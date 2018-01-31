@@ -1,0 +1,24 @@
+<section>
+  <div class="page-header">
+    <h1>{{vm.hotprice._id ? 'Edit Hotprice' : 'New Hotprice'}}</h1>
+  </div>
+  <div class="col-md-12">
+    <form name="vm.form.hotpriceForm" class="form-horizontal" ng-submit="vm.save(vm.form.hotpriceForm.$valid)" novalidate>
+      <fieldset>
+        <div class="form-group" show-errors>
+          <label class="control-label" for="name">Name</label>
+          <input name="name" type="text" ng-model="vm.hotprice.name" id="name" class="form-control" placeholder="Name" required>
+          <div ng-messages="vm.form.hotpriceForm.name.$error" role="alert">
+            <p class="help-block error-text" ng-message="required">Hotprice name is required.</p>
+          </div>
+        </div>
+        <div class="form-group">
+          <button type="submit" class="btn btn-default">{{vm.hotprice._id ? 'Update' : 'Create'}}</button>
+        </div>
+        <div ng-show="vm.error" class="text-danger">
+          <strong ng-bind="vm.error"></strong>
+        </div>
+      </fieldset>
+    </form>
+  </div>
+</section>

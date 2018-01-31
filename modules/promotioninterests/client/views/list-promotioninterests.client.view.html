@@ -1,0 +1,22 @@
+<section>
+  <div class="page-header">
+    <h1>Promotioninterests</h1>
+  </div>
+  <div class="list-group">
+    <a ng-repeat="promotioninterest in vm.promotioninterests"
+       ui-sref="promotioninterests.view({ promotioninterestId: promotioninterest._id })"
+       class="list-group-item">
+      <small class="list-group-item-text">
+        Posted on
+        <span ng-bind="promotioninterest.created | date:'mediumDate'"></span>
+        by
+        <span ng-if="promotioninterest.user" ng-bind="promotioninterest.user.displayName"></span>
+        <span ng-if="!promotioninterest.user">Deleted User</span>
+      </small>
+      <h4 class="list-group-item-heading" ng-bind="promotioninterest.name"></h4>
+    </a>
+  </div>
+  <div class="alert alert-warning text-center" ng-if="vm.promotioninterests.$resolved && !vm.promotioninterests.length">
+    No Promotioninterests yet, why don't you <a ui-sref="promotioninterests.create">create one</a>?
+  </div>
+</section>

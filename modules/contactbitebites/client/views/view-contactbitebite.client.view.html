@@ -1,0 +1,26 @@
+<section>
+  <div class="page-header">
+    <h1 ng-bind="vm.contactbitebite.name"></h1>
+  </div>
+  <div class="pull-right"
+       ng-show="vm.contactbitebite.isCurrentUserOwner">
+    <a class="btn btn-primary"
+       ui-sref="contactbitebites.edit({ contactbitebiteId: vm.contactbitebite._id })">
+      <i class="glyphicon glyphicon-edit"></i>
+    </a>
+    <a class="btn btn-primary" ng-click="vm.remove()">
+      <i class="glyphicon glyphicon-trash"></i>
+    </a>
+  </div>
+  <small>
+    <em class="text-muted">
+      Posted on
+      <span ng-bind="vm.contactbitebite.created | date:'mediumDate'"></span>
+      by
+      <span ng-if="vm.contactbitebite.user"
+            ng-bind="vm.contactbitebite.user.displayName"></span>
+      <span ng-if="!vm.contactbitebite.user">Deleted User</span>
+    </em>
+  </small>
+  <p class="lead" ng-bind="vm.contactbitebite.content"></p>
+</section>

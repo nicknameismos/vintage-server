@@ -1,0 +1,26 @@
+<section>
+  <div class="page-header">
+    <h1 ng-bind="vm.hotprice.name"></h1>
+  </div>
+  <div class="pull-right"
+       ng-show="vm.hotprice.isCurrentUserOwner">
+    <a class="btn btn-primary"
+       ui-sref="hotprices.edit({ hotpriceId: vm.hotprice._id })">
+      <i class="glyphicon glyphicon-edit"></i>
+    </a>
+    <a class="btn btn-primary" ng-click="vm.remove()">
+      <i class="glyphicon glyphicon-trash"></i>
+    </a>
+  </div>
+  <small>
+    <em class="text-muted">
+      Posted on
+      <span ng-bind="vm.hotprice.created | date:'mediumDate'"></span>
+      by
+      <span ng-if="vm.hotprice.user"
+            ng-bind="vm.hotprice.user.displayName"></span>
+      <span ng-if="!vm.hotprice.user">Deleted User</span>
+    </em>
+  </small>
+  <p class="lead" ng-bind="vm.hotprice.content"></p>
+</section>

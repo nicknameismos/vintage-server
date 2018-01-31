@@ -1,0 +1,22 @@
+<section>
+  <div class="page-header">
+    <h1>Categoryproducts</h1>
+  </div>
+  <div class="list-group">
+    <a ng-repeat="categoryproduct in vm.categoryproducts"
+       ui-sref="categoryproducts.view({ categoryproductId: categoryproduct._id })"
+       class="list-group-item">
+      <small class="list-group-item-text">
+        Posted on
+        <span ng-bind="categoryproduct.created | date:'mediumDate'"></span>
+        by
+        <span ng-if="categoryproduct.user" ng-bind="categoryproduct.user.displayName"></span>
+        <span ng-if="!categoryproduct.user">Deleted User</span>
+      </small>
+      <h4 class="list-group-item-heading" ng-bind="categoryproduct.name"></h4>
+    </a>
+  </div>
+  <div class="alert alert-warning text-center" ng-if="vm.categoryproducts.$resolved && !vm.categoryproducts.length">
+    No Categoryproducts yet, why don't you <a ui-sref="categoryproducts.create">create one</a>?
+  </div>
+</section>

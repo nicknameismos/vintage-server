@@ -1,0 +1,22 @@
+<section>
+  <div class="page-header">
+    <h1>Contactchoices</h1>
+  </div>
+  <div class="list-group">
+    <a ng-repeat="contactchoice in vm.contactchoices"
+       ui-sref="contactchoices.view({ contactchoiceId: contactchoice._id })"
+       class="list-group-item">
+      <small class="list-group-item-text">
+        Posted on
+        <span ng-bind="contactchoice.created | date:'mediumDate'"></span>
+        by
+        <span ng-if="contactchoice.user" ng-bind="contactchoice.user.displayName"></span>
+        <span ng-if="!contactchoice.user">Deleted User</span>
+      </small>
+      <h4 class="list-group-item-heading" ng-bind="contactchoice.name"></h4>
+    </a>
+  </div>
+  <div class="alert alert-warning text-center" ng-if="vm.contactchoices.$resolved && !vm.contactchoices.length">
+    No Contactchoices yet, why don't you <a ui-sref="contactchoices.create">create one</a>?
+  </div>
+</section>

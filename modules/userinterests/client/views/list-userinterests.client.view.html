@@ -1,0 +1,22 @@
+<section>
+  <div class="page-header">
+    <h1>Userinterests</h1>
+  </div>
+  <div class="list-group">
+    <a ng-repeat="userinterest in vm.userinterests"
+       ui-sref="userinterests.view({ userinterestId: userinterest._id })"
+       class="list-group-item">
+      <small class="list-group-item-text">
+        Posted on
+        <span ng-bind="userinterest.created | date:'mediumDate'"></span>
+        by
+        <span ng-if="userinterest.user" ng-bind="userinterest.user.displayName"></span>
+        <span ng-if="!userinterest.user">Deleted User</span>
+      </small>
+      <h4 class="list-group-item-heading" ng-bind="userinterest.name"></h4>
+    </a>
+  </div>
+  <div class="alert alert-warning text-center" ng-if="vm.userinterests.$resolved && !vm.userinterests.length">
+    No Userinterests yet, why don't you <a ui-sref="userinterests.create">create one</a>?
+  </div>
+</section>

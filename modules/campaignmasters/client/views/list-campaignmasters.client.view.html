@@ -1,0 +1,22 @@
+<section>
+  <div class="page-header">
+    <h1>Campaignmasters</h1>
+  </div>
+  <div class="list-group">
+    <a ng-repeat="campaignmaster in vm.campaignmasters"
+       ui-sref="campaignmasters.view({ campaignmasterId: campaignmaster._id })"
+       class="list-group-item">
+      <small class="list-group-item-text">
+        Posted on
+        <span ng-bind="campaignmaster.created | date:'mediumDate'"></span>
+        by
+        <span ng-if="campaignmaster.user" ng-bind="campaignmaster.user.displayName"></span>
+        <span ng-if="!campaignmaster.user">Deleted User</span>
+      </small>
+      <h4 class="list-group-item-heading" ng-bind="campaignmaster.name"></h4>
+    </a>
+  </div>
+  <div class="alert alert-warning text-center" ng-if="vm.campaignmasters.$resolved && !vm.campaignmasters.length">
+    No Campaignmasters yet, why don't you <a ui-sref="campaignmasters.create">create one</a>?
+  </div>
+</section>

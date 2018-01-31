@@ -1,0 +1,22 @@
+<section>
+  <div class="page-header">
+    <h1>Shopinterests</h1>
+  </div>
+  <div class="list-group">
+    <a ng-repeat="shopinterest in vm.shopinterests"
+       ui-sref="shopinterests.view({ shopinterestId: shopinterest._id })"
+       class="list-group-item">
+      <small class="list-group-item-text">
+        Posted on
+        <span ng-bind="shopinterest.created | date:'mediumDate'"></span>
+        by
+        <span ng-if="shopinterest.user" ng-bind="shopinterest.user.displayName"></span>
+        <span ng-if="!shopinterest.user">Deleted User</span>
+      </small>
+      <h4 class="list-group-item-heading" ng-bind="shopinterest.name"></h4>
+    </a>
+  </div>
+  <div class="alert alert-warning text-center" ng-if="vm.shopinterests.$resolved && !vm.shopinterests.length">
+    No Shopinterests yet, why don't you <a ui-sref="shopinterests.create">create one</a>?
+  </div>
+</section>

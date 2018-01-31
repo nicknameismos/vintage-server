@@ -1,0 +1,22 @@
+<section>
+  <div class="page-header">
+    <h1>Benefitsettings</h1>
+  </div>
+  <div class="list-group">
+    <a ng-repeat="benefitsetting in vm.benefitsettings"
+       ui-sref="benefitsettings.view({ benefitsettingId: benefitsetting._id })"
+       class="list-group-item">
+      <small class="list-group-item-text">
+        Posted on
+        <span ng-bind="benefitsetting.created | date:'mediumDate'"></span>
+        by
+        <span ng-if="benefitsetting.user" ng-bind="benefitsetting.user.displayName"></span>
+        <span ng-if="!benefitsetting.user">Deleted User</span>
+      </small>
+      <h4 class="list-group-item-heading" ng-bind="benefitsetting.name"></h4>
+    </a>
+  </div>
+  <div class="alert alert-warning text-center" ng-if="vm.benefitsettings.$resolved && !vm.benefitsettings.length">
+    No Benefitsettings yet, why don't you <a ui-sref="benefitsettings.create">create one</a>?
+  </div>
+</section>

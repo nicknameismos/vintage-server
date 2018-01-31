@@ -1,0 +1,22 @@
+<section>
+  <div class="page-header">
+    <h1>Hotprices</h1>
+  </div>
+  <div class="list-group">
+    <a ng-repeat="hotprice in vm.hotprices"
+       ui-sref="hotprices.view({ hotpriceId: hotprice._id })"
+       class="list-group-item">
+      <small class="list-group-item-text">
+        Posted on
+        <span ng-bind="hotprice.created | date:'mediumDate'"></span>
+        by
+        <span ng-if="hotprice.user" ng-bind="hotprice.user.displayName"></span>
+        <span ng-if="!hotprice.user">Deleted User</span>
+      </small>
+      <h4 class="list-group-item-heading" ng-bind="hotprice.name"></h4>
+    </a>
+  </div>
+  <div class="alert alert-warning text-center" ng-if="vm.hotprices.$resolved && !vm.hotprices.length">
+    No Hotprices yet, why don't you <a ui-sref="hotprices.create">create one</a>?
+  </div>
+</section>
