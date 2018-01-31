@@ -179,13 +179,13 @@ exports.shopByID = function (req, res, next, id) {
   Shop.findById(id).populate('user').populate('categories').populate({
     path: 'items',
     populate: [{
-        path: 'cate',
-        model: 'Categoryproduct'
-      },
-      {
-        path: 'products',
-        model: 'Product'
-      }
+      path: 'cate',
+      model: 'Categoryproduct'
+    },
+    {
+      path: 'products',
+      model: 'Product'
+    }
     ]
   }).exec(function (err, shop) {
     if (err) {
@@ -380,13 +380,13 @@ exports.cookingHomeShop = function (req, res, next) {
   }).sort('-created').populate('categories').populate({
     path: 'items',
     populate: [{
-        path: 'cate',
-        model: 'Categoryproduct'
-      },
-      {
-        path: 'products',
-        model: 'Product'
-      }
+      path: 'cate',
+      model: 'Categoryproduct'
+    },
+    {
+      path: 'products',
+      model: 'Product'
+    }
     ]
   }).exec(function (err, shops) {
     if (err) {
@@ -431,6 +431,7 @@ exports.resHomeShop = function (req, res) {
             image: i.images && i.images.length > 0 ? i.images[0] : './assets/imgs/add.jpg',
             price: i.promotionprice ? i.promotionprice : i.price,
             isrecommend: i.isrecommend,
+            issale: i.issale ? i.issale : false,
             ispromotionprice: true,
             startdate: startdate,
             expiredate: expiredate
@@ -442,6 +443,7 @@ exports.resHomeShop = function (req, res) {
             image: i.images && i.images.length > 0 ? i.images[0] : './assets/imgs/add.jpg',
             price: i.name === 'default' ? null : i.price,
             isrecommend: i.isrecommend,
+            issale: i.issale ? i.issale : false,
             ispromotionprice: false,
             startdate: startdate,
             expiredate: expiredate
@@ -455,6 +457,7 @@ exports.resHomeShop = function (req, res) {
           image: i.images && i.images.length > 0 ? i.images[0] : './assets/imgs/add.jpg',
           price: i.name === 'default' ? null : i.price,
           isrecommend: i.isrecommend,
+          issale: i.issale ? i.issale : false,          
           ispromotionprice: false,
           startdate: null,
           expiredate: null
@@ -779,13 +782,13 @@ exports.addCateToShop = function (req, res, next) {
       Shop.findById(shop._id).populate('user').populate('categories').populate({
         path: 'items',
         populate: [{
-            path: 'cate',
-            model: 'Categoryproduct'
-          },
-          {
-            path: 'products',
-            model: 'Product'
-          }
+          path: 'cate',
+          model: 'Categoryproduct'
+        },
+        {
+          path: 'products',
+          model: 'Product'
+        }
         ]
       }).exec(function (err, shop) {
         if (err) {
@@ -942,13 +945,13 @@ exports.findShopUser = function (req, res, next) {
   }).sort('-created').populate('categories').populate({
     path: 'items',
     populate: [{
-        path: 'cate',
-        model: 'Categoryproduct'
-      },
-      {
-        path: 'products',
-        model: 'Product'
-      }
+      path: 'cate',
+      model: 'Categoryproduct'
+    },
+    {
+      path: 'products',
+      model: 'Product'
+    }
     ]
   }).exec(function (err, shops) {
     if (err) {
@@ -975,13 +978,13 @@ exports.updateShop = function (req, res, next) {
     .populate({
       path: 'items',
       populate: [{
-          path: 'cate',
-          model: 'Categoryproduct'
-        },
-        {
-          path: 'products',
-          model: 'Product'
-        }
+        path: 'cate',
+        model: 'Categoryproduct'
+      },
+      {
+        path: 'products',
+        model: 'Product'
+      }
       ]
     }).exec(function (err, shop) {
       if (err) {
@@ -1450,23 +1453,23 @@ function countPage(shops) {
 function searchKeyword(keyWord) {
   var keyword = {
     $or: [{
-        'name': {
-          '$regex': keyWord,
-          '$options': 'i'
-        }
-      },
-      {
-        'detail': {
-          '$regex': keyWord,
-          '$options': 'i'
-        }
-      },
-      {
-        'tel': {
-          '$regex': keyWord,
-          '$options': 'i'
-        }
+      'name': {
+        '$regex': keyWord,
+        '$options': 'i'
       }
+    },
+    {
+      'detail': {
+        '$regex': keyWord,
+        '$options': 'i'
+      }
+    },
+    {
+      'tel': {
+        '$regex': keyWord,
+        '$options': 'i'
+      }
+    }
     ]
   };
   return keyword;

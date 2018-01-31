@@ -36,6 +36,10 @@ var ProductSchema = new Schema({
   promotionprice: {
     type: Number
   },
+  issale: {
+    type: Boolean,
+    default: true
+  },
   ispromotionprice: {
     type: Boolean,
     default: false

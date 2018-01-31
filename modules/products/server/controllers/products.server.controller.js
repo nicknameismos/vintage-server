@@ -133,6 +133,7 @@ exports.update = function (req, res) {
   product.price = req.body.price ? req.body.price : product.price;
   product.promotionprice = req.body.promotionprice ? req.body.promotionprice : product.promotionprice;
   product.isrecommend = req.body.isrecommend;
+  product.issale = req.body.issale;
 
 
   product.save(function (err) {
