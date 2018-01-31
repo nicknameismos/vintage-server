@@ -36,7 +36,7 @@ describe('Bid Model Unit Tests:', function () {
         bidprice: 100,
         starttime: new Date(),
         endtime: new Date(),
-        image: 'image',
+        image: ['https://www.felex-lederwaren.de/bilder/produkte/gross/Billy-the-Kid-by-Greenburry-Rebel-of-Vintage-Greenburry-Damenumhaengetasche-UEberschlagtasche-rot-braun.jpg'],
         user: user
       });
 
@@ -63,7 +63,7 @@ describe('Bid Model Unit Tests:', function () {
     });
 
     it('should be able to show an error when try to save without image', function (done) {
-      bid.image = '';
+      bid.image = null;
 
       return bid.save(function (err) {
         should.exist(err);

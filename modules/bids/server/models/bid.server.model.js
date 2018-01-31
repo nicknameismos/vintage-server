@@ -33,7 +33,7 @@ var BidSchema = new Schema({
     type: Date
   },
   image: {
-    type: String,
+    type: [String],
     required: 'Please fill Bid image'
   },
   created: {
