@@ -1215,6 +1215,37 @@ describe('Shop CRUD edit and delete items token tests', function () {
       });
   });
 
+  it('get list shops', function (done) {
+    // Save a new Shop
+
+    agent.post('/api/shops')
+      .set('authorization', 'Bearer ' + token)
+      .send(shop)
+      .expect(200)
+      .end(function (shopSaveErr, shopSaveRes) {
+        // Handle shop save error
+        if (shopSaveErr) {
+          return done(shopSaveErr);
+        }
+        agent.get('/api/getshoplist')
+          .set('authorization', 'Bearer ' + token)
+          .expect(200)
+          .end(function (shopGetErr, shopsGetRes) {
+            // Handle shop save error
+            if (shopGetErr) {
+              return done(shopGetErr);
+            }
+            // Get shop list
+            var shops = shopsGetRes.body;
+
+            (shops.length).should.match(1);
+            (shops[0].coverimage).should.match(shop.coverimage);
+
+            done();
+          });
+      });
+  });
+
   afterEach(function (done) {
     User.remove().exec(function () {
       Categoryshop.remove().exec(function () {

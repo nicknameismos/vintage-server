@@ -179,13 +179,13 @@ exports.shopByID = function (req, res, next, id) {
   Shop.findById(id).populate('user').populate('categories').populate({
     path: 'items',
     populate: [{
-      path: 'cate',
-      model: 'Categoryproduct'
-    },
-    {
-      path: 'products',
-      model: 'Product'
-    }
+        path: 'cate',
+        model: 'Categoryproduct'
+      },
+      {
+        path: 'products',
+        model: 'Product'
+      }
     ]
   }).exec(function (err, shop) {
     if (err) {
@@ -380,13 +380,13 @@ exports.cookingHomeShop = function (req, res, next) {
   }).sort('-created').populate('categories').populate({
     path: 'items',
     populate: [{
-      path: 'cate',
-      model: 'Categoryproduct'
-    },
-    {
-      path: 'products',
-      model: 'Product'
-    }
+        path: 'cate',
+        model: 'Categoryproduct'
+      },
+      {
+        path: 'products',
+        model: 'Product'
+      }
     ]
   }).exec(function (err, shops) {
     if (err) {
@@ -779,13 +779,13 @@ exports.addCateToShop = function (req, res, next) {
       Shop.findById(shop._id).populate('user').populate('categories').populate({
         path: 'items',
         populate: [{
-          path: 'cate',
-          model: 'Categoryproduct'
-        },
-        {
-          path: 'products',
-          model: 'Product'
-        }
+            path: 'cate',
+            model: 'Categoryproduct'
+          },
+          {
+            path: 'products',
+            model: 'Product'
+          }
         ]
       }).exec(function (err, shop) {
         if (err) {
@@ -942,13 +942,13 @@ exports.findShopUser = function (req, res, next) {
   }).sort('-created').populate('categories').populate({
     path: 'items',
     populate: [{
-      path: 'cate',
-      model: 'Categoryproduct'
-    },
-    {
-      path: 'products',
-      model: 'Product'
-    }
+        path: 'cate',
+        model: 'Categoryproduct'
+      },
+      {
+        path: 'products',
+        model: 'Product'
+      }
     ]
   }).exec(function (err, shops) {
     if (err) {
@@ -975,13 +975,13 @@ exports.updateShop = function (req, res, next) {
     .populate({
       path: 'items',
       populate: [{
-        path: 'cate',
-        model: 'Categoryproduct'
-      },
-      {
-        path: 'products',
-        model: 'Product'
-      }
+          path: 'cate',
+          model: 'Categoryproduct'
+        },
+        {
+          path: 'products',
+          model: 'Product'
+        }
       ]
     }).exec(function (err, shop) {
       if (err) {
@@ -1421,6 +1421,17 @@ exports.resSearch = function (req, res) {
   });
 };
 
+exports.getShopsList = function (req, res) {
+  Shop.find({}, '_id coverimage').sort('-created').exec(function (err, shops) {
+    if (err) {
+      return res.status(400).send({
+        message: errorHandler.getErrorMessage(err)
+      });
+    } else {
+      res.jsonp(shops);
+    }
+  });
+};
 //count page
 function countPage(shops) {
   var numpage = [];
@@ -1439,23 +1450,23 @@ function countPage(shops) {
 function searchKeyword(keyWord) {
   var keyword = {
     $or: [{
-      'name': {
-        '$regex': keyWord,
-        '$options': 'i'
+        'name': {
+          '$regex': keyWord,
+          '$options': 'i'
+        }
+      },
+      {
+        'detail': {
+          '$regex': keyWord,
+          '$options': 'i'
+        }
+      },
+      {
+        'tel': {
+          '$regex': keyWord,
+          '$options': 'i'
+        }
       }
-    },
-    {
-      'detail': {
-        '$regex': keyWord,
-        '$options': 'i'
-      }
-    },
-    {
-      'tel': {
-        '$regex': keyWord,
-        '$options': 'i'
-      }
-    }
     ]
   };
   return keyword;
