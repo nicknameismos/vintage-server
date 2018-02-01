@@ -112,8 +112,8 @@ exports.getnewregisterreward = function (req, res, next) {
             loginToken: user.loginToken,
             newregisterreward: {
               items: [{
-                image: benefit.image,
-                description: benefit.description
+                image: benefit ? benefit.image : '',
+                description: benefit ? benefit.description : ''
               }]
             }
           };
