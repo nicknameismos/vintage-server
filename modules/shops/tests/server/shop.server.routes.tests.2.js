@@ -1082,6 +1082,24 @@ describe('Shop CRUD edit and delete items token tests', function () {
                             (shopsssxxx.items.length).should.match(1);
                             (shopsssxxx.items[0].products.length).should.match(30);
                             // (shopsssxxx.items[0].products[0].name).should.match('sadf');
+                            var productCreateFalse = {
+                              name: '1222',
+                              images: ['1222', '1222'],
+                              price: 12222234,
+                              categories: shopchange.items[0].cate,
+                              issale: false,
+                              index: 3,
+                              cateindex: 0
+                            };
+                            agent.put('/api/createproduct/' + shops._id)
+                              .set('authorization', 'Bearer ' + signinRes.body.loginToken)
+                              .send(productCreateFalse)
+                              .expect(200)
+                              .end(function (createproductErrfalse, createproductResfalse) {
+                                // Handle signin error
+                                if (createproductErrfalse) {
+                                  return done(createproductErrfalse);
+                                }
                             var productCreate = {
                               name: '1',
                               images: ['asdf', 'asdf'],
@@ -1154,7 +1172,7 @@ describe('Shop CRUD edit and delete items token tests', function () {
                                               return done(productsGetErr);
                                             }
                                             var productsRes = productsGetRes.body;
-                                            (productsRes.length).should.match(4);
+                                            (productsRes.length).should.match(5);
 
                                             agent.get('/api/customershopdetail/' + shops._id)
                                               .expect(200)
@@ -1206,6 +1224,7 @@ describe('Shop CRUD edit and delete items token tests', function () {
                                       });
                                   });
                               });
+                            });
                           });
                       });
                   });

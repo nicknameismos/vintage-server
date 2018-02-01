@@ -457,7 +457,7 @@ exports.resHomeShop = function (req, res) {
           image: i.images && i.images.length > 0 ? i.images[0] : './assets/imgs/add.jpg',
           price: i.name === 'default' ? null : i.price,
           isrecommend: i.isrecommend,
-          issale: i.issale ? i.issale : false,          
+          issale: i.issale ? i.issale : false,
           ispromotionprice: false,
           startdate: null,
           expiredate: null
@@ -1297,7 +1297,7 @@ exports.getCateByShop = function (req, res, next) {
 
 exports.getProductsByShop = function (req, res, next) {
   Product.find({
-    shop: req.shop._id
+    shop: req.shop._id, issale: true
   }).exec(function (err, products) {
     if (err) {
       return next(err);
