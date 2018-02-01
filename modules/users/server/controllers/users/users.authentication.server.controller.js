@@ -87,7 +87,7 @@ exports.getnewregisterreward = function (req, res, next) {
       var coinbalance = new Coinbalance({
         name: benefit ? benefit.name : '',
         balancetype: 'in',
-        volume: benefit.items[0].volume,
+        volume: benefit ? benefit.items[0].volume : null,
         refbenefit: benefit,
         user: user
       });
