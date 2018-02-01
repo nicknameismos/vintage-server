@@ -85,9 +85,9 @@ exports.getnewregisterreward = function (req, res, next) {
       });
     } else {
       var coinbalance = new Coinbalance({
-        name: benefit ? benefit.name : '',
+        name: benefit ? benefit.name : 'coin',
         balancetype: 'in',
-        volume: benefit ? benefit.items[0].volume : null,
+        volume: benefit ? benefit.items[0].volume : 0,
         refbenefit: benefit,
         user: user
       });
