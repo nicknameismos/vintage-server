@@ -32,6 +32,7 @@ describe('Bid Model Unit Tests:', function () {
       bid = new Bid({
         name: 'Bid name',
         detail: 'bid detail',
+        price: 300,
         startprice: 50,
         bidprice: 100,
         starttime: new Date(),

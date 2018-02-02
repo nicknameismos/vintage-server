@@ -18,6 +18,8 @@ module.exports = function (app) {
     .put(bids.update)
     .delete(bids.delete);
 
+  app.route('/api/getbidlist').all(core.jwtCheck, bidsPolicy.isAllowed)
+    .get(bids.cookingBid, bids.resBids);
   // Finish by binding the Bid middleware
   app.param('bidId', bids.bidByID);
 };

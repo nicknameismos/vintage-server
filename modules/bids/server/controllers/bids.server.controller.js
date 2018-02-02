@@ -12,11 +12,11 @@ var path = require('path'),
 /**
  * Create a Bid
  */
-exports.create = function(req, res) {
+exports.create = function (req, res) {
   var bid = new Bid(req.body);
   bid.user = req.user;
 
-  bid.save(function(err) {
+  bid.save(function (err) {
     if (err) {
       return res.status(400).send({
         message: errorHandler.getErrorMessage(err)
@@ -30,7 +30,7 @@ exports.create = function(req, res) {
 /**
  * Show the current Bid
  */
-exports.read = function(req, res) {
+exports.read = function (req, res) {
   // convert mongoose document to JSON
   var bid = req.bid ? req.bid.toJSON() : {};
 
@@ -44,12 +44,12 @@ exports.read = function(req, res) {
 /**
  * Update a Bid
  */
-exports.update = function(req, res) {
+exports.update = function (req, res) {
   var bid = req.bid;
 
   bid = _.extend(bid, req.body);
 
-  bid.save(function(err) {
+  bid.save(function (err) {
     if (err) {
       return res.status(400).send({
         message: errorHandler.getErrorMessage(err)
@@ -63,10 +63,10 @@ exports.update = function(req, res) {
 /**
  * Delete an Bid
  */
-exports.delete = function(req, res) {
+exports.delete = function (req, res) {
   var bid = req.bid;
 
-  bid.remove(function(err) {
+  bid.remove(function (err) {
     if (err) {
       return res.status(400).send({
         message: errorHandler.getErrorMessage(err)
@@ -80,8 +80,8 @@ exports.delete = function(req, res) {
 /**
  * List of Bids
  */
-exports.list = function(req, res) {
-  Bid.find().sort('-created').populate('user', 'displayName').exec(function(err, bids) {
+exports.list = function (req, res) {
+  Bid.find().sort('-created').populate('user', 'displayName').exec(function (err, bids) {
     if (err) {
       return res.status(400).send({
         message: errorHandler.getErrorMessage(err)
@@ -95,7 +95,7 @@ exports.list = function(req, res) {
 /**
  * Bid middleware
  */
-exports.bidByID = function(req, res, next, id) {
+exports.bidByID = function (req, res, next, id) {
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(400).send({
@@ -113,5 +113,36 @@ exports.bidByID = function(req, res, next, id) {
     }
     req.bid = bid;
     next();
+  });
+};
+
+exports.cookingBid = function (req, res, next) {
+  var items = [];
+  Bid.find().sort('-created').populate('user', 'displayName').exec(function (err, bids) {
+    if (err) {
+      return res.status(400).send({
+        message: errorHandler.getErrorMessage(err)
+      });
+    } else {
+      bids.forEach(function (element) {
+        items.push({
+          image: element.image[0],
+          price: element.price,
+          isBid: true,
+          pricestart: element.startprice,
+          pricebid: element.bidprice,
+          datestart: element.starttime,
+          dateend: element.endtime
+        });
+      });
+      req.bids = items;
+      next();
+    }
+  });
+};
+
+exports.resBids = function (req, res) {
+  res.jsonp({
+    items: req.bids
   });
 };

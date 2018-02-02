@@ -20,6 +20,9 @@ exports.invokeRolesPolicies = function () {
     }, {
       resources: '/api/bids/:bidId',
       permissions: '*'
+    }, {
+      resources: '/api/getbidlist',
+      permissions: '*'
     }]
   }, {
     roles: ['shop'],
@@ -29,6 +32,9 @@ exports.invokeRolesPolicies = function () {
     }, {
       resources: '/api/bids/:bidId',
       permissions: '*'
+    }, {
+      resources: '/api/getbidlist',
+      permissions: ['get']
     }]
   }, {
     roles: ['user'],
@@ -38,6 +44,9 @@ exports.invokeRolesPolicies = function () {
     }, {
       resources: '/api/bids/:bidId',
       permissions: ['get']
+    }, {
+      resources: '/api/getbidlist',
+      permissions: ['get']
     }]
   }, {
     roles: ['guest'],
@@ -46,6 +55,9 @@ exports.invokeRolesPolicies = function () {
       permissions: ['get']
     }, {
       resources: '/api/bids/:bidId',
+      permissions: ['get']
+    }, {
+      resources: '/api/getbidlist',
       permissions: ['get']
     }]
   }]);

@@ -19,6 +19,9 @@ var BidSchema = new Schema({
   detail: {
     type: String
   },
+  price: {
+    type: Number
+  },
   startprice: {
     type: Number
   },
