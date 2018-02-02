@@ -130,6 +130,7 @@ exports.update = function (req, res) {
   // product = _.extend(product, req.body);
   product.images = req.body.images ? req.body.images : product.images;
   product.name = req.body.name ? req.body.name : product.name;
+  product.detail = req.body.detail ? req.body.detail : product.detail;
   product.price = req.body.price ? req.body.price : product.price;
   product.promotionprice = req.body.promotionprice ? req.body.promotionprice : product.promotionprice;
   product.isrecommend = req.body.isrecommend;
