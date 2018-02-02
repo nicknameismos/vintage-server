@@ -106,7 +106,7 @@ describe('Product CRUD tests with token', function () {
         categoryproduct.save(function () {
           product = {
             name: 'Product name',
-            detail:'Product detail',
+            detail: 'Product detail',
             price: 50,
             priorityofcate: 1,
             images: ['https://simg.kapook.com/o/photo/410/kapook_world-408206.jpg', 'https://f.ptcdn.info/408/051/000/oqi6tdf9uS1811y1XHx-o.png'],
@@ -440,6 +440,7 @@ describe('Product CRUD tests with token', function () {
             (product.images[0]).should.match(productObj.images[0]);
             (product.images[1]).should.match(productObj.images[1]);
             (product.price).should.match(productObj.price);
+            (product.detail).should.match(productObj.detail);
 
             done();
           });
