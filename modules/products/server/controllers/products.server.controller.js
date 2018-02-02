@@ -253,8 +253,9 @@ exports.productByShop = function (req, res) {
 
 exports.getShopID = function (req, res, next, shopid) {
   Product.find({
-    shop: shopid
-  }, '_id name images price categories ispromotionprice isrecommend').sort('-created').populate('user', 'displayName').populate('categories').exec(function (err, products) {
+    shop: shopid,
+    issale: true
+  }, '_id name images price categories ispromotionprice isrecommend detail').sort('-created').populate('user', 'displayName').populate('categories').exec(function (err, products) {
     if (err) {
       return res.status(400).send({
         message: errorHandler.getErrorMessage(err)
@@ -277,6 +278,7 @@ exports.getListProduct = function (req, res, next) {
       cateid: element.categories._id,
       ispromotion: element.ispromotionprice,
       isrecommend: element.isrecommend,
+      detail: element.detail,
       ispopular: false
     });
   });
