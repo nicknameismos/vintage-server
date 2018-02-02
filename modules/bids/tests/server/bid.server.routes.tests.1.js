@@ -83,9 +83,21 @@ describe('Bid CRUD tests with token', function () {
     var bidObj1 = new Bid(bid);
     var bidObj2 = new Bid(bid);
 
+    var today = new Date();
+
+    bidObj.starttime = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 1);
+    bidObj.endtime = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
+
+    bidObj1.starttime = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
+    bidObj1.endtime = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 2);
+
+    bidObj2.starttime = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
+    bidObj2.endtime = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 2);
+
     bidObj.save();
     bidObj1.save();
     bidObj2.save();
+
     agent.get('/api/getbidlist')
       .set('authorization', 'Bearer ' + token)
       .end(function (bidsGetErr, bidsGetRes) {

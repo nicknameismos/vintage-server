@@ -117,25 +117,52 @@ exports.bidByID = function (req, res, next, id) {
 };
 
 exports.cookingBid = function (req, res, next) {
-  var items = [];
+  // var items = [];
   Bid.find().sort('-created').populate('user', 'displayName').exec(function (err, bids) {
     if (err) {
       return res.status(400).send({
         message: errorHandler.getErrorMessage(err)
       });
     } else {
+      var cookingBidsTrue = [];
+      var cookingBidsFalse = [];
       bids.forEach(function (element) {
-        items.push({
-          image: element.image[0],
-          price: element.price,
-          isBid: true,
-          pricestart: element.startprice,
-          pricebid: element.bidprice,
-          datestart: element.starttime,
-          dateend: element.endtime
-        });
+
+        var startdate = new Date(element.starttime);
+        var expiredate = new Date(element.endtime);
+        var today = new Date();
+
+        if (today >= startdate && today <= expiredate) {
+          cookingBidsTrue.push({
+            _id: element._id,
+            created: element.created,
+            image: element.image ? element.image[0] : '',
+            price: element.price,
+            isBid: true,
+            pricestart: element.startprice,
+            pricebid: element.bidprice,
+            datestart: element.starttime,
+            dateend: element.endtime
+          });
+        } else if (startdate >= today) {
+          cookingBidsFalse.push({
+            _id: element._id,
+            created: element.created,
+            image: element.image ? element.image[0] : '',
+            price: element.price,
+            isBid: false,
+            pricestart: element.startprice,
+            pricebid: element.bidprice,
+            datestart: element.starttime,
+            dateend: element.endtime
+          });
+        }
       });
-      req.bids = items;
+      var sortTime = cookingBidsTrue.sort(function (a, b) {
+        return (a.time > b.time) ? 1 : ((b.time > a.time) ? -1 : 0);
+      });
+      var resultbid = sortTime.concat(cookingBidsFalse);
+      req.bids = resultbid;
       next();
     }
   });
@@ -146,3 +173,27 @@ exports.resBids = function (req, res) {
     items: req.bids
   });
 };
+
+function counttime(expire) {
+  var time = 0;
+  var today = new Date();
+  var expireDay = new Date(expire);
+  var t = expireDay - today;
+  var minutes = Math.floor((t / 1000 / 60) % 60);
+  var hours = Math.floor((t / (1000 * 60 * 60)) % 24);
+  var days = Math.floor(t / (1000 * 60 * 60 * 24));
+
+  if (days > 0) {
+    time += (days * 24) * 60;
+  }
+
+  if (hours > 0) {
+    time += hours * 60;
+  }
+
+  if (minutes > 0) {
+    time += minutes;
+  }
+
+  return time;
+}
