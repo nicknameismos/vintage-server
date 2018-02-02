@@ -106,6 +106,7 @@ describe('Product CRUD tests with token', function () {
         categoryproduct.save(function () {
           product = {
             name: 'Product name',
+            detail:'Product detail',
             price: 50,
             priorityofcate: 1,
             images: ['https://simg.kapook.com/o/photo/410/kapook_world-408206.jpg', 'https://f.ptcdn.info/408/051/000/oqi6tdf9uS1811y1XHx-o.png'],
@@ -169,6 +170,7 @@ describe('Product CRUD tests with token', function () {
             // Set assertions
             //(products[0].user.loginToken).should.equal(token);
             (products[0].name).should.match('Product name');
+            (products[0].detail).should.match('Product detail');
 
             // Call the assertion callback
             done();
