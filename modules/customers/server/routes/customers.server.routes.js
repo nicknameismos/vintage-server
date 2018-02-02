@@ -43,7 +43,7 @@ module.exports = function (app) {
   app.param('condition', customers.getcondition);
 
   app.route('/api/vintagecustomerhome')
-    .get(customers.getListBids, customers.cookingListBids, customers.getListProducts, customers.cookingListProducts, customers.customerVintageHome);
+    .get(customers.getListBids, customers.cookingListBids, customers.getListAds, customers.cookingListAds, customers.getListProducts, customers.cookingListProducts, customers.customerVintageHome);
 
   app.param('lat', customers.getlat);
   app.param('lng', customers.getlng);

@@ -404,6 +404,7 @@ exports.getListBids = function (req, res, next) {
     }
   });
 };
+
 exports.cookingListBids = function (req, res, next) {
   var cookingBidsTrue = [];
   var cookingBidsFalse = [];
@@ -434,6 +435,36 @@ exports.cookingListBids = function (req, res, next) {
   req.resBids = sortTime.concat(cookingBidsFalse);
   next();
 };
+
+exports.getListAds = function (req, res, next) {
+  Ad.find().sort('-created').exec(function (err, ads) {
+    if (err) {
+      return res.status(400).send({
+        message: errorHandler.getErrorMessage(err)
+      });
+    } else {
+      req.ads = ads;
+      next();
+    }
+  });
+};
+
+exports.cookingListAds = function (req, res, next) {
+  var items = [];
+  req.ads.forEach(function (ad) {
+    items.push({
+      _id: ad._id,
+      image: ad.image,
+      imagecount: 1,
+      isvideo: ad.isvideo ? ad.isvideo : false,
+      type: 'ads',
+      created: ad.created
+    });
+  });
+  req.items = items;
+  next();
+};
+
 exports.getListProducts = function (req, res, next) {
   Product.find({ issale: true }).sort('-created').limit(54).exec(function (err, products) {
     if (err) {
@@ -446,18 +477,27 @@ exports.getListProducts = function (req, res, next) {
     }
   });
 };
+
 exports.cookingListProducts = function (req, res, next) {
   // {_id:image}
-  var cookingProducts = [];
   req.products.forEach(function (prod) {
-
+    req.items.push({
+      _id: prod._id,
+      image: prod.images && prod.images.length > 0 ? prod.images[0] : '',
+      imagecount: prod.images && prod.images.length > 0 ? prod.images.length : 1,
+      isvideo: false,
+      type: 'product',
+      created: prod.created
+    });
   });
   next();
 };
+
 exports.customerVintageHome = function (req, res, next) {
+  var items = req.items.sort((a, b) => { return (a.created < b.created) ? 1 : ((b.created < a.created) ? -1 : 0); });
   res.jsonp({
     bid: req.resBids,
-    items: req.products
+    items: items
   });
 };
 

@@ -80,7 +80,8 @@ describe('Customer Home Stories Test', function () {
       isvideo: true,
       videoid: "###",
       status: true,
-      user: user
+      user: user,
+      created: new Date(2018, 1, 30)
     });
 
     ads2 = new Ad({
@@ -88,7 +89,8 @@ describe('Customer Home Stories Test', function () {
       isvideo: false,
       videoid: '',
       status: true,
-      user: user
+      user: user,
+      created: new Date(2018, 1, 29)
     });
 
     ads3 = new Ad({
@@ -96,7 +98,8 @@ describe('Customer Home Stories Test', function () {
       isvideo: true,
       videoid: "###",
       status: true,
-      user: user
+      user: user,
+      created: new Date(2018, 1, 28)
     });
 
     categoryshop = new Categoryshop({
@@ -558,6 +561,7 @@ describe('Customer Home Stories Test', function () {
       ispromotionprice: true,
       startdate: new Date(),
       expiredate: new Date(),
+      created: new Date(2018, 1, 31)
     });
     bidProduct.save();
     agent.get('/api/vintagecustomerhome')
@@ -582,10 +586,30 @@ describe('Customer Home Stories Test', function () {
         gettoday2.bid[2].image.should.be.equal(bid2.image[0]);
         gettoday2.bid[2].isBid.should.be.equal(false);
 
-        gettoday2.items.length.should.be.equal(1);
-        // gettoday2.items[0]._id.should.be.equal(bidProduct.id);
-        // gettoday2.items[0].image.should.be.equal(bidProduct.images[0]);
+        gettoday2.items.length.should.be.equal(4);
+        gettoday2.items[0]._id.should.be.equal(bidProduct.id);
+        gettoday2.items[0].image.should.be.equal(bidProduct.images[0]);
+        gettoday2.items[0].imagecount.should.be.equal(2);
+        gettoday2.items[0].isvideo.should.be.equal(false);
+        gettoday2.items[0].type.should.be.equal('product');
 
+        gettoday2.items[1]._id.should.be.equal(ads1.id);
+        gettoday2.items[1].image.should.be.equal(ads1.image);
+        gettoday2.items[1].imagecount.should.be.equal(1);
+        gettoday2.items[1].isvideo.should.be.equal(true);
+        gettoday2.items[1].type.should.be.equal('ads');
+
+        gettoday2.items[2]._id.should.be.equal(ads2.id);
+        gettoday2.items[2].image.should.be.equal(ads2.image);
+        gettoday2.items[2].imagecount.should.be.equal(1);
+        gettoday2.items[2].isvideo.should.be.equal(false);
+        gettoday2.items[2].type.should.be.equal('ads');
+
+        gettoday2.items[3]._id.should.be.equal(ads3.id);
+        gettoday2.items[3].image.should.be.equal(ads3.image);
+        gettoday2.items[3].imagecount.should.be.equal(1);
+        gettoday2.items[3].isvideo.should.be.equal(true);
+        gettoday2.items[3].type.should.be.equal('ads');
         done();
 
       });
