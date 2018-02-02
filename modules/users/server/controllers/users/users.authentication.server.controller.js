@@ -48,7 +48,9 @@ exports.signup = function (req, res, next) {
       user.password = undefined;
       user.salt = undefined;
       user.loginToken = "";
-      user.loginToken = jwt.sign(_.omit(user, 'password'), config.jwt.secret, { expiresIn: 2 * 60 * 60 * 1000 });
+      user.loginToken = jwt.sign(_.omit(user, 'password'), config.jwt.secret, {
+        expiresIn: 2 * 60 * 60 * 1000
+      });
       user.loginExpires = Date.now() + (2 * 60 * 60 * 1000); // 2 hours
 
       req.login(user, function (err, resp) {
@@ -74,25 +76,27 @@ exports.signup = function (req, res, next) {
  */
 exports.getnewregisterreward = function (req, res, next) {
   var user = req.user;
-  Benefitsetting.findOne({name: 'newreg'}).sort('-created').exec(function (err, benefit) {
+  Benefitsetting.findOne({
+    name: 'newreg'
+  }).sort('-created').exec(function (err, benefit) {
     if (err) {
       return res.status(400).send({
         message: errorHandler.getErrorMessage(err)
       });
     } else {
       var coinbalance = new Coinbalance({
-        name: benefit.name,
+        name: benefit ? benefit.name : 'newreg',
         balancetype: 'in',
-        volume: benefit.items[0].volume,
+        volume: benefit ? benefit.items[0].volume : 0,
         refbenefit: benefit,
         user: user
       });
-      coinbalance.save(function(errsave){
-        if(errsave){
+      coinbalance.save(function (errsave) {
+        if (errsave) {
           return res.status(400).send({
             message: errorHandler.getErrorMessage(errsave)
           });
-        }else{
+        } else {
           var resuser = {
             _id: user._id,
             created: user.created,
@@ -108,19 +112,18 @@ exports.getnewregisterreward = function (req, res, next) {
             loginToken: user.loginToken,
             newregisterreward: {
               items: [{
-                image: benefit.image,
-                description: benefit.description
-              }
-              ]
+                image: benefit ? benefit.image : '',
+                description: benefit ? benefit.description : ''
+              }]
             }
           };
           res.json(resuser);
         }
       });
-      
+
     }
   });
-  
+
 };
 
 /**
@@ -139,7 +142,9 @@ exports.signin = function (req, res, next) {
           user.password = undefined;
           user.salt = undefined;
           user.loginToken = "";
-          user.loginToken = jwt.sign(_.omit(user, 'password'), config.jwt.secret, { expiresIn: 2 * 60 * 60 * 1000 });
+          user.loginToken = jwt.sign(_.omit(user, 'password'), config.jwt.secret, {
+            expiresIn: 2 * 60 * 60 * 1000
+          });
           user.loginExpires = Date.now() + (2 * 60 * 60 * 1000); // 2 hours
 
           req.login(user, function (err) {
@@ -166,7 +171,9 @@ exports.signin = function (req, res, next) {
               user.password = undefined;
               user.salt = undefined;
               user.loginToken = "";
-              user.loginToken = jwt.sign(_.omit(user, 'password'), config.jwt.secret, { expiresIn: 2 * 60 * 60 * 1000 });
+              user.loginToken = jwt.sign(_.omit(user, 'password'), config.jwt.secret, {
+                expiresIn: 2 * 60 * 60 * 1000
+              });
               user.loginExpires = Date.now() + (2 * 60 * 60 * 1000);
               res.json(user);
             }
@@ -184,7 +191,9 @@ exports.signin = function (req, res, next) {
         user.salt = undefined;
         // add token and exp date to user object
         user.loginToken = "";
-        user.loginToken = jwt.sign(_.omit(user, 'password'), config.jwt.secret, { expiresIn: 2 * 60 * 60 * 1000 });
+        user.loginToken = jwt.sign(_.omit(user, 'password'), config.jwt.secret, {
+          expiresIn: 2 * 60 * 60 * 1000
+        });
         user.loginExpires = Date.now() + (2 * 60 * 60 * 1000); // 2 hours
 
 

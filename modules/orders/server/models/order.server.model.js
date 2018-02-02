@@ -23,10 +23,8 @@ var OrderSchema = new Schema({
   items: {
     type: [{
       product: {
-        type: [{
-          type: Schema.ObjectId,
-          ref: 'Product'
-        }]
+        type: Schema.ObjectId,
+        ref: 'Product'
       },
       qty: Number,
       amount: Number
