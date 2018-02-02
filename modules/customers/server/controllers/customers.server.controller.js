@@ -11,6 +11,8 @@ var path = require('path'),
   Shop = mongoose.model('Shop'),
   Hotprice = mongoose.model('Hotprice'),
   Benefitsetting = mongoose.model('Benefitsetting'),
+  Bid = mongoose.model('Bid'),
+  Product = mongoose.model('Product'),
   Coinbalance = mongoose.model('Coinbalance'),
   errorHandler = require(path.resolve('./modules/core/server/controllers/errors.server.controller')),
   _ = require('lodash');
@@ -133,7 +135,7 @@ exports.categories = function (req, res, next) {
           _id: category._id,
           image: category.image,
           imageen: category.imageen
-          
+
         };
         req.categories.items.push(category);
       });
@@ -144,17 +146,17 @@ exports.categories = function (req, res, next) {
 
 exports.listShop = function (req, res, next) {
   req.listShop = [{
-      "title": "NEAR_BY",
-      "items": []
-    },
-    {
-      "title": "POPULAR",
-      "items": []
-    },
-    {
-      "title": "FAVORITE",
-      "items": []
-    }
+    "title": "NEAR_BY",
+    "items": []
+  },
+  {
+    "title": "POPULAR",
+    "items": []
+  },
+  {
+    "title": "FAVORITE",
+    "items": []
+  }
   ];
   next();
 };
@@ -389,3 +391,96 @@ exports.todaywelcome = function (req, res) {
   });
 
 };
+
+exports.getListBids = function (req, res, next) {
+  Bid.find().sort('-starttime').exec(function (err, bids) {
+    if (err) {
+      return res.status(400).send({
+        message: errorHandler.getErrorMessage(err)
+      });
+    } else {
+      req.bids = bids;
+      next();
+    }
+  });
+};
+exports.cookingListBids = function (req, res, next) {
+  var cookingBidsTrue = [];
+  var cookingBidsFalse = [];
+  req.bids.forEach(function (bid) {
+    var startdate = new Date(bid.starttime);
+    var expiredate = new Date(bid.endtime);
+    var today = new Date();
+    // timeStart = today
+
+    if (today >= startdate && today <= expiredate) {
+      cookingBidsTrue.push({
+        _id: bid._id,
+        image: bid.image && bid.image[0] ? bid.image[0] : '',
+        isBid: true,
+        time: counttime(expiredate),
+        created: bid.created
+      });
+    } else if (startdate >= today) {
+      cookingBidsFalse.push({
+        _id: bid._id,
+        image: bid.image && bid.image[0] ? bid.image[0] : '',
+        isBid: false,
+        created: bid.created
+      });
+    }
+  });
+  var sortTime = cookingBidsTrue.sort((a, b) => { return (a.time > b.time) ? 1 : ((b.time > a.time) ? -1 : 0); });
+  req.resBids = sortTime.concat(cookingBidsFalse);
+  next();
+};
+exports.getListProducts = function (req, res, next) {
+  Product.find({ issale: true }).sort('-created').limit(54).exec(function (err, products) {
+    if (err) {
+      return res.status(400).send({
+        message: errorHandler.getErrorMessage(err)
+      });
+    } else {
+      req.products = products;
+      next();
+    }
+  });
+};
+exports.cookingListProducts = function (req, res, next) {
+  // {_id:image}
+  var cookingProducts = [];
+  req.products.forEach(function (prod) {
+
+  });
+  next();
+};
+exports.customerVintageHome = function (req, res, next) {
+  res.jsonp({
+    bid: req.resBids,
+    items: req.products
+  });
+};
+
+function counttime(expire) {
+  var time = 0;
+  var today = new Date();
+  var expireDay = new Date(expire);
+  var t = expireDay - today;
+  var minutes = Math.floor((t / 1000 / 60) % 60);
+  var hours = Math.floor((t / (1000 * 60 * 60)) % 24);
+  var days = Math.floor(t / (1000 * 60 * 60 * 24));
+
+  if (days > 0) {
+    time += (days * 24) * 60;
+  }
+
+  if (hours > 0) {
+    time += hours * 60;
+  }
+
+  if (minutes > 0) {
+    time += minutes;
+  }
+
+  return time;
+}

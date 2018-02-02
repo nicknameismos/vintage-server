@@ -13,6 +13,7 @@ var should = require('should'),
   Product = mongoose.model('Product'),
   Benefitsetting = mongoose.model('Benefitsetting'),
   Coinbalance = mongoose.model('Coinbalance'),
+  Bid = mongoose.model('Bid'),
   express = require(path.resolve('./config/lib/express'));
 
 /**
@@ -477,14 +478,133 @@ describe('Customer Home Stories Test', function () {
       });
   });
 
+  it('get vintage customer home', function (done) {
+    var enddate = new Date();
+    var bid = new Bid({
+      name: 'Bid name',
+      detail: 'bid detail',
+      startprice: 50,
+      bidprice: 100,
+      price: 200,
+      starttime: new Date(),
+      endtime: new Date(enddate.getFullYear(), enddate.getMonth(), enddate.getDate() + 1),
+      image: ['https://www.felex-lederwaren.de/bilder/produkte/gross/Billy-the-Kid-by-Greenburry-Rebel-of-Vintage-Greenburry-Damenumhaengetasche-UEberschlagtasche-rot-braun.jpg'],
+      user: user,
+      created: new Date(enddate.getFullYear(), enddate.getMonth(), enddate.getDate() + 1)
+    });
+    var bid2 = new Bid({
+      name: 'Bid name2',
+      detail: 'bid detail2',
+      startprice: 502,
+      bidprice: 1002,
+      price: 2002,
+      starttime: new Date(enddate.getFullYear(), enddate.getMonth(), enddate.getDate() + 2),
+      endtime: new Date(enddate.getFullYear(), enddate.getMonth(), enddate.getDate() + 3),
+      image: ['https://www.felex-lederwaren.de/bilder/produkte/gross/Billy-the-Kid-by-Greenburry-Rebel-of-Vintage-Greenburry-Damenumhaengetasche-UEberschlagtasche-rot-braun.jpg'],
+      user: user,
+      created: new Date(enddate.getFullYear(), enddate.getMonth(), enddate.getDate() + 4)
+    });
+
+    var bid4 = new Bid({
+      name: 'Bid name4',
+      detail: 'bid detail4',
+      startprice: 502,
+      bidprice: 1002,
+      price: 2002,
+      starttime: new Date(enddate.getFullYear(), enddate.getMonth(), enddate.getDate() - 1),
+      endtime: new Date(enddate.getFullYear(), enddate.getMonth(), enddate.getDate() - 1),
+      image: ['https://www.felex-lederwaren.de/bilder/produkte/gross/Billy-the-Kid-by-Greenburry-Rebel-of-Vintage-Greenburry-Damenumhaengetasche-UEberschlagtasche-rot-braun.jpg'],
+      user: user,
+      created: new Date(enddate.getFullYear(), enddate.getMonth(), enddate.getDate() + 4)
+    });
+    var startdate = new Date();
+    startdate.setHours(0, 0, 0);
+    var bid3endtime = new Date(enddate.getFullYear(), enddate.getMonth(), enddate.getDate() + 1);
+    bid3endtime.setHours(12, 0, 0);
+    var bid3 = new Bid({
+      name: 'Bid name2',
+      detail: 'bid detail2',
+      startprice: 502,
+      bidprice: 1002,
+      price: 2002,
+      starttime: startdate,
+      endtime: bid3endtime,
+      image: ['https://www.felex-lederwaren.de/bilder/produkte/gross/Billy-the-Kid-by-Greenburry-Rebel-of-Vintage-Greenburry-Damenumhaengetasche-UEberschlagtasche-rot-braun.jpg'],
+      user: user,
+      created: new Date(enddate.getFullYear(), enddate.getMonth(), enddate.getDate() + 2)
+    });
+    bid3.save();
+    bid.save();
+    bid2.save();
+    bid4.save();
+
+    var categoryproduct = new Categoryproduct({
+      name: 'อาหาร',
+      priority: 1,
+      image: 'image cate product',
+      user: user,
+    });
+    categoryproduct.save();
+    var bidProduct = new Product({
+      name: 'Product name',
+      detail: 'Product detail',
+      price: 50,
+      priorityofcate: 1,
+      images: ['https://simg.kapook.com/o/photo/410/kapook_world-408206.jpg', 'https://f.ptcdn.info/408/051/000/oqi6tdf9uS1811y1XHx-o.png'],
+      user: user,
+      categories: categoryproduct,
+      promotionprice: 40,
+      isrecommend: false,
+      ispromotionprice: true,
+      startdate: new Date(),
+      expiredate: new Date(),
+    });
+    bidProduct.save();
+    agent.get('/api/vintagecustomerhome')
+      .end(function (getErr2, getRes2) {
+        if (getErr2) {
+          return done(getErr2);
+        }
+
+        // Get Products list
+        var gettoday2 = getRes2.body;
+
+        // Set assertions
+        gettoday2.bid.length.should.be.equal(3);
+        gettoday2.bid[0].image.should.be.equal(bid3.image[0]);
+        gettoday2.bid[0].isBid.should.be.equal(true);
+        // gettoday2.bid[0].time.should.be.equal(true);
+
+        gettoday2.bid[1].image.should.be.equal(bid.image[0]);
+        gettoday2.bid[1].isBid.should.be.equal(true);
+        // gettoday2.bid[1].time.should.be.equal(true);
+
+        gettoday2.bid[2].image.should.be.equal(bid2.image[0]);
+        gettoday2.bid[2].isBid.should.be.equal(false);
+
+        gettoday2.items.length.should.be.equal(1);
+        // gettoday2.items[0]._id.should.be.equal(bidProduct.id);
+        // gettoday2.items[0].image.should.be.equal(bidProduct.images[0]);
+
+        done();
+
+      });
+  });
+
   afterEach(function (done) {
     Coinbalance.remove().exec(function () {
       Benefitsetting.remove().exec(function () {
         User.remove().exec(function () {
           Hotprice.remove().exec(function () {
             Shop.remove().exec(function () {
-              Categoryshop.remove().exec(function () {
-                Ad.remove().exec(done);
+              Bid.remove().exec(function () {
+                Product.remove().exec(function () {
+                  Categoryproduct.remove().exec(function () {
+                    Categoryshop.remove().exec(function () {
+                      Ad.remove().exec(done);
+                    });
+                  });
+                });
               });
             });
           });

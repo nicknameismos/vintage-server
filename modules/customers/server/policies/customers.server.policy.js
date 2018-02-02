@@ -17,6 +17,9 @@ exports.invokeRolesPolicies = function () {
     allows: [{
       resources: '/api/customers/home',
       permissions: ['get']
+    }, {
+      resources: '/api/vintagecustomerhome',
+      permissions: ['get']
     }]
   }]);
 };
