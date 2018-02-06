@@ -39,6 +39,17 @@ var ProductSchema = new Schema({
   promotionprice: {
     type: Number
   },
+  shippings: {
+    type: [{
+      ref: {
+        type: Schema.ObjectId,
+        ref: 'Shippingmaster'
+      },
+      price: {
+        type: Number
+      }
+    }]
+  },
   issale: {
     type: Boolean,
     default: true

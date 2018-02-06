@@ -169,7 +169,7 @@ exports.delete = function (req, res) {
  * List of Products
  */
 exports.list = function (req, res) {
-  Product.find().sort('-created').populate('user', 'displayName').populate('categories').populate('shop').exec(function (err, products) {
+  Product.find().sort('-created').populate('user', 'displayName').populate('categories').populate('shop').populate('shippings.ref').exec(function (err, products) {
     if (err) {
       return res.status(400).send({
         message: errorHandler.getErrorMessage(err)
@@ -191,7 +191,7 @@ exports.productByID = function (req, res, next, id) {
     });
   }
 
-  Product.findById(id).populate('user', 'displayName').populate('categories').populate('shop').exec(function (err, product) {
+  Product.findById(id).populate('user', 'displayName').populate('categories').populate('shop').populate('shippings.ref').exec(function (err, product) {
     if (err) {
       return next(err);
     } else if (!product) {
@@ -255,7 +255,7 @@ exports.getShopID = function (req, res, next, shopid) {
   Product.find({
     shop: shopid,
     issale: true
-  }, '_id name images price categories ispromotionprice isrecommend detail').sort('-created').populate('user', 'displayName').populate('categories').exec(function (err, products) {
+  }, '_id name images price categories ispromotionprice isrecommend detail shippings').sort('-created').populate('user', 'displayName').populate('categories').populate('shippings.ref').exec(function (err, products) {
     if (err) {
       return res.status(400).send({
         message: errorHandler.getErrorMessage(err)
@@ -279,7 +279,8 @@ exports.getListProduct = function (req, res, next) {
       ispromotion: element.ispromotionprice,
       isrecommend: element.isrecommend,
       detail: element.detail,
-      ispopular: false
+      ispopular: false,
+      shippings: element.shippings
     });
   });
   req.getProducList = products;
@@ -297,7 +298,8 @@ exports.productDetail = function (req, res) {
     name: productDB.name,
     images: productDB.images,
     price: productDB.price,
-    detail: productDB.detail
+    detail: productDB.detail,
+    shippings: productDB.shippings
   };
   product.isCurrentUserOwner = req.user && product.user && product.user._id.toString() === req.user._id.toString();
   res.jsonp(product);
