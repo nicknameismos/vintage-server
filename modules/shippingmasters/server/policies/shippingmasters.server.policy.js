@@ -22,7 +22,7 @@ exports.invokeRolesPolicies = function () {
       permissions: '*'
     }]
   }, {
-    roles: ['user'],
+    roles: ['user', 'shop'],
     allows: [{
       resources: '/api/shippingmasters',
       permissions: ['get', 'post']
