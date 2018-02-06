@@ -1,0 +1,24 @@
+<section>
+  <div class="page-header">
+    <h1>{{vm.shippingmaster._id ? 'Edit Shippingmaster' : 'New Shippingmaster'}}</h1>
+  </div>
+  <div class="col-md-12">
+    <form name="vm.form.shippingmasterForm" class="form-horizontal" ng-submit="vm.save(vm.form.shippingmasterForm.$valid)" novalidate>
+      <fieldset>
+        <div class="form-group" show-errors>
+          <label class="control-label" for="name">Name</label>
+          <input name="name" type="text" ng-model="vm.shippingmaster.name" id="name" class="form-control" placeholder="Name" required>
+          <div ng-messages="vm.form.shippingmasterForm.name.$error" role="alert">
+            <p class="help-block error-text" ng-message="required">Shippingmaster name is required.</p>
+          </div>
+        </div>
+        <div class="form-group">
+          <button type="submit" class="btn btn-default">{{vm.shippingmaster._id ? 'Update' : 'Create'}}</button>
+        </div>
+        <div ng-show="vm.error" class="text-danger">
+          <strong ng-bind="vm.error"></strong>
+        </div>
+      </fieldset>
+    </form>
+  </div>
+</section>
