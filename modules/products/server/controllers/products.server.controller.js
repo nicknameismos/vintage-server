@@ -135,6 +135,7 @@ exports.update = function (req, res) {
   product.promotionprice = req.body.promotionprice ? req.body.promotionprice : product.promotionprice;
   product.isrecommend = req.body.isrecommend;
   product.issale = req.body.issale;
+  product.shippings = req.body.shippings ? req.body.shippings : [];
 
 
   product.save(function (err) {
