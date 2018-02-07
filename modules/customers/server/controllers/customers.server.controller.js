@@ -437,7 +437,7 @@ exports.cookingListBids = function (req, res, next) {
 };
 
 exports.getListAds = function (req, res, next) {
-  Ad.find().sort('-created').exec(function (err, ads) {
+  Ad.find({ status: true }).sort('-created').exec(function (err, ads) {
     if (err) {
       return res.status(400).send({
         message: errorHandler.getErrorMessage(err)
