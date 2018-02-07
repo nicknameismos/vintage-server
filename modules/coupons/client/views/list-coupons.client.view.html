@@ -1,0 +1,22 @@
+<section>
+  <div class="page-header">
+    <h1>Coupons</h1>
+  </div>
+  <div class="list-group">
+    <a ng-repeat="coupon in vm.coupons"
+       ui-sref="coupons.view({ couponId: coupon._id })"
+       class="list-group-item">
+      <small class="list-group-item-text">
+        Posted on
+        <span ng-bind="coupon.created | date:'mediumDate'"></span>
+        by
+        <span ng-if="coupon.user" ng-bind="coupon.user.displayName"></span>
+        <span ng-if="!coupon.user">Deleted User</span>
+      </small>
+      <h4 class="list-group-item-heading" ng-bind="coupon.name"></h4>
+    </a>
+  </div>
+  <div class="alert alert-warning text-center" ng-if="vm.coupons.$resolved && !vm.coupons.length">
+    No Coupons yet, why don't you <a ui-sref="coupons.create">create one</a>?
+  </div>
+</section>

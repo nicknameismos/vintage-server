@@ -1,0 +1,26 @@
+<section>
+  <div class="page-header">
+    <h1 ng-bind="vm.coupon.name"></h1>
+  </div>
+  <div class="pull-right"
+       ng-show="vm.coupon.isCurrentUserOwner">
+    <a class="btn btn-primary"
+       ui-sref="coupons.edit({ couponId: vm.coupon._id })">
+      <i class="glyphicon glyphicon-edit"></i>
+    </a>
+    <a class="btn btn-primary" ng-click="vm.remove()">
+      <i class="glyphicon glyphicon-trash"></i>
+    </a>
+  </div>
+  <small>
+    <em class="text-muted">
+      Posted on
+      <span ng-bind="vm.coupon.created | date:'mediumDate'"></span>
+      by
+      <span ng-if="vm.coupon.user"
+            ng-bind="vm.coupon.user.displayName"></span>
+      <span ng-if="!vm.coupon.user">Deleted User</span>
+    </em>
+  </small>
+  <p class="lead" ng-bind="vm.coupon.content"></p>
+</section>
