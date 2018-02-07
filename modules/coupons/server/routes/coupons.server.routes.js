@@ -18,6 +18,9 @@ module.exports = function (app) {
     .put(coupons.update)
     .delete(coupons.delete);
 
+  app.route('/api/getcouponbycode').all(core.jwtCheck, couponsPolicy.isAllowed)
+    .post(coupons.getCouponCode, coupons.wrongCode, coupons.expiredCode, coupons.usedCode, coupons.resCouponCode);
+
   // Finish by binding the Coupon middleware
   app.param('couponId', coupons.couponByID);
 };

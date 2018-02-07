@@ -14,7 +14,11 @@ var should = require('should'),
 var app,
   agent,
   credentials,
+  credentials2,
+  credentials3,
   user,
+  user2,
+  user3,
   token,
   coupon;
 
@@ -38,6 +42,15 @@ describe('Coupon CRUD tests with token', function () {
       password: 'M3@n.jsI$Aw3$0m3'
     };
 
+    credentials2 = {
+      username: 'username2',
+      password: 'M3@n.2jsI$Aw3$0m3'
+    };
+
+    credentials3 = {
+      username: 'username3',
+      password: 'M3@n.3jsI$Aw3$0m3'
+    };
     // Create a new user
     user = new User({
       firstName: 'Full',
@@ -50,29 +63,53 @@ describe('Coupon CRUD tests with token', function () {
       roles: ['admin']
     });
 
+    user2 = new User({
+      firstName: 'Full',
+      lastName: 'Name',
+      displayName: 'Full Name',
+      email: 'test2@test.com',
+      username: credentials2.username,
+      password: credentials2.password,
+      provider: 'local'
+    });
+
+    user3 = new User({
+      firstName: 'Full',
+      lastName: 'Name',
+      displayName: 'Full Name',
+      email: 'test3@test.com',
+      username: credentials3.username,
+      password: credentials3.password,
+      provider: 'local'
+    });
+
     // Save a user to the test db and create new Coupon
     user.save(function () {
-      coupon = {
-        code: 'AAAA',
-        price: 20,
-        type: 'single',
-        owner: [],
-        startdate: new Date(),
-        enddate: new Date(),
-        useruse: [user],
-      };
-      agent.post('/api/auth/signin')
-        .send(credentials)
-        .expect(200)
-        .end(function (signinErr, signinRes) {
-          // Handle signin error
-          if (signinErr) {
-            return done(signinErr);
-          }
-          signinRes.body.loginToken.should.not.be.empty();
-          token = signinRes.body.loginToken;
-          done();
+      user2.save(function () {
+        user3.save(function () {
+          coupon = {
+            code: 'AAAA',
+            price: 20,
+            type: 'single',
+            owner: [],
+            startdate: new Date(),
+            enddate: new Date(),
+            useruse: [user],
+          };
+          agent.post('/api/auth/signin')
+            .send(credentials)
+            .expect(200)
+            .end(function (signinErr, signinRes) {
+              // Handle signin error
+              if (signinErr) {
+                return done(signinErr);
+              }
+              signinRes.body.loginToken.should.not.be.empty();
+              token = signinRes.body.loginToken;
+              done();
+            });
         });
+      });
     });
   });
 
@@ -329,6 +366,366 @@ describe('Coupon CRUD tests with token', function () {
           done(couponDeleteErr);
         });
 
+    });
+  });
+
+  it('get Coupon by code invalid code', function (done) {
+    var today = new Date();
+    var startdate = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 1);
+    var enddate = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
+    // Create new Coupon model instance
+    var couponObj = new Coupon({
+      code: 'AAAA',
+      price: 20,
+      type: 'single',
+      owner: [],
+      startdate: startdate,
+      enddate: enddate,
+      useruse: [user],
+      user: user
+    });
+
+    // Save the Coupon
+    couponObj.save(function () {
+      var code = {
+        code: 'AAA'
+      };
+      agent.post('/api/auth/signin')
+        .send(credentials2)
+        .expect(200)
+        .end(function (signinErr, signinRes) {
+          // Handle signin error
+          if (signinErr) {
+            return done(signinErr);
+          }
+          agent.post('/api/getcouponbycode')
+            .set('authorization', 'Bearer ' + signinRes.body.loginToken)
+            .send(code)
+            .expect(200)
+            .end(function (couponSaveErr, couponSaveRes) {
+              // Handle Coupon save error
+              if (couponSaveErr) {
+                return done(couponSaveErr);
+              }
+
+              var discount = couponSaveRes.body;
+              (discount.status).should.equal(false);
+              (discount.message).should.equal('Coupon is invalid!');
+              (discount.code).should.equal('');
+              // (discount.discount).should.equal('');.to.equal
+              // (discount.discount).to.equal(null);
+              should.equal(discount.discount, null);
+              done();
+            });
+
+        });
+    });
+  });
+
+  it('get Coupon by code expired', function (done) {
+    var today = new Date();
+    var startdate = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 1);
+    var enddate = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 1);
+    // Create new Coupon model instance
+    var couponObj = new Coupon({
+      code: 'AAAA',
+      price: 20,
+      type: 'single',
+      owner: [],
+      startdate: startdate,
+      enddate: enddate,
+      useruse: [user],
+      user: user
+    });
+
+    // Save the Coupon
+    couponObj.save(function () {
+      var code = {
+        code: 'AAAA'
+      };
+      agent.post('/api/auth/signin')
+        .send(credentials2)
+        .expect(200)
+        .end(function (signinErr, signinRes) {
+          // Handle signin error
+          if (signinErr) {
+            return done(signinErr);
+          }
+          agent.post('/api/getcouponbycode')
+            .set('authorization', 'Bearer ' + signinRes.body.loginToken)
+            .send(code)
+            .expect(200)
+            .end(function (couponSaveErr, couponSaveRes) {
+              // Handle Coupon save error
+              if (couponSaveErr) {
+                return done(couponSaveErr);
+              }
+
+              var discount = couponSaveRes.body;
+              (discount.status).should.equal(false);
+              (discount.message).should.equal('Coupon is expired!');
+              (discount.code).should.equal('');
+              should.equal(discount.discount, null);
+              done();
+            });
+
+        });
+    });
+  });
+
+  it('get Coupon by code but code used type single owner used', function (done) {
+    var today = new Date();
+    var startdate = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 1);
+    var enddate = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
+    // Create new Coupon model instance
+    var couponObj = new Coupon({
+      code: 'AAAA',
+      price: 20,
+      type: 'single',
+      owner: [user2],
+      startdate: startdate,
+      enddate: enddate,
+      useruse: [user2],
+      user: user
+    });
+
+    // Save the Coupon
+    couponObj.save(function () {
+      var code = {
+        code: 'AAAA'
+      };
+      agent.post('/api/auth/signin')
+        .send(credentials2)
+        .expect(200)
+        .end(function (signinErr, signinRes) {
+          // Handle signin error
+          if (signinErr) {
+            return done(signinErr);
+          }
+          agent.post('/api/getcouponbycode')
+            .set('authorization', 'Bearer ' + signinRes.body.loginToken)
+            .send(code)
+            .expect(200)
+            .end(function (couponSaveErr, couponSaveRes) {
+              // Handle Coupon save error
+              if (couponSaveErr) {
+                return done(couponSaveErr);
+              }
+
+              var discount = couponSaveRes.body;
+              (discount.status).should.equal(false);
+              (discount.message).should.equal('Coupon is already!');
+              (discount.code).should.equal('');
+              should.equal(discount.discount, null);
+              done();
+            });
+
+        });
+    });
+  });
+
+  it('get Coupon by code but code used type single not owner used', function (done) {
+    var today = new Date();
+    var startdate = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 1);
+    var enddate = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
+    // Create new Coupon model instance
+    var couponObj = new Coupon({
+      code: 'AAAA',
+      price: 20,
+      type: 'single',
+      owner: [user2],
+      startdate: startdate,
+      enddate: enddate,
+      useruse: [user2],
+      user: user
+    });
+
+    // Save the Coupon
+    couponObj.save(function () {
+      var code = {
+        code: 'AAAA'
+      };
+      agent.post('/api/auth/signin')
+        .send(credentials3)
+        .expect(200)
+        .end(function (signinErr, signinRes) {
+          // Handle signin error
+          if (signinErr) {
+            return done(signinErr);
+          }
+          agent.post('/api/getcouponbycode')
+            .set('authorization', 'Bearer ' + signinRes.body.loginToken)
+            .send(code)
+            .expect(200)
+            .end(function (couponSaveErr, couponSaveRes) {
+              // Handle Coupon save error
+              if (couponSaveErr) {
+                return done(couponSaveErr);
+              }
+
+              var discount = couponSaveRes.body;
+              (discount.status).should.equal(false);
+              (discount.message).should.equal('Coupon is invalid!');
+              (discount.code).should.equal('');
+              should.equal(discount.discount, null);
+              done();
+            });
+
+        });
+    });
+  });
+
+  it('get Coupon by code but code used type multi', function (done) {
+    var today = new Date();
+    var startdate = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 1);
+    var enddate = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
+    // Create new Coupon model instance
+    var couponObj = new Coupon({
+      code: 'AAAA',
+      price: 20,
+      type: 'multi',
+      owner: [],
+      startdate: startdate,
+      enddate: enddate,
+      useruse: [user2],
+      user: user
+    });
+
+    // Save the Coupon
+    couponObj.save(function () {
+      var code = {
+        code: 'AAAA'
+      };
+      agent.post('/api/auth/signin')
+        .send(credentials2)
+        .expect(200)
+        .end(function (signinErr, signinRes) {
+          // Handle signin error
+          if (signinErr) {
+            return done(signinErr);
+          }
+          agent.post('/api/getcouponbycode')
+            .set('authorization', 'Bearer ' + signinRes.body.loginToken)
+            .send(code)
+            .expect(200)
+            .end(function (couponSaveErr, couponSaveRes) {
+              // Handle Coupon save error
+              if (couponSaveErr) {
+                return done(couponSaveErr);
+              }
+
+              var discount = couponSaveRes.body;
+              (discount.status).should.equal(false);
+              (discount.message).should.equal('Coupon is already!');
+              (discount.code).should.equal('');
+              should.equal(discount.discount, null);
+              done();
+            });
+
+        });
+    });
+  });
+
+  it('get Coupon by code type single success', function (done) {
+    var today = new Date();
+    var startdate = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 1);
+    var enddate = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
+    // Create new Coupon model instance
+    var couponObj = new Coupon({
+      code: 'AAAA',
+      price: 20,
+      type: 'single',
+      owner: [user2],
+      startdate: startdate,
+      enddate: enddate,
+      useruse: [],
+      user: user
+    });
+
+    // Save the Coupon
+    couponObj.save(function () {
+      var code = {
+        code: 'AAAA'
+      };
+      agent.post('/api/auth/signin')
+        .send(credentials2)
+        .expect(200)
+        .end(function (signinErr, signinRes) {
+          // Handle signin error
+          if (signinErr) {
+            return done(signinErr);
+          }
+          agent.post('/api/getcouponbycode')
+            .set('authorization', 'Bearer ' + signinRes.body.loginToken)
+            .send(code)
+            .expect(200)
+            .end(function (couponSaveErr, couponSaveRes) {
+              // Handle Coupon save error
+              if (couponSaveErr) {
+                return done(couponSaveErr);
+              }
+
+              var discount = couponSaveRes.body;
+              (discount.status).should.equal(true);
+              (discount.message).should.equal('');
+              (discount.code).should.equal('AAAA');
+              (discount.discount).should.equal(20);
+              done();
+            });
+
+        });
+    });
+  });
+
+  it('get Coupon by code type multi success', function (done) {
+    var today = new Date();
+    var startdate = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 1);
+    var enddate = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
+    // Create new Coupon model instance
+    var couponObj = new Coupon({
+      code: 'AAAA',
+      price: 20,
+      type: 'multi',
+      owner: [],
+      startdate: startdate,
+      enddate: enddate,
+      useruse: [],
+      user: user
+    });
+
+    // Save the Coupon
+    couponObj.save(function () {
+      var code = {
+        code: 'AAAA'
+      };
+      agent.post('/api/auth/signin')
+        .send(credentials2)
+        .expect(200)
+        .end(function (signinErr, signinRes) {
+          // Handle signin error
+          if (signinErr) {
+            return done(signinErr);
+          }
+          agent.post('/api/getcouponbycode')
+            .set('authorization', 'Bearer ' + signinRes.body.loginToken)
+            .send(code)
+            .expect(200)
+            .end(function (couponSaveErr, couponSaveRes) {
+              // Handle Coupon save error
+              if (couponSaveErr) {
+                return done(couponSaveErr);
+              }
+
+              var discount = couponSaveRes.body;
+              (discount.status).should.equal(true);
+              (discount.message).should.equal('');
+              (discount.code).should.equal('AAAA');
+              (discount.discount).should.equal(20);
+              // should.equal(discount.discount, null);
+              done();
+            });
+
+        });
     });
   });
 

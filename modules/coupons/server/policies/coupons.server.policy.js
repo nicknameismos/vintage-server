@@ -29,6 +29,9 @@ exports.invokeRolesPolicies = function () {
     }, {
       resources: '/api/coupons/:couponId',
       permissions: ['get']
+    }, {
+      resources: '/api/getcouponbycode',
+      permissions: ['post']
     }]
   }, {
     roles: ['guest'],
