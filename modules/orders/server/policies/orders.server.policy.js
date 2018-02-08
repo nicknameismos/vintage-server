@@ -47,6 +47,9 @@ exports.invokeRolesPolicies = function () {
     }, {
       resources: '/api/payorder/:orderId',
       permissions: ['put']
+    }, {
+      resources: '/api/customergetorders',
+      permissions: ['get']
     }]
   }, {
     roles: ['guest'],

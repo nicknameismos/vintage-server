@@ -46,6 +46,17 @@ var OrderSchema = new Schema({
       },
       amount: {
         type: Number
+      },
+      log: {
+        type: [{
+          status: {
+            type: String
+          },
+          created: {
+            type: Date,
+            default: Date.now
+          }
+        }]
       }
     }]
   },

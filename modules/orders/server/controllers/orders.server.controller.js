@@ -89,9 +89,13 @@ exports.omiseCard = function (req, res, next) {
 
 exports.create = function (req, res) {
   var order = new Order(req.body);
-  order.omiseresponse = req.omiseresponse;
+  order.omiseresponse = order.payment.paymenttype === 'Credit Card' ? req.omiseresponse : order.omiseresponse;
   order.user = req.user;
-
+  order.items.forEach(element => {
+    element.log.push({
+      status: 'confirm'
+    });
+  });
   order.save(function (err) {
     if (err) {
       return res.status(400).send({
@@ -190,4 +194,68 @@ exports.orderByID = function (req, res, next, id) {
     req.order = order;
     next();
   });
+};
+
+exports.customerGetListOrder = function (req, res, next) {
+  Order.find({ user: { _id: req.user._id } }).sort('-created').populate('user', 'displayName').exec(function (err, orders) {
+    if (err) {
+      return res.status(400).send({
+        message: errorHandler.getErrorMessage(err)
+      });
+    } else {
+      req.orders = orders;
+      next();
+    }
+  });
+};
+
+exports.customerCookingListOrder = function (req, res, next) {
+  var resData = [{
+    status: 'confirm',
+    items: []
+  }, {
+    status: 'sent',
+    items: []
+  }, {
+    status: 'completed',
+    items: []
+  }, {
+    status: 'cancel',
+    items: []
+  }];
+  req.orders.forEach(function (order) {
+    order.items.forEach(function (itm) {
+      if (itm.status === 'confirm') {
+        resData[0].items.push({
+          itemid: itm._id,
+          orderid: order._id,
+          name: itm.product.name,
+          image: itm.product.images ? itm.product.images[0] : '',
+          price: itm.product.price,
+          qty: itm.qty,
+          shippingtype: itm.shipping.ref.name,
+          shippingprice: itm.shipping.price,
+          amount: itm.amount,
+          sentdate: '',
+          received: '',
+          canceldate: '',
+          isrefund: false,
+          status: 'confirm',
+          rejectreason: ''
+        });
+      } else if (itm.status === 'sent') {
+
+      } else if (itm.status === 'completed') {
+
+      } else if (itm.status === 'cancel' || itm.status === 'reject') {
+
+      }
+    });
+  });
+  req.resData = resData;
+  next();
+};
+
+exports.customerList = function (req, res) {
+  res.jsonp(req.resData);
 };

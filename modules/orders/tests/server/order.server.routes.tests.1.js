@@ -151,10 +151,9 @@ describe('Order omise create tests', function () {
                   },
                   price: 100
                 },
-                status: 'confirm',
                 remark: '',
                 qty: 1,
-                amount: 200
+                amount: 300
               }],
               shippingAddress: {
                 name: 'Ass',
@@ -320,8 +319,9 @@ describe('Order omise create tests', function () {
                   (ord2.length).should.match(1);
                   (ord2[0].omiseresponse.capture).should.match(true);
                   (ord2[0].omiseToken).should.match(token1.id);
-
-
+                  (ord2[0].items[0].status).should.match('confirm');
+                  (ord2[0].items[0].log.length).should.match(1);
+                  (ord2[0].items[0].log[0].status).should.match('confirm');
 
                   done();
 
@@ -329,6 +329,172 @@ describe('Order omise create tests', function () {
             });
         });
       });
+  });
+
+  it('get list order by user', function (done) {
+
+    // Update Order name
+    var cardDetails = {
+      card: {
+        'name': 'JOHN DOE',
+        'city': 'Bangkok',
+        'postal_code': 10320,
+        'number': '4242424242424242',
+        'expiration_month': 2,
+        'expiration_year': 2018
+      }
+    };
+    omise.tokens.create(cardDetails).then(function (token1) {
+      order.omiseToken = token1.id;
+      order.payment.paymenttype = 'Credit Card';
+      // Save a new Order
+      order.items.push({
+        product: {
+          name: 'sent',
+          price: 200,
+          images: ['img1', 'img2']
+        },
+        shipping: {
+          ref: {
+            name: 'EMS'
+          },
+          price: 100
+        },
+        status: 'sent',
+        remark: '',
+        qty: 1,
+        amount: 300
+      }, {
+          product: {
+            name: 'completed',
+            price: 200,
+            images: ['img1', 'img2']
+          },
+          shipping: {
+            ref: {
+              name: 'EMS'
+            },
+            price: 100
+          },
+          status: 'completed',
+          remark: '',
+          qty: 1,
+          amount: 300
+        }, {
+          product: {
+            name: 'cancel',
+            price: 200,
+            images: ['img1', 'img2']
+          },
+          shipping: {
+            ref: {
+              name: 'EMS'
+            },
+            price: 100
+          },
+          status: 'cancel',
+          remark: '',
+          qty: 1,
+          amount: 300
+        }, {
+          product: {
+            name: 'reject',
+            price: 200,
+            images: ['img1', 'img2']
+          },
+          shipping: {
+            ref: {
+              name: 'EMS'
+            },
+            price: 100
+          },
+          status: 'reject',
+          remark: 'out of stock',
+          qty: 1,
+          amount: 300
+        });
+      agent.post('/api/orders')
+        .set('authorization', 'Bearer ' + token)
+        .send(order)
+        .expect(200)
+        .end(function (orderSaveErr, orderSaveRes) {
+          // Handle Order save error
+          if (orderSaveErr) {
+            return done(orderSaveErr);
+          }
+          // Set assertions
+          agent.get('/api/orders')
+            // .set('authorization', 'Bearer ' + token)
+            .end(function (order2Err, order2Res) {
+              // Handle signin error
+              if (order2Err) {
+                return done(order2Err);
+              }
+              var ord2 = order2Res.body;
+              (ord2.length).should.match(1);
+              (ord2[0].omiseresponse.capture).should.match(true);
+              (ord2[0].omiseToken).should.match(token1.id);
+              (ord2[0].items.length).should.match(5);
+              (ord2[0].items[0].status).should.match('confirm');
+              (ord2[0].items[0].log.length).should.match(1);
+              (ord2[0].items[0].log[0].status).should.match('confirm');
+
+              agent.get('/api/customergetorders')
+                .set('authorization', 'Bearer ' + token)
+                .end(function (customergetordersErr, customergetordersRes) {
+                  // Handle signin error
+                  if (customergetordersErr) {
+                    return done(customergetordersErr);
+                  }
+                  var cord = customergetordersRes.body;
+                  (cord.length).should.match(4);
+                  (cord[0].status).should.match('confirm');
+                  (cord[0].items.length).should.match(1);
+                  // (cord[0].items[0].itemid).should.match(ord2.items[0]);
+                  // (cord[0].items[0].orderid).should.match(1234);
+                  (cord[0].items[0].name).should.match(order.items[0].product.name);
+                  (cord[0].items[0].image).should.match(order.items[0].product.images[0]);
+                  (cord[0].items[0].price).should.match(order.items[0].product.price);
+                  (cord[0].items[0].qty).should.match(order.items[0].qty);
+                  (cord[0].items[0].shippingtype).should.match(order.items[0].shipping.ref.name);
+                  (cord[0].items[0].shippingprice).should.match(order.items[0].shipping.price);
+                  (cord[0].items[0].amount).should.match(order.items[0].amount);
+                  (cord[0].items[0].sentdate).should.match('');
+                  (cord[0].items[0].received).should.match('');
+                  (cord[0].items[0].canceldate).should.match('');
+                  (cord[0].items[0].isrefund).should.match(false);
+                  (cord[0].items[0].status).should.match('confirm');
+                  (cord[0].items[0].rejectreason).should.match('');
+
+                  (cord[1].status).should.match('sent');
+                  (cord[1].items.length).should.match(0);
+                  (cord[1].items[0].name).should.match(order.items[1].product.name);
+                  (cord[1].items[0].image).should.match(order.items[1].product.images[0]);
+                  (cord[1].items[0].price).should.match(order.items[1].product.price);
+                  (cord[1].items[0].qty).should.match(order.items[1].qty);
+                  (cord[1].items[0].shippingtype).should.match(order.items[1].shipping.ref.name);
+                  (cord[1].items[0].shippingprice).should.match(order.items[1].shipping.price);
+                  (cord[1].items[0].amount).should.match(order.items[1].amount);
+                  (cord[1].items[0].sentdate).should.match('');
+                  (cord[1].items[0].received).should.match('');
+                  (cord[1].items[0].canceldate).should.match('');
+                  (cord[1].items[0].isrefund).should.match(false);
+                  (cord[1].items[0].status).should.match('sent');
+                  (cord[1].items[0].rejectreason).should.match('');
+
+                  (cord[2].status).should.match('completed');
+                  (cord[2].items.length).should.match(0);
+
+                  (cord[3].status).should.match('cancel');
+                  (cord[3].items.length).should.match(0);
+
+                  done();
+
+                });
+
+            });
+        });
+    });
   });
 
   afterEach(function (done) {

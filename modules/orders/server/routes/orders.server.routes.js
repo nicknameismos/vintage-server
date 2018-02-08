@@ -21,6 +21,8 @@ module.exports = function (app) {
   app.route('/api/payorder/:orderId').all(core.jwtCheck, ordersPolicy.isAllowed)
     .put(orders.omiseCard, orders.update);
 
+  app.route('/api/customergetorders').all(core.jwtCheck, ordersPolicy.isAllowed)
+    .get(orders.customerGetListOrder,orders.customerCookingListOrder, orders.customerList);
   // Finish by binding the Order middleware
   app.param('orderId', orders.orderByID);
 };
