@@ -22,7 +22,7 @@ var path = require('path'),
 exports.omiseCard = function (req, res, next) {
   var order = req.body;
   if (order.payment && order.payment.paymenttype === 'Credit Card') {
-    var money = order.amount * 100;
+    var money = order.totalamount * 100;
     var id = order.omiseToken;
     omise.charges.create({
       'description': 'Charge for order ID:' + order._id,
@@ -48,6 +48,7 @@ exports.omiseCard = function (req, res, next) {
 
 exports.create = function (req, res) {
   var order = new Order(req.body);
+  order.omiseresponse = req.omiseresponse;
   order.user = req.user;
 
   order.save(function (err) {
@@ -56,19 +57,7 @@ exports.create = function (req, res) {
         message: errorHandler.getErrorMessage(err)
       });
     } else {
-      Product.populate(order, {
-        path: 'items.product'
-      }, function (err, orderRes) {
-        User.populate(orderRes, {
-          path: 'user'
-        }, function (err, orderRes2) {
-          Shop.populate(orderRes2, {
-            path: 'shop'
-          }, function (err, orderRes3) {
-            res.jsonp(orderRes3);
-          });
-        });
-      });
+      res.jsonp(order);
     }
   });
 };
@@ -101,19 +90,7 @@ exports.update = function (req, res) {
         message: errorHandler.getErrorMessage(err)
       });
     } else {
-      Product.populate(order, {
-        path: 'items.product'
-      }, function (err, orderRes) {
-        User.populate(orderRes, {
-          path: 'user'
-        }, function (err, orderRes2) {
-          Shop.populate(orderRes2, {
-            path: 'shop'
-          }, function (err, orderRes3) {
-            res.jsonp(orderRes3);
-          });
-        });
-      });
+      res.jsonp(order);
     }
   });
 };
@@ -139,7 +116,7 @@ exports.delete = function (req, res) {
  * List of Orders
  */
 exports.list = function (req, res) {
-  Order.find().sort('-created').populate('user', 'displayName').populate('items.product').populate('shop').populate('categories').exec(function (err, orders) {
+  Order.find().sort('-created').populate('user', 'displayName').exec(function (err, orders) {
     if (err) {
       return res.status(400).send({
         message: errorHandler.getErrorMessage(err)
@@ -161,7 +138,7 @@ exports.orderByID = function (req, res, next, id) {
     });
   }
 
-  Order.findById(id).populate('user', 'displayName').populate('items.product').populate('shop').populate('categories').exec(function (err, order) {
+  Order.findById(id).populate('user', 'displayName').exec(function (err, order) {
     if (err) {
       return next(err);
     } else if (!order) {

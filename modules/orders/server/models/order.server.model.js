@@ -10,55 +10,122 @@ var mongoose = require('mongoose'),
  * Order Schema
  */
 var OrderSchema = new Schema({
-  name: {
-    type: String,
-    default: '',
-    required: 'Please fill Order name',
-    trim: true
-  },
-  shop: {
-    type: Schema.ObjectId,
-    ref: 'Shop'
-  },
   items: {
     type: [{
       product: {
-        type: Schema.ObjectId,
-        ref: 'Product'
+        name: {
+          type: String
+        },
+        price: {
+          type: Number
+        },
+        images: {
+          type: [String]
+        }
       },
-      qty: Number,
-      amount: Number
+      shipping: {
+        ref: {
+          name: {
+            type: String
+          }
+        },
+        price: {
+          type: Number
+        }
+      },
+      status: {
+        type: String,
+        enum: ['confirm', 'sent', 'completed', 'cancel', 'reject', 'transferred', 'refund'],
+        default: 'confirm'
+      },
+      remark: {
+        type: String
+      },
+      qty: {
+        type: Number
+      },
+      amount: {
+        type: Number
+      }
     }]
   },
   shippingAddress: {
-    name: String,
-    tel: String,
-    address: String,
-    addressDetail: String,
+    name: {
+      type: String
+    },
+    tel: {
+      type: String
+    },
+    address: {
+      address: {
+        type: String
+      },
+      district: {
+        type: String
+      },
+      subdistrict: {
+        type: String
+      },
+      province: {
+        type: String
+      },
+      postcode: {
+        type: String
+      }
+    },
     location: {
-      lat: String,
-      lng: String
+      lat: {
+        type: Number
+      },
+      lng: {
+        type: Number
+      }
     }
   },
   coupon: {
-    code: String,
-    discount: Number,
+    code: {
+      type: String
+    },
+    discount: {
+      type: String
+    }
   },
-  qty: Number,
-  amount: Number,
-  discount: Number,
-  distance: String,
   payment: {
-    paymenttype: String,
-    creditno: String,
-    creditname: String,
-    expdate: String,
-    creditcvc: String
+    paymenttype: {
+      type: String
+    },
+    creditno: {
+      type: String
+    },
+    creditname: {
+      type: String
+    },
+    expdate: {
+      type: String
+    },
+    creditcvc: {
+      type: String
+    }
+  },
+  omiseToken: {
+    type: String
+  },
+  qty: {
+    type: Number
+  },
+  amount: {
+    type: Number
+  },
+  shippingamount: {
+    type: Number
+  },
+  discountamount: {
+    type: Number
+  },
+  totalamount: {
+    type: Number
   },
   omiseresponse: {},
-  skootarresponse: {},
-  estimateprice: {},
-  netamount: Number,
   created: {
     type: Date,
     default: Date.now

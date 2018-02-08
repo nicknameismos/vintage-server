@@ -115,32 +115,56 @@ describe('Order CRUD tests', function () {
       shop.save(function () {
         product.save(function () {
           order = {
-            name: 'Order name',
-            shop: shop,
             items: [{
-              product: product,
-              remark: 'remark',
-              qty: 10,
-              amount: 100
+              product: {
+                name: 'แก้วน้ำมหัศจรรย์ขันทอง',
+                price: 200,
+                images: ['img1', 'img2']
+              },
+              shipping: {
+                ref: {
+                  name: 'EMS'
+                },
+                price: 100
+              },
+              status: 'confirm',
+              remark: '',
+              qty: 1,
+              amount: 200
             }],
             shippingAddress: {
-              name: 'shipping name',
-              tel: '095445454',
-              address: 'address',
-              addressDetail: 'opposite big c',
+              name: 'Ass',
+              tel: '0999999999',
+              address: {
+                address: 'address',
+                district: 'districe',
+                subdistrict: 'subdistrict',
+                province: 'province',
+                postcode: '12150'
+              },
               location: {
-                lat: '115555',
-                lng: '5454545'
+                lat: 19999,
+                lng: 20000
               }
             },
             coupon: {
-              code: '00001',
-              discount: 10,
+              code: 'AC-100',
+              discount: 100
             },
-            qty: 50,
-            amount: 100,
-            discount: 10,
-            distance: '1 km',
+            payment: {
+              paymenttype: 'Internal Banking',
+              creditno: '',
+              creditname: '',
+              expdate: '',
+              creditcvc: ''
+            },
+            omiseToken: '',
+            qty: 1,
+            amount: 200,
+            shippingamount: 100,
+            discountamount: 100,
+            totalamount: 200,
+            omiseresponse: {},
             user: user
           };
 
@@ -186,7 +210,7 @@ describe('Order CRUD tests', function () {
 
                 // Set assertions
                 (orders[0].user._id).should.equal(userId);
-                (orders[0].name).should.match('Order name');
+                (orders[0].totalamount).should.match(200);
 
                 // Call the assertion callback
                 done();
@@ -202,83 +226,6 @@ describe('Order CRUD tests', function () {
       .end(function (orderSaveErr, orderSaveRes) {
         // Call the assertion callback
         done(orderSaveErr);
-      });
-  });
-
-  it('should not be able to save an Order if no name is provided', function (done) {
-    // Invalidate name field
-    order.name = '';
-
-    agent.post('/api/auth/signin')
-      .send(credentials)
-      .expect(200)
-      .end(function (signinErr, signinRes) {
-        // Handle signin error
-        if (signinErr) {
-          return done(signinErr);
-        }
-
-        // Get the userId
-        var userId = user.id;
-
-        // Save a new Order
-        agent.post('/api/orders')
-          .send(order)
-          .expect(400)
-          .end(function (orderSaveErr, orderSaveRes) {
-            // Set message assertion
-            (orderSaveRes.body.message).should.match('Please fill Order name');
-
-            // Handle Order save error
-            done(orderSaveErr);
-          });
-      });
-  });
-
-  it('should be able to update an Order if signed in', function (done) {
-    agent.post('/api/auth/signin')
-      .send(credentials)
-      .expect(200)
-      .end(function (signinErr, signinRes) {
-        // Handle signin error
-        if (signinErr) {
-          return done(signinErr);
-        }
-
-        // Get the userId
-        var userId = user.id;
-
-        // Save a new Order
-        agent.post('/api/orders')
-          .send(order)
-          .expect(200)
-          .end(function (orderSaveErr, orderSaveRes) {
-            // Handle Order save error
-            if (orderSaveErr) {
-              return done(orderSaveErr);
-            }
-
-            // Update Order name
-            order.name = 'WHY YOU GOTTA BE SO MEAN?';
-
-            // Update an existing Order
-            agent.put('/api/orders/' + orderSaveRes.body._id)
-              .send(order)
-              .expect(200)
-              .end(function (orderUpdateErr, orderUpdateRes) {
-                // Handle Order update error
-                if (orderUpdateErr) {
-                  return done(orderUpdateErr);
-                }
-
-                // Set assertions
-                (orderUpdateRes.body._id).should.equal(orderSaveRes.body._id);
-                (orderUpdateRes.body.name).should.match('WHY YOU GOTTA BE SO MEAN?');
-
-                // Call the assertion callback
-                done();
-              });
-          });
       });
   });
 
@@ -310,7 +257,7 @@ describe('Order CRUD tests', function () {
       request(app).get('/api/orders/' + orderObj._id)
         .end(function (req, res) {
           // Set assertion
-          res.body.should.be.instanceof(Object).and.have.property('name', order.name);
+          res.body.should.be.instanceof(Object).and.have.property('totalamount', order.totalamount);
 
           // Call the assertion callback
           done();
@@ -339,49 +286,6 @@ describe('Order CRUD tests', function () {
 
         // Call the assertion callback
         done();
-      });
-  });
-
-  it('should be able to delete an Order if signed in', function (done) {
-    agent.post('/api/auth/signin')
-      .send(credentials)
-      .expect(200)
-      .end(function (signinErr, signinRes) {
-        // Handle signin error
-        if (signinErr) {
-          return done(signinErr);
-        }
-
-        // Get the userId
-        var userId = user.id;
-
-        // Save a new Order
-        agent.post('/api/orders')
-          .send(order)
-          .expect(200)
-          .end(function (orderSaveErr, orderSaveRes) {
-            // Handle Order save error
-            if (orderSaveErr) {
-              return done(orderSaveErr);
-            }
-
-            // Delete an existing Order
-            agent.delete('/api/orders/' + orderSaveRes.body._id)
-              .send(order)
-              .expect(200)
-              .end(function (orderDeleteErr, orderDeleteRes) {
-                // Handle order error error
-                if (orderDeleteErr) {
-                  return done(orderDeleteErr);
-                }
-
-                // Set assertions
-                (orderDeleteRes.body._id).should.equal(orderSaveRes.body._id);
-
-                // Call the assertion callback
-                done();
-              });
-          });
       });
   });
 
@@ -454,8 +358,9 @@ describe('Order CRUD tests', function () {
                 return done(orderSaveErr);
               }
 
+              // (orderSaveRes.body).should.equal(order.totalamount);
               // Set assertions on new Order
-              (orderSaveRes.body.name).should.equal(order.name);
+              (orderSaveRes.body.totalamount).should.equal(order.totalamount);
               should.exist(orderSaveRes.body.user);
               should.equal(orderSaveRes.body.user._id, orphanId);
 
@@ -482,7 +387,7 @@ describe('Order CRUD tests', function () {
 
                         // Set assertions
                         (orderInfoRes.body._id).should.equal(orderSaveRes.body._id);
-                        (orderInfoRes.body.name).should.equal(order.name);
+                        (orderInfoRes.body.totalamount).should.equal(order.totalamount);
                         should.equal(orderInfoRes.body.user, undefined);
 
                         // Call the assertion callback
