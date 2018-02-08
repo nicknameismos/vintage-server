@@ -11,7 +11,7 @@ module.exports = function (app) {
   // Orders Routes
   app.route('/api/orders').all(core.jwtCheck, ordersPolicy.isAllowed)
     .get(orders.list)
-    .post(orders.omiseCard, orders.create);
+    .post(orders.updateCoupon, orders.omiseCard, orders.create);
 
   app.route('/api/orders/:orderId').all(core.jwtCheck, ordersPolicy.isAllowed)
     .get(orders.read)

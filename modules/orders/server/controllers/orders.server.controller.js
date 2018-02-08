@@ -9,6 +9,7 @@ var path = require('path'),
   Product = mongoose.model('Product'),
   User = mongoose.model('User'),
   Shop = mongoose.model('Shop'),
+  Coupon = mongoose.model('Coupon'),
   errorHandler = require(path.resolve('./modules/core/server/controllers/errors.server.controller')),
   _ = require('lodash'),
   omise = require('omise')({
@@ -18,6 +19,46 @@ var path = require('path'),
 /**
  * Create a Order
  */
+
+exports.updateCoupon = function (req, res, next) {
+  var order = req.body;
+  if (order.coupon && order.coupon.code) {
+    Coupon.find({ code: order.coupon.code }).exec(function (err, coupons) {
+      if (err) {
+        return res.status(400).send({
+          message: errorHandler.getErrorMessage(err)
+        });
+      } else {
+        if (coupons && coupons.length > 0) {
+          Coupon.findById(coupons[0]._id).exec(function (err, coupon) {
+            if (err) {
+              return next(err);
+            } else if (!coupon) {
+              return res.status(404).send({
+                message: 'No Coupon with that identifier has been found'
+              });
+            }
+            coupon.useruse.push(req.user);
+            coupon.save(function (err) {
+              if (err) {
+                return res.status(400).send({
+                  message: errorHandler.getErrorMessage(err)
+                });
+              } else {
+                next();
+              }
+            });
+          });
+        } else {
+          next();
+        }
+
+      }
+    });
+  } else {
+    next();
+  }
+};
 
 exports.omiseCard = function (req, res, next) {
   var order = req.body;

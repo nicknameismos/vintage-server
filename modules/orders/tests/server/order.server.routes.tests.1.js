@@ -9,6 +9,7 @@ var should = require('should'),
   Shop = mongoose.model('Shop'),
   Product = mongoose.model('Product'),
   Categoryshop = mongoose.model('Categoryshop'),
+  Coupon = mongoose.model('Coupon'),
   Categoryproduct = mongoose.model('Categoryproduct'),
   omise = require('omise')({
     'publicKey': 'pkey_test_5asc1ucstk1imcxnhy7',
@@ -28,6 +29,7 @@ var app,
   categoryshop,
   categoryproduct,
   token,
+  coupon,
   order;
 
 /**
@@ -116,79 +118,95 @@ describe('Order omise create tests', function () {
       shop: shop,
       user: user
     });
+    var today = new Date();
+    var startdate = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 1);
+    var enddate = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
+    coupon = new Coupon({
+      code: 'AC-100',
+      price: 100,
+      type: 'multi',
+      owner: [],
+      startdate: startdate,
+      enddate: enddate,
+      useruse: [],
+      user: user
+    });
 
     // Save a user to the test db and create new Order
     user.save(function () {
       shop.save(function () {
         product.save(function () {
-          order = {
-            items: [{
-              product: {
-                name: 'แก้วน้ำมหัศจรรย์ขันทอง',
-                price: 200,
-                images: ['img1', 'img2']
-              },
-              shipping: {
-                ref: {
-                  name: 'EMS'
-                },
-                price: 100
-              },
-              status: 'confirm',
-              remark: '',
-              qty: 1,
-              amount: 200
-            }],
-            shippingAddress: {
-              name: 'Ass',
-              tel: '0999999999',
-              address: {
-                address: 'address',
-                district: 'districe',
-                subdistrict: 'subdistrict',
-                province: 'province',
-                postcode: '12150'
-              },
-              location: {
-                lat: 19999,
-                lng: 20000
-              }
-            },
-            coupon: {
-              code: 'AC-100',
-              discount: 100
-            },
-            payment: {
-              paymenttype: 'Internal Banking',
-              creditno: '',
-              creditname: '',
-              expdate: '',
-              creditcvc: ''
-            },
-            omiseToken: '',
-            qty: 1,
-            amount: 200,
-            shippingamount: 100,
-            discountamount: 100,
-            totalamount: 200,
-            omiseresponse: {},
-            user: user
-          };
-        });
-      });
+          coupon.save(function () {
 
-      agent.post('/api/auth/signin')
-        .send(credentials)
-        .expect(200)
-        .end(function (signinErr, signinRes) {
-          // Handle signin error
-          if (signinErr) {
-            return done(signinErr);
-          }
-          signinRes.body.loginToken.should.not.be.empty();
-          token = signinRes.body.loginToken;
-          done();
+            order = {
+              items: [{
+                product: {
+                  name: 'แก้วน้ำมหัศจรรย์ขันทอง',
+                  price: 200,
+                  images: ['img1', 'img2']
+                },
+                shipping: {
+                  ref: {
+                    name: 'EMS'
+                  },
+                  price: 100
+                },
+                status: 'confirm',
+                remark: '',
+                qty: 1,
+                amount: 200
+              }],
+              shippingAddress: {
+                name: 'Ass',
+                tel: '0999999999',
+                address: {
+                  address: 'address',
+                  district: 'districe',
+                  subdistrict: 'subdistrict',
+                  province: 'province',
+                  postcode: '12150'
+                },
+                location: {
+                  lat: 19999,
+                  lng: 20000
+                }
+              },
+              coupon: {
+                code: 'AC-100',
+                discount: 100
+              },
+              payment: {
+                paymenttype: 'Internal Banking',
+                creditno: '',
+                creditname: '',
+                expdate: '',
+                creditcvc: ''
+              },
+              omiseToken: '',
+              qty: 1,
+              amount: 200,
+              shippingamount: 100,
+              discountamount: 100,
+              totalamount: 200,
+              omiseresponse: {},
+              user: user
+            };
+          });
         });
+
+        agent.post('/api/auth/signin')
+          .send(credentials)
+          .expect(200)
+          .end(function (signinErr, signinRes) {
+            // Handle signin error
+            if (signinErr) {
+              return done(signinErr);
+            }
+            signinRes.body.loginToken.should.not.be.empty();
+            token = signinRes.body.loginToken;
+            done();
+          });
+      });
     });
   });
 
@@ -197,6 +215,60 @@ describe('Order omise create tests', function () {
     done();
   });
 
+  it('create order update coupon', function (done) {
+    // Update Order name
+    var cardDetails = {
+      card: {
+        'name': 'JOHN DOE',
+        'city': 'Bangkok',
+        'postal_code': 10320,
+        'number': '4242424242424242',
+        'expiration_month': 2,
+        'expiration_year': 2018
+      }
+    };
+    omise.tokens.create(cardDetails).then(function (token1) {
+      order.omiseToken = token1.id;
+      order.payment.paymenttype = 'Credit Card';
+      // Save a new Order
+      agent.post('/api/orders')
+        .set('authorization', 'Bearer ' + token)
+        .send(order)
+        .expect(200)
+        .end(function (orderSaveErr, orderSaveRes) {
+          // Handle Order save error
+          if (orderSaveErr) {
+            return done(orderSaveErr);
+          }
+          // Set assertions
+          agent.get('/api/orders')
+            // .set('authorization', 'Bearer ' + token)
+            .end(function (order2Err, order2Res) {
+              // Handle signin error
+              if (order2Err) {
+                return done(order2Err);
+              }
+              var ord2 = order2Res.body;
+              (ord2.length).should.match(1);
+              (ord2[0].omiseresponse.capture).should.match(true);
+              (ord2[0].omiseToken).should.match(token1.id);
+              agent.get('/api/coupons')
+                .end(function (couponsErr, couponsRes) {
+                  // Handle signin error
+                  if (couponsErr) {
+                    return done(couponsErr);
+                  }
+                  var coupons = couponsRes.body;
+                  (coupons.length).should.match(1);
+                  (coupons[0].useruse.length).should.match(1);
+                  (coupons[0].useruse[0]).should.match(user.id);
+                  done();
+
+                });
+            });
+        });
+    });
+  });
 
   it('payment order', function (done) {
     agent.post('/api/auth/signin')
@@ -249,6 +321,8 @@ describe('Order omise create tests', function () {
                   (ord2[0].omiseresponse.capture).should.match(true);
                   (ord2[0].omiseToken).should.match(token1.id);
 
+
+
                   done();
 
                 });
@@ -261,7 +335,9 @@ describe('Order omise create tests', function () {
     User.remove().exec(function () {
       Product.remove().exec(function () {
         Shop.remove().exec(function () {
-          Order.remove().exec(done);
+          Coupon.remove().exec(function () {
+            Order.remove().exec(done);
+          });
         });
       });
     });
