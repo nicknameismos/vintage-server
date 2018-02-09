@@ -144,7 +144,8 @@ describe('Order omise create tests', function () {
                 product: {
                   name: 'แก้วน้ำมหัศจรรย์ขันทอง',
                   price: 200,
-                  images: ['img1', 'img2']
+                  images: ['img1', 'img2'],
+                  shopid: shop.id
                 },
                 shipping: {
                   ref: {
@@ -353,7 +354,8 @@ describe('Order omise create tests', function () {
         product: {
           name: 'sent',
           price: 200,
-          images: ['img1', 'img2']
+          images: ['img1', 'img2'],
+          shopid: shop.id
         },
         shipping: {
           ref: {
@@ -370,7 +372,8 @@ describe('Order omise create tests', function () {
           product: {
             name: 'completed',
             price: 200,
-            images: ['img1', 'img2']
+            images: ['img1', 'img2'],
+            shopid: shop.id
           },
           shipping: {
             ref: {
@@ -390,7 +393,8 @@ describe('Order omise create tests', function () {
           product: {
             name: 'cancel',
             price: 200,
-            images: ['img1', 'img2']
+            images: ['img1', 'img2'],
+            shopid: shop.id
           },
           shipping: {
             ref: {
@@ -409,7 +413,8 @@ describe('Order omise create tests', function () {
           product: {
             name: 'reject',
             price: 200,
-            images: ['img1', 'img2']
+            images: ['img1', 'img2'],
+            shopid: shop.id
           },
           shipping: {
             ref: {

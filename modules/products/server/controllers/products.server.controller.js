@@ -300,7 +300,8 @@ exports.productDetail = function (req, res) {
     images: productDB.images,
     price: productDB.price,
     detail: productDB.detail,
-    shippings: productDB.shippings
+    shippings: productDB.shippings,
+    shopid: productDB.shop ? productDB.shop._id : ''
   };
   product.isCurrentUserOwner = req.user && product.user && product.user._id.toString() === req.user._id.toString();
   res.jsonp(product);

@@ -296,6 +296,7 @@ describe('Product CRUD tests with token add shipping', function () {
             (product.shippings[0].ref.name).should.match(shippings.name);
             (product.shippings[0].ref.detail).should.match(shippings.detail);
             (product.shippings[0].price).should.match(20);
+            (product.shopid).should.match(shop.id);
             done();
           });
       });

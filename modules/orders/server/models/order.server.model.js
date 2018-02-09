@@ -21,6 +21,9 @@ var OrderSchema = new Schema({
         },
         images: {
           type: [String]
+        },
+        shopid: {
+          type: String
         }
       },
       shipping: {
