@@ -13,6 +13,9 @@ var OrderSchema = new Schema({
   items: {
     type: [{
       product: {
+        _id: {
+          type: String
+        },
         name: {
           type: String
         },
@@ -38,7 +41,7 @@ var OrderSchema = new Schema({
       },
       status: {
         type: String,
-        enum: ['confirm', 'sent', 'completed', 'cancel', 'reject', 'transferred', 'refund'],
+        enum: ['confirm', 'sent', 'completed', 'cancel', 'reject', 'transferred', 'rejectrefund', 'cancelrefund'],
         default: 'confirm'
       },
       remark: {

@@ -35,6 +35,9 @@ exports.invokeRolesPolicies = function () {
     }, {
       resources: '/api/payorder/:orderId',
       permissions: '*'
+    }, {
+      resources: '/api/shopgetorders/:orderShopId',
+      permissions: ['get']
     }]
   }, {
     roles: ['user'],
