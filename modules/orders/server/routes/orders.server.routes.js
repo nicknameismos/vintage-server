@@ -22,7 +22,7 @@ module.exports = function (app) {
     .put(orders.omiseCard, orders.update);
 
   app.route('/api/customergetorders').all(core.jwtCheck, ordersPolicy.isAllowed)
-    .get(orders.customerGetListOrder,orders.customerCookingListOrder, orders.customerList);
+    .get(orders.customerGetListOrder, orders.cookingListOrder, orders.resList);
   // Finish by binding the Order middleware
   app.param('orderId', orders.orderByID);
 };

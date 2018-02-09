@@ -24,6 +24,7 @@ var app,
   agent,
   credentials,
   user,
+  shopowner,
   shop,
   product,
   categoryshop,
@@ -362,6 +363,7 @@ describe('Order omise create tests', function () {
         },
         status: 'sent',
         remark: '',
+        log: [{ status: 'sent', created: new Date() }],
         qty: 1,
         amount: 300
       }, {
@@ -377,6 +379,10 @@ describe('Order omise create tests', function () {
             price: 100
           },
           status: 'completed',
+          log: [
+            { status: 'sent', created: new Date() },
+            { status: 'completed', created: new Date() }
+          ],
           remark: '',
           qty: 1,
           amount: 300
@@ -392,6 +398,9 @@ describe('Order omise create tests', function () {
             },
             price: 100
           },
+          log: [
+            { status: 'cancel', created: new Date() }
+          ],
           status: 'cancel',
           remark: '',
           qty: 1,
@@ -408,6 +417,9 @@ describe('Order omise create tests', function () {
             },
             price: 100
           },
+          log: [
+            { status: 'reject', created: new Date() }
+          ],
           status: 'reject',
           remark: 'out of stock',
           qty: 1,
@@ -467,7 +479,7 @@ describe('Order omise create tests', function () {
                   (cord[0].items[0].rejectreason).should.match('');
 
                   (cord[1].status).should.match('sent');
-                  (cord[1].items.length).should.match(0);
+                  (cord[1].items.length).should.match(1);
                   (cord[1].items[0].name).should.match(order.items[1].product.name);
                   (cord[1].items[0].image).should.match(order.items[1].product.images[0]);
                   (cord[1].items[0].price).should.match(order.items[1].product.price);
@@ -475,7 +487,7 @@ describe('Order omise create tests', function () {
                   (cord[1].items[0].shippingtype).should.match(order.items[1].shipping.ref.name);
                   (cord[1].items[0].shippingprice).should.match(order.items[1].shipping.price);
                   (cord[1].items[0].amount).should.match(order.items[1].amount);
-                  (cord[1].items[0].sentdate).should.match('');
+                  (cord[1].items[0].sentdate).should.match(order.items[1].log[0].created);
                   (cord[1].items[0].received).should.match('');
                   (cord[1].items[0].canceldate).should.match('');
                   (cord[1].items[0].isrefund).should.match(false);
@@ -483,10 +495,50 @@ describe('Order omise create tests', function () {
                   (cord[1].items[0].rejectreason).should.match('');
 
                   (cord[2].status).should.match('completed');
-                  (cord[2].items.length).should.match(0);
+                  (cord[2].items.length).should.match(1);
+                  (cord[2].items[0].name).should.match(order.items[2].product.name);
+                  (cord[2].items[0].image).should.match(order.items[2].product.images[0]);
+                  (cord[2].items[0].price).should.match(order.items[2].product.price);
+                  (cord[2].items[0].qty).should.match(order.items[2].qty);
+                  (cord[2].items[0].shippingtype).should.match(order.items[2].shipping.ref.name);
+                  (cord[2].items[0].shippingprice).should.match(order.items[2].shipping.price);
+                  (cord[2].items[0].amount).should.match(order.items[2].amount);
+                  (cord[2].items[0].sentdate).should.match(order.items[2].log[0].created);
+                  (cord[2].items[0].received).should.match(order.items[2].log[1].created);
+                  (cord[2].items[0].canceldate).should.match('');
+                  (cord[2].items[0].isrefund).should.match(false);
+                  (cord[2].items[0].status).should.match('completed');
+                  (cord[2].items[0].rejectreason).should.match('');
 
                   (cord[3].status).should.match('cancel');
-                  (cord[3].items.length).should.match(0);
+                  (cord[3].items.length).should.match(2);
+                  (cord[3].items[0].name).should.match(order.items[3].product.name);
+                  (cord[3].items[0].image).should.match(order.items[3].product.images[0]);
+                  (cord[3].items[0].price).should.match(order.items[3].product.price);
+                  (cord[3].items[0].qty).should.match(order.items[3].qty);
+                  (cord[3].items[0].shippingtype).should.match(order.items[3].shipping.ref.name);
+                  (cord[3].items[0].shippingprice).should.match(order.items[3].shipping.price);
+                  (cord[3].items[0].amount).should.match(order.items[3].amount);
+                  (cord[3].items[0].sentdate).should.match('');
+                  (cord[3].items[0].received).should.match('');
+                  (cord[3].items[0].canceldate).should.match(order.items[3].log[0].created);
+                  (cord[3].items[0].isrefund).should.match(false);
+                  (cord[3].items[0].status).should.match('cancel');
+                  (cord[3].items[0].rejectreason).should.match('');
+
+                  (cord[3].items[1].name).should.match(order.items[4].product.name);
+                  (cord[3].items[1].image).should.match(order.items[4].product.images[0]);
+                  (cord[3].items[1].price).should.match(order.items[4].product.price);
+                  (cord[3].items[1].qty).should.match(order.items[4].qty);
+                  (cord[3].items[1].shippingtype).should.match(order.items[4].shipping.ref.name);
+                  (cord[3].items[1].shippingprice).should.match(order.items[4].shipping.price);
+                  (cord[3].items[1].amount).should.match(order.items[4].amount);
+                  (cord[3].items[1].sentdate).should.match('');
+                  (cord[3].items[1].received).should.match('');
+                  (cord[3].items[1].canceldate).should.match(order.items[4].log[0].created);
+                  (cord[3].items[1].isrefund).should.match(false);
+                  (cord[3].items[1].status).should.match('reject');
+                  (cord[3].items[1].rejectreason).should.match(order.items[4].remark);
 
                   done();
 

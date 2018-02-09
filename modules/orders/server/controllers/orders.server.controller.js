@@ -209,7 +209,7 @@ exports.customerGetListOrder = function (req, res, next) {
   });
 };
 
-exports.customerCookingListOrder = function (req, res, next) {
+exports.cookingListOrder = function (req, res, next) {
   var resData = [{
     status: 'confirm',
     items: []
@@ -244,11 +244,90 @@ exports.customerCookingListOrder = function (req, res, next) {
           rejectreason: ''
         });
       } else if (itm.status === 'sent') {
-
+        var sentdate = '';
+        if (itm.log && itm.log.length > 0) {
+          itm.log.forEach(function (it) {
+            if (it.status === 'sent') {
+              sentdate = it.created;
+            }
+          });
+        }
+        resData[1].items.push({
+          itemid: itm._id,
+          orderid: order._id,
+          name: itm.product.name,
+          image: itm.product.images ? itm.product.images[0] : '',
+          price: itm.product.price,
+          qty: itm.qty,
+          shippingtype: itm.shipping.ref.name,
+          shippingprice: itm.shipping.price,
+          amount: itm.amount,
+          sentdate: sentdate,
+          received: '',
+          canceldate: '',
+          isrefund: false,
+          status: 'sent',
+          rejectreason: ''
+        });
       } else if (itm.status === 'completed') {
-
+        var sentdate2 = '';
+        var completed2 = '';
+        if (itm.log && itm.log.length > 0) {
+          itm.log.forEach(function (it) {
+            if (it.status === 'sent') {
+              sentdate2 = it.created;
+            } else if (it.status === 'completed') {
+              completed2 = it.created;
+            }
+          });
+        }
+        resData[2].items.push({
+          itemid: itm._id,
+          orderid: order._id,
+          name: itm.product.name,
+          image: itm.product.images ? itm.product.images[0] : '',
+          price: itm.product.price,
+          qty: itm.qty,
+          shippingtype: itm.shipping.ref.name,
+          shippingprice: itm.shipping.price,
+          amount: itm.amount,
+          sentdate: sentdate2,
+          received: completed2,
+          canceldate: '',
+          isrefund: false,
+          status: 'completed',
+          rejectreason: ''
+        });
       } else if (itm.status === 'cancel' || itm.status === 'reject') {
-
+        var canceldate = '';
+        var remark = '';
+        if (itm.log && itm.log.length > 0) {
+          itm.log.forEach(function (it) {
+            if (it.status === 'cancel') {
+              canceldate = it.created;
+            } else if (it.status === 'reject') {
+              canceldate = it.created;
+              remark = itm.remark;
+            }
+          });
+        }
+        resData[3].items.push({
+          itemid: itm._id,
+          orderid: order._id,
+          name: itm.product.name,
+          image: itm.product.images ? itm.product.images[0] : '',
+          price: itm.product.price,
+          qty: itm.qty,
+          shippingtype: itm.shipping.ref.name,
+          shippingprice: itm.shipping.price,
+          amount: itm.amount,
+          sentdate: '',
+          received: '',
+          canceldate: canceldate,
+          isrefund: false,
+          status: itm.status,
+          rejectreason: remark
+        });
       }
     });
   });
@@ -256,6 +335,6 @@ exports.customerCookingListOrder = function (req, res, next) {
   next();
 };
 
-exports.customerList = function (req, res) {
+exports.resList = function (req, res) {
   res.jsonp(req.resData);
 };
