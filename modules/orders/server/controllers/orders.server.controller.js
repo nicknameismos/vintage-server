@@ -187,7 +187,7 @@ exports.orderByID = function (req, res, next, id) {
     });
   }
 
-  Order.findById(id).populate('user', 'displayName').exec(function (err, order) {
+  Order.findById(id).populate('user', 'displayName').populate('items.product').exec(function (err, order) {
     if (err) {
       return next(err);
     } else if (!order) {
@@ -503,4 +503,100 @@ exports.shopCookingListOrder = function (req, res, next) {
   });
   req.resData = resData;
   next();
+};
+
+exports.orderItemId = function (req, res, next, itmId) {
+  req.itm_id = itmId;
+  next();
+};
+
+exports.findShop = function (req, res, next) {
+  var id = '';
+  req.order.items.forEach(function (itm, i) {
+    if (itm._id.toString() === req.itm_id.toString()) {
+      id = itm.shopid;
+      req.itemIndex = i;
+    }
+  });
+  Shop.findById(id).populate('user', 'displayName').exec(function (err, shop) {
+    if (err) {
+      return next(err);
+    } else if (!shop) {
+      return res.status(404).send({
+        message: 'No Shop with that identifier has been found'
+      });
+    }
+    req.shop = shop;
+    next();
+  });
+};
+
+exports.cookingOrderDetail = function (req, res, next) {
+  var confirmdate = '';
+  var sentdate = '';
+  var receiveddate = '';
+  var canceldate = '';
+  var transferdate = '';
+  var refunddate = '';
+
+  req.order.items[req.itemIndex].log.forEach(function (l) {
+    if (l.status.toString() === 'confirm') {
+      confirmdate = l.created;
+    } else if (l.status.toString() === 'sent') {
+      sentdate = l.created;
+    } else if (l.status.toString() === 'completed') {
+      receiveddate = l.created;
+    } else if (l.status.toString() === 'cancel' || l.status.toString() === 'reject') {
+      canceldate = l.created;
+    } else if (l.status.toString() === 'transferred') {
+      transferdate = l.created;
+    } else if (l.status.toString() === 'rejectrefund' || l.status.toString() === 'cancelrefund') {
+      refunddate = l.created;
+    }
+  });
+
+  var resData = {
+    itemid: req.itm_id,
+    orderid: req.order._id,
+    shop: {
+      _id: req.shop._id,
+      name: req.shop.name
+    },
+    product: {
+      _id: req.order.items[req.itemIndex].product._id,
+      name: req.order.items[req.itemIndex].product.name,
+      image: req.order.items[req.itemIndex].product.images && req.order.items[req.itemIndex].product.images.length > 0 ? req.order.items[req.itemIndex].product.images[0] : '',
+      price: req.order.items[req.itemIndex].unitprice,
+      qty: req.order.items[req.itemIndex].qty,
+      shippingtype: req.order.items[req.itemIndex].shipping.ref.name,
+      shippingtrack: req.order.items[req.itemIndex].refid ? req.order.items[req.itemIndex].refid : '',
+      shippingprice: req.order.items[req.itemIndex].shipping.price
+    },
+    amount: req.order.items[req.itemIndex].amount,
+    paymenttype: req.order.payment.paymenttype,
+    shipping: {
+      name: req.order.shippingAddress.name,
+      tel: req.order.shippingAddress.tel,
+      address: req.order.shippingAddress.address.address,
+      subdistrict: req.order.shippingAddress.address.subdistrict,
+      district: req.order.shippingAddress.address.district,
+      province: req.order.shippingAddress.address.province,
+      postcode: req.order.shippingAddress.address.postcode
+    },
+    confirmdate: confirmdate,
+    sentdate: sentdate,
+    receiveddate: receiveddate,
+    canceldate: canceldate,
+    transferdate: transferdate,
+    refunddate: refunddate,
+    isrefund: req.order.items[req.itemIndex].status === 'rejectrefund' || req.order.items[req.itemIndex].status === 'cancelrefund' ? true : false,
+    status: req.order.items[req.itemIndex].status,
+    rejectreason: req.order.items[req.itemIndex].remark ? req.order.items[req.itemIndex].remark : ''
+  };
+  req.resData = resData;
+  next();
+};
+
+exports.orderDetail = function (req, res) {
+  res.jsonp(req.resData);
 };

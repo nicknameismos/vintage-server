@@ -38,6 +38,9 @@ exports.invokeRolesPolicies = function () {
     }, {
       resources: '/api/shopgetorders/:orderShopId',
       permissions: ['get']
+    }, {
+      resources: '/api/getorderdetail/:orderId/:itemId',
+      permissions: ['get']
     }]
   }, {
     roles: ['user'],
@@ -52,6 +55,9 @@ exports.invokeRolesPolicies = function () {
       permissions: ['put']
     }, {
       resources: '/api/customergetorders',
+      permissions: ['get']
+    }, {
+      resources: '/api/getorderdetail/:orderId/:itemId',
       permissions: ['get']
     }]
   }, {

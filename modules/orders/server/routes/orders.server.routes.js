@@ -26,7 +26,11 @@ module.exports = function (app) {
 
   app.route('/api/shopgetorders/:orderShopId').all(core.jwtCheck, ordersPolicy.isAllowed)
     .get(orders.shopGetListOrder, orders.shopCookingListOrder, orders.resList);
+
+  app.route('/api/getorderdetail/:orderId/:itemId').all(core.jwtCheck, ordersPolicy.isAllowed)
+    .get(orders.findShop, orders.cookingOrderDetail, orders.orderDetail);
   // Finish by binding the Order middleware
   app.param('orderId', orders.orderByID);
   app.param('orderShopId', orders.orderShopId);
+  app.param('itemId', orders.orderItemId);
 };
