@@ -96,6 +96,7 @@ describe('Order Model Unit Tests:', function () {
           order = new Order({
             items: [{
               product: {
+                _id: product.id,
                 name: 'แก้วน้ำมหัศจรรย์ขันทอง',
                 price: 200,
                 images: ['img1', 'img2']

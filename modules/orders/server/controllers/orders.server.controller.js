@@ -89,9 +89,13 @@ exports.omiseCard = function (req, res, next) {
 
 exports.create = function (req, res) {
   var order = new Order(req.body);
+  var _order = req.body;
   order.omiseresponse = order.payment.paymenttype === 'Credit Card' ? req.omiseresponse : order.omiseresponse;
   order.user = req.user;
-  order.items.forEach(element => {
+  order.items.forEach((element, i) => {
+    element.product = _order.items[i].product._id;
+    element.shopid = _order.items[i].product.shopid;
+    element.unitprice = _order.items[i].product.price;
     element.log.push({
       status: 'confirm'
     });
@@ -197,7 +201,7 @@ exports.orderByID = function (req, res, next, id) {
 };
 
 exports.customerGetListOrder = function (req, res, next) {
-  Order.find({ user: { _id: req.user._id } }).sort('-created').populate('user', 'displayName').exec(function (err, orders) {
+  Order.find({ user: { _id: req.user._id } }).sort('-created').populate('user', 'displayName').populate('items.product').exec(function (err, orders) {
     if (err) {
       return res.status(400).send({
         message: errorHandler.getErrorMessage(err)
@@ -231,7 +235,7 @@ exports.customerCookingListOrder = function (req, res, next) {
           orderid: order._id,
           name: itm.product.name,
           image: itm.product.images ? itm.product.images[0] : '',
-          price: itm.product.price,
+          price: itm.unitprice,
           qty: itm.qty,
           shippingtype: itm.shipping.ref.name,
           shippingprice: itm.shipping.price,
@@ -241,7 +245,8 @@ exports.customerCookingListOrder = function (req, res, next) {
           canceldate: '',
           isrefund: false,
           status: 'confirm',
-          rejectreason: ''
+          rejectreason: '',
+          refid: itm.refid ? itm.refid : ''
         });
       } else if (itm.status === 'sent') {
         var sentdate = '';
@@ -257,7 +262,7 @@ exports.customerCookingListOrder = function (req, res, next) {
           orderid: order._id,
           name: itm.product.name,
           image: itm.product.images ? itm.product.images[0] : '',
-          price: itm.product.price,
+          price: itm.unitprice,
           qty: itm.qty,
           shippingtype: itm.shipping.ref.name,
           shippingprice: itm.shipping.price,
@@ -267,7 +272,8 @@ exports.customerCookingListOrder = function (req, res, next) {
           canceldate: '',
           isrefund: false,
           status: 'sent',
-          rejectreason: ''
+          rejectreason: '',
+          refid: itm.refid ? itm.refid : ''
         });
       } else if (itm.status === 'completed' || itm.status === 'transferred') {
         var sentdate2 = '';
@@ -286,7 +292,7 @@ exports.customerCookingListOrder = function (req, res, next) {
           orderid: order._id,
           name: itm.product.name,
           image: itm.product.images ? itm.product.images[0] : '',
-          price: itm.product.price,
+          price: itm.unitprice,
           qty: itm.qty,
           shippingtype: itm.shipping.ref.name,
           shippingprice: itm.shipping.price,
@@ -296,7 +302,8 @@ exports.customerCookingListOrder = function (req, res, next) {
           canceldate: '',
           isrefund: false,
           status: itm.status,
-          rejectreason: ''
+          rejectreason: '',
+          refid: itm.refid ? itm.refid : ''
         });
       } else if (itm.status === 'cancel' || itm.status === 'reject' || itm.status === 'rejectrefund' || itm.status === 'cancelrefund') {
         var canceldate = '';
@@ -321,7 +328,7 @@ exports.customerCookingListOrder = function (req, res, next) {
           orderid: order._id,
           name: itm.product.name,
           image: itm.product.images ? itm.product.images[0] : '',
-          price: itm.product.price,
+          price: itm.unitprice,
           qty: itm.qty,
           shippingtype: itm.shipping.ref.name,
           shippingprice: itm.shipping.price,
@@ -331,7 +338,8 @@ exports.customerCookingListOrder = function (req, res, next) {
           canceldate: canceldate,
           isrefund: false,
           status: itm.status,
-          rejectreason: remark
+          rejectreason: remark,
+          refid: itm.refid ? itm.refid : ''
         });
       }
     });
@@ -351,7 +359,7 @@ exports.orderShopId = function (req, res, next, shopid) {
 };
 exports.shopGetListOrder = function (req, res, next) {
   // console.log(req.user);
-  Order.find({ items: { $elemMatch: { 'product.shopid': req.shopid } } }).sort('-created').populate('user', 'displayName').exec(function (err, orders) {
+  Order.find({ items: { $elemMatch: { shopid: req.shopid } } }).sort('-created').populate('user', 'displayName').populate('items.product').exec(function (err, orders) {
     if (err) {
       return res.status(400).send({
         message: errorHandler.getErrorMessage(err)
@@ -379,14 +387,14 @@ exports.shopCookingListOrder = function (req, res, next) {
   }];
   req.orders.forEach(function (order) {
     order.items.forEach(function (itm) {
-      if (itm.product.shopid.toString() === req.shopid.toString()) {
+      if (itm.shopid.toString() === req.shopid.toString()) {
         if (itm.status === 'confirm') {
           resData[0].items.push({
             itemid: itm._id,
             orderid: order._id,
             name: itm.product.name,
             image: itm.product.images ? itm.product.images[0] : '',
-            price: itm.product.price,
+            price: itm.unitprice,
             qty: itm.qty,
             shippingtype: itm.shipping.ref.name,
             shippingprice: itm.shipping.price,
@@ -396,7 +404,8 @@ exports.shopCookingListOrder = function (req, res, next) {
             canceldate: '',
             isrefund: false,
             status: 'confirm',
-            rejectreason: ''
+            rejectreason: '',
+            refid: itm.refid ? itm.refid : ''
           });
         } else if (itm.status === 'sent') {
           var sentdate = '';
@@ -412,7 +421,7 @@ exports.shopCookingListOrder = function (req, res, next) {
             orderid: order._id,
             name: itm.product.name,
             image: itm.product.images ? itm.product.images[0] : '',
-            price: itm.product.price,
+            price: itm.unitprice,
             qty: itm.qty,
             shippingtype: itm.shipping.ref.name,
             shippingprice: itm.shipping.price,
@@ -422,7 +431,8 @@ exports.shopCookingListOrder = function (req, res, next) {
             canceldate: '',
             isrefund: false,
             status: 'sent',
-            rejectreason: ''
+            rejectreason: '',
+            refid: itm.refid ? itm.refid : ''
           });
         } else if (itm.status === 'completed' || itm.status === 'transferred') {
           var sentdate2 = '';
@@ -443,7 +453,7 @@ exports.shopCookingListOrder = function (req, res, next) {
             orderid: order._id,
             name: itm.product.name,
             image: itm.product.images ? itm.product.images[0] : '',
-            price: itm.product.price,
+            price: itm.unitprice,
             qty: itm.qty,
             shippingtype: itm.shipping.ref.name,
             shippingprice: itm.shipping.price,
@@ -453,7 +463,8 @@ exports.shopCookingListOrder = function (req, res, next) {
             canceldate: '',
             isrefund: false,
             status: itm.status,
-            rejectreason: ''
+            rejectreason: '',
+            refid: itm.refid ? itm.refid : ''
           });
         } else if (itm.status === 'cancel' || itm.status === 'reject' || itm.status === 'rejectrefund' || itm.status === 'cancelrefund') {
           var canceldate = '';
@@ -473,7 +484,7 @@ exports.shopCookingListOrder = function (req, res, next) {
             orderid: order._id,
             name: itm.product.name,
             image: itm.product.images ? itm.product.images[0] : '',
-            price: itm.product.price,
+            price: itm.unitprice,
             qty: itm.qty,
             shippingtype: itm.shipping.ref.name,
             shippingprice: itm.shipping.price,
@@ -483,7 +494,8 @@ exports.shopCookingListOrder = function (req, res, next) {
             canceldate: canceldate,
             isrefund: false,
             status: itm.status,
-            rejectreason: remark
+            rejectreason: remark,
+            refid: itm.refid ? itm.refid : ''
           });
         }
       }

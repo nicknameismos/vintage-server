@@ -131,7 +131,7 @@ describe('Order omise create tests', function () {
 
     product = new Product({
       name: 'Product name',
-      price: 50,
+      price: 200,
       priorityofcate: 1,
       images: ['https://simg.kapook.com/o/photo/410/kapook_world-408206.jpg', 'https://f.ptcdn.info/408/051/000/oqi6tdf9uS1811y1XHx-o.png'],
       categories: categoryproduct,
@@ -161,6 +161,7 @@ describe('Order omise create tests', function () {
               order = {
                 items: [{
                   product: {
+                    _id: product.id,
                     name: 'แก้วน้ำมหัศจรรย์ขันทอง',
                     price: 200,
                     images: ['img1', 'img2'],
@@ -345,6 +346,7 @@ describe('Order omise create tests', function () {
                   (ord2[0].items[0].status).should.match('confirm');
                   (ord2[0].items[0].log.length).should.match(1);
                   (ord2[0].items[0].log[0].status).should.match('confirm');
+                  (ord2[0].items[0].product).should.match(product.id);
 
                   done();
 
@@ -373,6 +375,7 @@ describe('Order omise create tests', function () {
       // Save a new Order
       order.items.push({
         product: {
+          _id: product.id,
           name: 'sent',
           price: 200,
           images: ['img1', 'img2'],
@@ -391,6 +394,7 @@ describe('Order omise create tests', function () {
         amount: 300
       }, {
           product: {
+            _id: product.id,
             name: 'completed',
             price: 200,
             images: ['img1', 'img2'],
@@ -409,9 +413,11 @@ describe('Order omise create tests', function () {
           ],
           remark: '',
           qty: 1,
-          amount: 300
+          amount: 300,
+          refid: '1234'
         }, {
           product: {
+            _id: product.id,
             name: 'cancel',
             price: 200,
             images: ['img1', 'img2'],
@@ -432,6 +438,7 @@ describe('Order omise create tests', function () {
           amount: 300
         }, {
           product: {
+            _id: product.id,
             name: 'reject',
             price: 200,
             images: ['img1', 'img2'],
@@ -490,8 +497,8 @@ describe('Order omise create tests', function () {
                   (cord[0].items.length).should.match(1);
                   // (cord[0].items[0].itemid).should.match(ord2.items[0]);
                   // (cord[0].items[0].orderid).should.match(1234);
-                  (cord[0].items[0].name).should.match(order.items[0].product.name);
-                  (cord[0].items[0].image).should.match(order.items[0].product.images[0]);
+                  (cord[0].items[0].name).should.match(product.name);
+                  (cord[0].items[0].image).should.match(product.images[0]);
                   (cord[0].items[0].price).should.match(order.items[0].product.price);
                   (cord[0].items[0].qty).should.match(order.items[0].qty);
                   (cord[0].items[0].shippingtype).should.match(order.items[0].shipping.ref.name);
@@ -503,11 +510,12 @@ describe('Order omise create tests', function () {
                   (cord[0].items[0].isrefund).should.match(false);
                   (cord[0].items[0].status).should.match('confirm');
                   (cord[0].items[0].rejectreason).should.match('');
+                  (cord[0].items[0].refid).should.match('');
 
                   (cord[1].status).should.match('sent');
                   (cord[1].items.length).should.match(1);
-                  (cord[1].items[0].name).should.match(order.items[1].product.name);
-                  (cord[1].items[0].image).should.match(order.items[1].product.images[0]);
+                  (cord[1].items[0].name).should.match(product.name);
+                  (cord[1].items[0].image).should.match(product.images[0]);
                   (cord[1].items[0].price).should.match(order.items[1].product.price);
                   (cord[1].items[0].qty).should.match(order.items[1].qty);
                   (cord[1].items[0].shippingtype).should.match(order.items[1].shipping.ref.name);
@@ -519,11 +527,12 @@ describe('Order omise create tests', function () {
                   (cord[1].items[0].isrefund).should.match(false);
                   (cord[1].items[0].status).should.match('sent');
                   (cord[1].items[0].rejectreason).should.match('');
+                  (cord[1].items[0].refid).should.match('');
 
                   (cord[2].status).should.match('completed');
                   (cord[2].items.length).should.match(1);
-                  (cord[2].items[0].name).should.match(order.items[2].product.name);
-                  (cord[2].items[0].image).should.match(order.items[2].product.images[0]);
+                  (cord[2].items[0].name).should.match(product.name);
+                  (cord[2].items[0].image).should.match(product.images[0]);
                   (cord[2].items[0].price).should.match(order.items[2].product.price);
                   (cord[2].items[0].qty).should.match(order.items[2].qty);
                   (cord[2].items[0].shippingtype).should.match(order.items[2].shipping.ref.name);
@@ -535,11 +544,12 @@ describe('Order omise create tests', function () {
                   (cord[2].items[0].isrefund).should.match(false);
                   (cord[2].items[0].status).should.match('completed');
                   (cord[2].items[0].rejectreason).should.match('');
+                  (cord[2].items[0].refid).should.match('1234');
 
                   (cord[3].status).should.match('cancel');
                   (cord[3].items.length).should.match(2);
-                  (cord[3].items[0].name).should.match(order.items[3].product.name);
-                  (cord[3].items[0].image).should.match(order.items[3].product.images[0]);
+                  (cord[3].items[0].name).should.match(product.name);
+                  (cord[3].items[0].image).should.match(product.images[0]);
                   (cord[3].items[0].price).should.match(order.items[3].product.price);
                   (cord[3].items[0].qty).should.match(order.items[3].qty);
                   (cord[3].items[0].shippingtype).should.match(order.items[3].shipping.ref.name);
@@ -551,9 +561,10 @@ describe('Order omise create tests', function () {
                   (cord[3].items[0].isrefund).should.match(false);
                   (cord[3].items[0].status).should.match('cancel');
                   (cord[3].items[0].rejectreason).should.match('');
+                  (cord[3].items[0].refid).should.match('');
 
-                  (cord[3].items[1].name).should.match(order.items[4].product.name);
-                  (cord[3].items[1].image).should.match(order.items[4].product.images[0]);
+                  (cord[3].items[1].name).should.match(product.name);
+                  (cord[3].items[1].image).should.match(product.images[0]);
                   (cord[3].items[1].price).should.match(order.items[4].product.price);
                   (cord[3].items[1].qty).should.match(order.items[4].qty);
                   (cord[3].items[1].shippingtype).should.match(order.items[4].shipping.ref.name);
@@ -565,6 +576,7 @@ describe('Order omise create tests', function () {
                   (cord[3].items[1].isrefund).should.match(false);
                   (cord[3].items[1].status).should.match('reject');
                   (cord[3].items[1].rejectreason).should.match(order.items[4].remark);
+                  (cord[3].items[1].refid).should.match('');
 
                   done();
 
@@ -581,12 +593,9 @@ describe('Order omise create tests', function () {
 
     var orderObj = new Order({
       items: [{
-        product: {
-          name: 'confirm',
-          price: 200,
-          images: ['img1', 'img2'],
-          shopid: shop.id
-        },
+        product: product,
+        unitprice: 200,
+        shopid: shop.id,
         shipping: {
           ref: {
             name: 'EMS'
@@ -599,12 +608,9 @@ describe('Order omise create tests', function () {
         qty: 1,
         amount: 300
       }, {
-        product: {
-          name: 'sent',
-          price: 200,
-          images: ['img1', 'img2'],
-          shopid: shop.id
-        },
+        product: product,
+        unitprice: 200,
+        shopid: shop.id,        
         shipping: {
           ref: {
             name: 'EMS'
@@ -617,12 +623,9 @@ describe('Order omise create tests', function () {
         qty: 1,
         amount: 300
       }, {
-        product: {
-          name: 'completed',
-          price: 200,
-          images: ['img1', 'img2'],
-          shopid: shop.id
-        },
+        product: product,
+        unitprice: 200,
+        shopid: shop.id,        
         shipping: {
           ref: {
             name: 'EMS'
@@ -636,14 +639,12 @@ describe('Order omise create tests', function () {
         ],
         remark: '',
         qty: 1,
-        amount: 300
+        amount: 300,
+        refid: '1111'
       }, {
-        product: {
-          name: 'cancel',
-          price: 200,
-          images: ['img1', 'img2'],
-          shopid: shop.id
-        },
+        product: product,
+        unitprice: 200,
+        shopid: shop.id,        
         shipping: {
           ref: {
             name: 'EMS'
@@ -658,12 +659,9 @@ describe('Order omise create tests', function () {
         qty: 1,
         amount: 300
       }, {
-        product: {
-          name: 'reject',
-          price: 200,
-          images: ['img1', 'img2'],
-          shopid: shop.id
-        },
+        product: product,
+        unitprice: 200,
+        shopid: shop.id,        
         shipping: {
           ref: {
             name: 'EMS'
@@ -716,12 +714,9 @@ describe('Order omise create tests', function () {
 
     var orderObj2 = new Order({
       items: [{
-        product: {
-          name: 'confirm',
-          price: 200,
-          images: ['img1', 'img2'],
-          shopid: shop.id
-        },
+        product: product,
+        unitprice: 200,
+        shopid: shop.id,        
         shipping: {
           ref: {
             name: 'EMS'
@@ -735,7 +730,8 @@ describe('Order omise create tests', function () {
           { status: 'transferred', created: new Date() }
         ],
         qty: 1,
-        amount: 300
+        amount: 300,
+        refid: '123'
       }],
       shippingAddress: {
         name: 'Ass',
@@ -815,9 +811,9 @@ describe('Order omise create tests', function () {
                 (cord[0].items.length).should.match(1);
                 // (cord[0].items[0].itemid).should.match(ord2.items[0]);
                 // (cord[0].items[0].orderid).should.match(1234);
-                (cord[0].items[0].name).should.match(orderObj.items[0].product.name);
-                (cord[0].items[0].image).should.match(orderObj.items[0].product.images[0]);
-                (cord[0].items[0].price).should.match(orderObj.items[0].product.price);
+                (cord[0].items[0].name).should.match(product.name);
+                (cord[0].items[0].image).should.match(product.images[0]);
+                (cord[0].items[0].price).should.match(product.price);
                 (cord[0].items[0].qty).should.match(orderObj.items[0].qty);
                 (cord[0].items[0].shippingtype).should.match(orderObj.items[0].shipping.ref.name);
                 (cord[0].items[0].shippingprice).should.match(orderObj.items[0].shipping.price);
@@ -831,9 +827,9 @@ describe('Order omise create tests', function () {
 
                 (cord[1].status).should.match('sent');
                 (cord[1].items.length).should.match(1);
-                (cord[1].items[0].name).should.match(orderObj.items[1].product.name);
-                (cord[1].items[0].image).should.match(orderObj.items[1].product.images[0]);
-                (cord[1].items[0].price).should.match(orderObj.items[1].product.price);
+                (cord[1].items[0].name).should.match(product.name);
+                (cord[1].items[0].image).should.match(product.images[0]);
+                (cord[1].items[0].price).should.match(product.price);
                 (cord[1].items[0].qty).should.match(orderObj.items[1].qty);
                 (cord[1].items[0].shippingtype).should.match(orderObj.items[1].shipping.ref.name);
                 (cord[1].items[0].shippingprice).should.match(orderObj.items[1].shipping.price);
@@ -847,9 +843,9 @@ describe('Order omise create tests', function () {
 
                 (cord[2].status).should.match('completed');
                 (cord[2].items.length).should.match(2);
-                (cord[2].items[0].name).should.match(orderObj2.items[0].product.name);
-                (cord[2].items[0].image).should.match(orderObj2.items[0].product.images[0]);
-                (cord[2].items[0].price).should.match(orderObj2.items[0].product.price);
+                (cord[2].items[0].name).should.match(product.name);
+                (cord[2].items[0].image).should.match(product.images[0]);
+                (cord[2].items[0].price).should.match(product.price);
                 (cord[2].items[0].qty).should.match(orderObj2.items[0].qty);
                 (cord[2].items[0].shippingtype).should.match(orderObj2.items[0].shipping.ref.name);
                 (cord[2].items[0].shippingprice).should.match(orderObj2.items[0].shipping.price);
@@ -861,9 +857,9 @@ describe('Order omise create tests', function () {
                 (cord[2].items[0].status).should.match('transferred');
                 (cord[2].items[0].rejectreason).should.match('');
 
-                (cord[2].items[1].name).should.match(orderObj.items[2].product.name);
-                (cord[2].items[1].image).should.match(orderObj.items[2].product.images[0]);
-                (cord[2].items[1].price).should.match(orderObj.items[2].product.price);
+                (cord[2].items[1].name).should.match(product.name);
+                (cord[2].items[1].image).should.match(product.images[0]);
+                (cord[2].items[1].price).should.match(product.price);
                 (cord[2].items[1].qty).should.match(orderObj.items[2].qty);
                 (cord[2].items[1].shippingtype).should.match(orderObj.items[2].shipping.ref.name);
                 (cord[2].items[1].shippingprice).should.match(orderObj.items[2].shipping.price);
@@ -877,9 +873,9 @@ describe('Order omise create tests', function () {
 
                 (cord[3].status).should.match('cancel');
                 (cord[3].items.length).should.match(2);
-                (cord[3].items[0].name).should.match(orderObj.items[3].product.name);
-                (cord[3].items[0].image).should.match(orderObj.items[3].product.images[0]);
-                (cord[3].items[0].price).should.match(orderObj.items[3].product.price);
+                (cord[3].items[0].name).should.match(product.name);
+                (cord[3].items[0].image).should.match(product.images[0]);
+                (cord[3].items[0].price).should.match(product.price);
                 (cord[3].items[0].qty).should.match(orderObj.items[3].qty);
                 (cord[3].items[0].shippingtype).should.match(orderObj.items[3].shipping.ref.name);
                 (cord[3].items[0].shippingprice).should.match(orderObj.items[3].shipping.price);
@@ -891,9 +887,9 @@ describe('Order omise create tests', function () {
                 (cord[3].items[0].status).should.match('cancel');
                 (cord[3].items[0].rejectreason).should.match('');
 
-                (cord[3].items[1].name).should.match(orderObj.items[4].product.name);
-                (cord[3].items[1].image).should.match(orderObj.items[4].product.images[0]);
-                (cord[3].items[1].price).should.match(orderObj.items[4].product.price);
+                (cord[3].items[1].name).should.match(product.name);
+                (cord[3].items[1].image).should.match(product.images[0]);
+                (cord[3].items[1].price).should.match(product.price);
                 (cord[3].items[1].qty).should.match(orderObj.items[4].qty);
                 (cord[3].items[1].shippingtype).should.match(orderObj.items[4].shipping.ref.name);
                 (cord[3].items[1].shippingprice).should.match(orderObj.items[4].shipping.price);

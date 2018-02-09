@@ -13,21 +13,14 @@ var OrderSchema = new Schema({
   items: {
     type: [{
       product: {
-        _id: {
-          type: String
-        },
-        name: {
-          type: String
-        },
-        price: {
-          type: Number
-        },
-        images: {
-          type: [String]
-        },
-        shopid: {
-          type: String
-        }
+        type: Schema.ObjectId,
+        ref: 'Product'
+      },
+      shopid: {
+        type: String
+      },
+      unitprice: {
+        type: Number
       },
       shipping: {
         ref: {
@@ -63,6 +56,9 @@ var OrderSchema = new Schema({
             default: Date.now
           }
         }]
+      },
+      refid: {
+        type: String
       }
     }]
   },

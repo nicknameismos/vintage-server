@@ -117,6 +117,7 @@ describe('Order CRUD tests', function () {
           order = {
             items: [{
               product: {
+                _id: product.id,
                 name: 'แก้วน้ำมหัศจรรย์ขันทอง',
                 price: 200,
                 images: ['img1', 'img2']
