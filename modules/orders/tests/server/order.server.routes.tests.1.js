@@ -2100,7 +2100,8 @@ describe('Order omise create tests', function () {
             }
             var item = {
               orderid: orderObj.id,
-              itemid: orderObj.items[0].id
+              itemid: orderObj.items[0].id,
+              refid: 'asdf'
             };
             agent.post('/api/sentitem')
               .set('authorization', 'Bearer ' + signinRes.body.loginToken)
@@ -2115,6 +2116,7 @@ describe('Order omise create tests', function () {
                 (cord._id).should.match(orderObj.id);
                 (cord.items[0]._id).should.match(orderObj.items[0].id);
                 (cord.items[0].status).should.match('sent');
+                (cord.items[0].refid).should.match('asdf');
 
 
                 done();

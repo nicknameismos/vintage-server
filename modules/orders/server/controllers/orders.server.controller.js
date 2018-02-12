@@ -669,6 +669,7 @@ exports.sent = function (req, res) {
   var order = req.order;
   if (order.items[order.items.map(function (e) { return e._id.toString(); }).indexOf(req.body.itemid.toString())].status === 'confirm') {
     order.items[order.items.map(function (e) { return e._id.toString(); }).indexOf(req.body.itemid.toString())].status = 'sent';
+    order.items[order.items.map(function (e) { return e._id.toString(); }).indexOf(req.body.itemid.toString())].refid = req.body.refid;
     order.items[order.items.map(function (e) { return e._id.toString(); }).indexOf(req.body.itemid.toString())].log.push({
       status: 'sent',
       created: new Date()
