@@ -482,7 +482,7 @@ exports.shopCookingListOrder = function (req, res, next) {
           resData[3].items.push({
             itemid: itm._id,
             orderid: order._id,
-            name: itm.product.name,
+            name: itm.product.name ? itm.product.name : '',
             image: itm.product.images ? itm.product.images[0] : '',
             price: itm.unitprice,
             qty: itm.qty,
