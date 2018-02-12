@@ -27,7 +27,7 @@ exports.invokeRolesPolicies = function () {
       resources: '/api/transferitem',
       permissions: ['post']
     }, {
-      resources: '/api/refund',
+      resources: '/api/refunditem',
       permissions: ['post']
     }]
   }, {
