@@ -24,7 +24,9 @@ var app,
   agent,
   credentials,
   credentials2,
+  credentials3,
   user,
+  admin,
   shopowner,
   shop,
   product,
@@ -59,6 +61,10 @@ describe('Order omise create tests', function () {
       password: '1234'
     };
 
+    credentials3 = {
+      username: 'admin',
+      password: '1234'
+    };
     // Create a new user
     user = new User({
       firstName: 'Full',
@@ -79,6 +85,17 @@ describe('Order omise create tests', function () {
       password: credentials2.password,
       provider: 'local',
       roles: ['shop']
+    });
+
+    admin = new User({
+      firstName: 'admin',
+      lastName: 'admin',
+      displayName: 'admin admin',
+      email: 'admin@test.com',
+      username: credentials3.username,
+      password: credentials3.password,
+      provider: 'local',
+      roles: ['admin']
     });
 
     token = '';
@@ -155,79 +172,81 @@ describe('Order omise create tests', function () {
     // Save a user to the test db and create new Order
     user.save(function () {
       shopowner.save(function () {
-        shop.save(function () {
-          product.save(function () {
-            coupon.save(function () {
-              order = {
-                items: [{
-                  product: {
-                    _id: product.id,
-                    name: 'แก้วน้ำมหัศจรรย์ขันทอง',
-                    price: 200,
-                    images: ['img1', 'img2'],
-                    shopid: shop.id
-                  },
-                  shipping: {
-                    ref: {
-                      name: 'EMS'
+        admin.save(function () {
+          shop.save(function () {
+            product.save(function () {
+              coupon.save(function () {
+                order = {
+                  items: [{
+                    product: {
+                      _id: product.id,
+                      name: 'แก้วน้ำมหัศจรรย์ขันทอง',
+                      price: 200,
+                      images: ['img1', 'img2'],
+                      shopid: shop.id
                     },
-                    price: 100
+                    shipping: {
+                      ref: {
+                        name: 'EMS'
+                      },
+                      price: 100
+                    },
+                    log: [],
+                    remark: '',
+                    qty: 1,
+                    amount: 300
+                  }],
+                  shippingAddress: {
+                    name: 'Ass',
+                    tel: '0999999999',
+                    address: {
+                      address: 'address',
+                      district: 'districe',
+                      subdistrict: 'subdistrict',
+                      province: 'province',
+                      postcode: '12150'
+                    },
+                    location: {
+                      lat: 19999,
+                      lng: 20000
+                    }
                   },
-                  log: [],
-                  remark: '',
+                  coupon: {
+                    code: 'AC-100',
+                    discount: 100
+                  },
+                  payment: {
+                    paymenttype: 'Internal Banking',
+                    creditno: '',
+                    creditname: '',
+                    expdate: '',
+                    creditcvc: ''
+                  },
+                  omiseToken: '',
                   qty: 1,
-                  amount: 300
-                }],
-                shippingAddress: {
-                  name: 'Ass',
-                  tel: '0999999999',
-                  address: {
-                    address: 'address',
-                    district: 'districe',
-                    subdistrict: 'subdistrict',
-                    province: 'province',
-                    postcode: '12150'
-                  },
-                  location: {
-                    lat: 19999,
-                    lng: 20000
-                  }
-                },
-                coupon: {
-                  code: 'AC-100',
-                  discount: 100
-                },
-                payment: {
-                  paymenttype: 'Internal Banking',
-                  creditno: '',
-                  creditname: '',
-                  expdate: '',
-                  creditcvc: ''
-                },
-                omiseToken: '',
-                qty: 1,
-                amount: 200,
-                shippingamount: 100,
-                discountamount: 100,
-                totalamount: 200,
-                omiseresponse: {},
-                user: user
-              };
+                  amount: 200,
+                  shippingamount: 100,
+                  discountamount: 100,
+                  totalamount: 200,
+                  omiseresponse: {},
+                  user: user
+                };
+              });
             });
-          });
 
-          agent.post('/api/auth/signin')
-            .send(credentials)
-            .expect(200)
-            .end(function (signinErr, signinRes) {
-              // Handle signin error
-              if (signinErr) {
-                return done(signinErr);
-              }
-              signinRes.body.loginToken.should.not.be.empty();
-              token = signinRes.body.loginToken;
-              done();
-            });
+            agent.post('/api/auth/signin')
+              .send(credentials)
+              .expect(200)
+              .end(function (signinErr, signinRes) {
+                // Handle signin error
+                if (signinErr) {
+                  return done(signinErr);
+                }
+                signinRes.body.loginToken.should.not.be.empty();
+                token = signinRes.body.loginToken;
+                done();
+              });
+          });
         });
       });
     });
@@ -1281,11 +1300,11 @@ describe('Order omise create tests', function () {
         creditcvc: ''
       },
       omiseToken: '',
-      qty: 1,
-      amount: 200,
+      qty: 5,
+      amount: 1000,
       shippingamount: 100,
       discountamount: 100,
-      totalamount: 200,
+      totalamount: 900,
       omiseresponse: {},
       user: user
     });
@@ -1392,6 +1411,9 @@ describe('Order omise create tests', function () {
                 (cord._id).should.match(orderObj.id);
                 (cord.items[0]._id).should.match(orderObj.items[0].id);
                 (cord.items[0].status).should.match('cancel');
+                // (cord.qty).should.match(4);
+                // (cord.amount).should.match(800);
+                // (cord.totalamount).should.match(700);
 
 
                 done();
@@ -2793,6 +2815,474 @@ describe('Order omise create tests', function () {
                 var cord = customergetordersRes.body;
                 // (cord).should.match(orderObj.id);
                 (cord.message).should.match('this item cancel by user!');
+
+
+                done();
+
+              });
+          });
+      });
+  });
+
+  it('admin transferred order item success', function (done) {
+    // Save a new Order
+    var orderObj = new Order({
+      items: [{
+        product: product,
+        unitprice: 200,
+        shopid: shop.id,
+        shipping: {
+          ref: {
+            name: 'EMS'
+          },
+          price: 100
+        },
+        status: 'confirm',
+        remark: '',
+        log: [{ status: 'confirm', created: new Date() }],
+        qty: 1,
+        amount: 300
+      }, {
+        product: product,
+        unitprice: 200,
+        shopid: shop.id,
+        shipping: {
+          ref: {
+            name: 'EMS'
+          },
+          price: 100
+        },
+        status: 'sent',
+        remark: '',
+        log: [{ status: 'sent', created: new Date() }],
+        qty: 1,
+        amount: 300
+      }, {
+        product: product,
+        unitprice: 200,
+        shopid: shop.id,
+        shipping: {
+          ref: {
+            name: 'EMS'
+          },
+          price: 100
+        },
+        status: 'completed',
+        log: [
+          { status: 'sent', created: new Date() },
+          { status: 'completed', created: new Date() }
+        ],
+        remark: '',
+        qty: 1,
+        amount: 300,
+        refid: '1111'
+      }, {
+        product: product,
+        unitprice: 200,
+        shopid: shop.id,
+        shipping: {
+          ref: {
+            name: 'EMS'
+          },
+          price: 100
+        },
+        log: [
+          { status: 'cancel', created: new Date() }
+        ],
+        status: 'cancel',
+        remark: '',
+        qty: 1,
+        amount: 300
+      }, {
+        product: product,
+        unitprice: 200,
+        shopid: shop.id,
+        shipping: {
+          ref: {
+            name: 'EMS'
+          },
+          price: 100
+        },
+        log: [
+          { status: 'reject', created: new Date() }
+        ],
+        status: 'reject',
+        remark: 'out of stock',
+        qty: 1,
+        amount: 300
+      }],
+      shippingAddress: {
+        name: 'Ass',
+        tel: '0999999999',
+        address: {
+          address: 'address',
+          district: 'districe',
+          subdistrict: 'subdistrict',
+          province: 'province',
+          postcode: '12150'
+        },
+        location: {
+          lat: 19999,
+          lng: 20000
+        }
+      },
+      coupon: {
+        code: 'AC-100',
+        discount: 100
+      },
+      payment: {
+        paymenttype: 'Internal Banking',
+        creditno: '',
+        creditname: '',
+        expdate: '',
+        creditcvc: ''
+      },
+      omiseToken: '',
+      qty: 1,
+      amount: 200,
+      shippingamount: 100,
+      discountamount: 100,
+      totalamount: 200,
+      omiseresponse: {},
+      user: user
+    });
+
+    var orderObj2 = new Order({
+      items: [{
+        product: product,
+        unitprice: 200,
+        shopid: shop.id,
+        shipping: {
+          ref: {
+            name: 'EMS'
+          },
+          price: 100
+        },
+        status: 'transferred',
+        remark: '',
+        log: [
+          { status: 'sent', created: new Date() },
+          { status: 'transferred', created: new Date() }
+        ],
+        qty: 1,
+        amount: 300,
+        refid: '123'
+      }],
+      shippingAddress: {
+        name: 'Ass',
+        tel: '0999999999',
+        address: {
+          address: 'address',
+          district: 'districe',
+          subdistrict: 'subdistrict',
+          province: 'province',
+          postcode: '12150'
+        },
+        location: {
+          lat: 19999,
+          lng: 20000
+        }
+      },
+      coupon: {
+        code: 'AC-100',
+        discount: 100
+      },
+      payment: {
+        paymenttype: 'Internal Banking',
+        creditno: '',
+        creditname: '',
+        expdate: '',
+        creditcvc: ''
+      },
+      omiseToken: '',
+      qty: 1,
+      amount: 200,
+      shippingamount: 100,
+      discountamount: 100,
+      totalamount: 200,
+      omiseresponse: {},
+      user: user
+    });
+
+    orderObj.save(function (err) {
+      // console.log(err);
+      orderObj2.save(function (err) {
+        // console.log(err);
+      });
+    });
+    agent.get('/api/orders')
+      // .set('authorization', 'Bearer ' + token)
+      .end(function (order2Err, order2Res) {
+        // Handle signin error
+        if (order2Err) {
+          return done(order2Err);
+        }
+        var ord2 = order2Res.body;
+        (ord2.length).should.match(2);
+        // (ord2[0].items.length).should.match(5);
+        // (ord2[0].items[0].status).should.match('confirm');
+        // (ord2[0].items[0].log.length).should.match(1);
+        // (ord2[0].items[0].log[0].status).should.match('confirm');
+        // (ord2[0].items[0].product.name).should.match('confirm');
+        agent.post('/api/auth/signin')
+          .send(credentials3)
+          .expect(200)
+          .end(function (signinErr, signinRes) {
+            // Handle signin error
+            if (signinErr) {
+              return done(signinErr);
+            }
+            var item = {
+              orderid: orderObj.id,
+              itemid: orderObj.items[2].id
+            };
+            agent.post('/api/transferitem')
+              .set('authorization', 'Bearer ' + signinRes.body.loginToken)
+              .send(item)
+              .end(function (customergetordersErr, customergetordersRes) {
+                // Handle signin error
+                if (customergetordersErr) {
+                  return done(customergetordersErr);
+                }
+                var cord = customergetordersRes.body;
+                // (cord).should.match(orderObj.id);
+                (cord._id).should.match(orderObj.id);
+                (cord.items[2]._id).should.match(orderObj.items[2].id);
+                (cord.items[2].status).should.match('transferred');
+
+
+                done();
+
+              });
+          });
+      });
+  });
+
+  it('admin transferred order item success', function (done) {
+    // Save a new Order
+    var orderObj = new Order({
+      items: [{
+        product: product,
+        unitprice: 200,
+        shopid: shop.id,
+        shipping: {
+          ref: {
+            name: 'EMS'
+          },
+          price: 100
+        },
+        status: 'confirm',
+        remark: '',
+        log: [{ status: 'confirm', created: new Date() }],
+        qty: 1,
+        amount: 300
+      }, {
+        product: product,
+        unitprice: 200,
+        shopid: shop.id,
+        shipping: {
+          ref: {
+            name: 'EMS'
+          },
+          price: 100
+        },
+        status: 'sent',
+        remark: '',
+        log: [{ status: 'sent', created: new Date() }],
+        qty: 1,
+        amount: 300
+      }, {
+        product: product,
+        unitprice: 200,
+        shopid: shop.id,
+        shipping: {
+          ref: {
+            name: 'EMS'
+          },
+          price: 100
+        },
+        status: 'completed',
+        log: [
+          { status: 'sent', created: new Date() },
+          { status: 'completed', created: new Date() }
+        ],
+        remark: '',
+        qty: 1,
+        amount: 300,
+        refid: '1111'
+      }, {
+        product: product,
+        unitprice: 200,
+        shopid: shop.id,
+        shipping: {
+          ref: {
+            name: 'EMS'
+          },
+          price: 100
+        },
+        log: [
+          { status: 'cancel', created: new Date() }
+        ],
+        status: 'cancel',
+        remark: '',
+        qty: 1,
+        amount: 300
+      }, {
+        product: product,
+        unitprice: 200,
+        shopid: shop.id,
+        shipping: {
+          ref: {
+            name: 'EMS'
+          },
+          price: 100
+        },
+        log: [
+          { status: 'reject', created: new Date() }
+        ],
+        status: 'reject',
+        remark: 'out of stock',
+        qty: 1,
+        amount: 300
+      }],
+      shippingAddress: {
+        name: 'Ass',
+        tel: '0999999999',
+        address: {
+          address: 'address',
+          district: 'districe',
+          subdistrict: 'subdistrict',
+          province: 'province',
+          postcode: '12150'
+        },
+        location: {
+          lat: 19999,
+          lng: 20000
+        }
+      },
+      coupon: {
+        code: 'AC-100',
+        discount: 100
+      },
+      payment: {
+        paymenttype: 'Internal Banking',
+        creditno: '',
+        creditname: '',
+        expdate: '',
+        creditcvc: ''
+      },
+      omiseToken: '',
+      qty: 1,
+      amount: 200,
+      shippingamount: 100,
+      discountamount: 100,
+      totalamount: 200,
+      omiseresponse: {},
+      user: user
+    });
+
+    var orderObj2 = new Order({
+      items: [{
+        product: product,
+        unitprice: 200,
+        shopid: shop.id,
+        shipping: {
+          ref: {
+            name: 'EMS'
+          },
+          price: 100
+        },
+        status: 'transferred',
+        remark: '',
+        log: [
+          { status: 'sent', created: new Date() },
+          { status: 'transferred', created: new Date() }
+        ],
+        qty: 1,
+        amount: 300,
+        refid: '123'
+      }],
+      shippingAddress: {
+        name: 'Ass',
+        tel: '0999999999',
+        address: {
+          address: 'address',
+          district: 'districe',
+          subdistrict: 'subdistrict',
+          province: 'province',
+          postcode: '12150'
+        },
+        location: {
+          lat: 19999,
+          lng: 20000
+        }
+      },
+      coupon: {
+        code: 'AC-100',
+        discount: 100
+      },
+      payment: {
+        paymenttype: 'Internal Banking',
+        creditno: '',
+        creditname: '',
+        expdate: '',
+        creditcvc: ''
+      },
+      omiseToken: '',
+      qty: 1,
+      amount: 200,
+      shippingamount: 100,
+      discountamount: 100,
+      totalamount: 200,
+      omiseresponse: {},
+      user: user
+    });
+
+    orderObj.save(function (err) {
+      // console.log(err);
+      orderObj2.save(function (err) {
+        // console.log(err);
+      });
+    });
+    agent.get('/api/orders')
+      // .set('authorization', 'Bearer ' + token)
+      .end(function (order2Err, order2Res) {
+        // Handle signin error
+        if (order2Err) {
+          return done(order2Err);
+        }
+        var ord2 = order2Res.body;
+        (ord2.length).should.match(2);
+        // (ord2[0].items.length).should.match(5);
+        // (ord2[0].items[0].status).should.match('confirm');
+        // (ord2[0].items[0].log.length).should.match(1);
+        // (ord2[0].items[0].log[0].status).should.match('confirm');
+        // (ord2[0].items[0].product.name).should.match('confirm');
+        agent.post('/api/auth/signin')
+          .send(credentials3)
+          .expect(200)
+          .end(function (signinErr, signinRes) {
+            // Handle signin error
+            if (signinErr) {
+              return done(signinErr);
+            }
+            var item = {
+              orderid: orderObj.id,
+              itemid: orderObj.items[4].id
+            };
+            agent.post('/api/transferitem')
+              .set('authorization', 'Bearer ' + signinRes.body.loginToken)
+              .send(item)
+              .end(function (customergetordersErr, customergetordersRes) {
+                // Handle signin error
+                if (customergetordersErr) {
+                  return done(customergetordersErr);
+                }
+                var cord = customergetordersRes.body;
+                // (cord).should.match(orderObj.id);
+                (cord._id).should.match(orderObj.id);
+                (cord.items[4]._id).should.match(orderObj.items[4].id);
+                (cord.items[4].status).should.match('cancelrefund');
 
 
                 done();

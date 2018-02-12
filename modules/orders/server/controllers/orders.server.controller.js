@@ -233,7 +233,7 @@ exports.customerCookingListOrder = function (req, res, next) {
         resData[0].items.push({
           itemid: itm._id,
           orderid: order._id,
-          name: itm.product.name,
+          name: itm.product.name ? itm.product.name : '',
           image: itm.product.images ? itm.product.images[0] : '',
           price: itm.unitprice,
           qty: itm.qty,
@@ -260,7 +260,7 @@ exports.customerCookingListOrder = function (req, res, next) {
         resData[1].items.push({
           itemid: itm._id,
           orderid: order._id,
-          name: itm.product.name,
+          name: itm.product.name ? itm.product.name : '',
           image: itm.product.images ? itm.product.images[0] : '',
           price: itm.unitprice,
           qty: itm.qty,
@@ -290,7 +290,7 @@ exports.customerCookingListOrder = function (req, res, next) {
         resData[2].items.push({
           itemid: itm._id,
           orderid: order._id,
-          name: itm.product.name,
+          name: itm.product.name ? itm.product.name : '',
           image: itm.product.images ? itm.product.images[0] : '',
           price: itm.unitprice,
           qty: itm.qty,
@@ -326,7 +326,7 @@ exports.customerCookingListOrder = function (req, res, next) {
         resData[3].items.push({
           itemid: itm._id,
           orderid: order._id,
-          name: itm.product.name,
+          name: itm.product.name ? itm.product.name : '',
           image: itm.product.images ? itm.product.images[0] : '',
           price: itm.unitprice,
           qty: itm.qty,
@@ -699,6 +699,22 @@ exports.reject = function (req, res) {
       });
     }
   }
+  order.save(function (err) {
+    if (err) {
+      return res.status(400).send({
+        message: errorHandler.getErrorMessage(err)
+      });
+    } else {
+      res.jsonp(order);
+    }
+  });
+
+};
+
+exports.transfer = function (req, res) {
+  var order = req.order;
+  order.items[order.items.map(function (e) { return e._id.toString(); }).indexOf(req.body.itemid.toString())].status = 'transferred';
+
   order.save(function (err) {
     if (err) {
       return res.status(400).send({
