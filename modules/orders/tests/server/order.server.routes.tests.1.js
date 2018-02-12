@@ -2567,7 +2567,8 @@ describe('Order omise create tests', function () {
             }
             var item = {
               orderid: orderObj.id,
-              itemid: orderObj.items[0].id
+              itemid: orderObj.items[0].id,
+              remark: 'aaa'
             };
             agent.post('/api/rejectitem')
               .set('authorization', 'Bearer ' + signinRes.body.loginToken)
@@ -2582,6 +2583,7 @@ describe('Order omise create tests', function () {
                 (cord._id).should.match(orderObj.id);
                 (cord.items[0]._id).should.match(orderObj.items[0].id);
                 (cord.items[0].status).should.match('reject');
+                (cord.items[0].remark).should.match('aaa');
 
 
                 done();
@@ -3270,7 +3272,7 @@ describe('Order omise create tests', function () {
               orderid: orderObj.id,
               itemid: orderObj.items[4].id
             };
-            agent.post('/api/transferitem')
+            agent.post('/api/refunditem')
               .set('authorization', 'Bearer ' + signinRes.body.loginToken)
               .send(item)
               .end(function (customergetordersErr, customergetordersRes) {

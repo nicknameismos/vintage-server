@@ -618,6 +618,10 @@ exports.cancel = function (req, res) {
   var order = req.order;
   if (order.items[order.items.map(function (e) { return e._id.toString(); }).indexOf(req.body.itemid.toString())].status === 'confirm') {
     order.items[order.items.map(function (e) { return e._id.toString(); }).indexOf(req.body.itemid.toString())].status = 'cancel';
+    order.items[order.items.map(function (e) { return e._id.toString(); }).indexOf(req.body.itemid.toString())].log.push({
+      status: 'cancel',
+      created: new Date()
+    });
   } else {
     if (order.items[order.items.map(function (e) { return e._id.toString(); }).indexOf(req.body.itemid.toString())].status === 'reject') {
       return res.status(400).send({
@@ -644,6 +648,10 @@ exports.cancel = function (req, res) {
 exports.complete = function (req, res) {
   var order = req.order;
   order.items[order.items.map(function (e) { return e._id.toString(); }).indexOf(req.body.itemid.toString())].status = 'completed';
+  order.items[order.items.map(function (e) { return e._id.toString(); }).indexOf(req.body.itemid.toString())].log.push({
+    status: 'completed',
+    created: new Date()
+  });
 
   order.save(function (err) {
     if (err) {
@@ -661,6 +669,10 @@ exports.sent = function (req, res) {
   var order = req.order;
   if (order.items[order.items.map(function (e) { return e._id.toString(); }).indexOf(req.body.itemid.toString())].status === 'confirm') {
     order.items[order.items.map(function (e) { return e._id.toString(); }).indexOf(req.body.itemid.toString())].status = 'sent';
+    order.items[order.items.map(function (e) { return e._id.toString(); }).indexOf(req.body.itemid.toString())].log.push({
+      status: 'sent',
+      created: new Date()
+    });
   } else {
     if (order.items[order.items.map(function (e) { return e._id.toString(); }).indexOf(req.body.itemid.toString())].status === 'cancel') {
       return res.status(400).send({
@@ -688,6 +700,11 @@ exports.reject = function (req, res) {
   var order = req.order;
   if (order.items[order.items.map(function (e) { return e._id.toString(); }).indexOf(req.body.itemid.toString())].status === 'confirm') {
     order.items[order.items.map(function (e) { return e._id.toString(); }).indexOf(req.body.itemid.toString())].status = 'reject';
+    order.items[order.items.map(function (e) { return e._id.toString(); }).indexOf(req.body.itemid.toString())].remark = req.body.remark;
+    order.items[order.items.map(function (e) { return e._id.toString(); }).indexOf(req.body.itemid.toString())].log.push({
+      status: 'reject',
+      created: new Date()
+    });
   } else {
     if (order.items[order.items.map(function (e) { return e._id.toString(); }).indexOf(req.body.itemid.toString())].status === 'cancel') {
       return res.status(400).send({
@@ -714,6 +731,10 @@ exports.reject = function (req, res) {
 exports.transfer = function (req, res) {
   var order = req.order;
   order.items[order.items.map(function (e) { return e._id.toString(); }).indexOf(req.body.itemid.toString())].status = 'transferred';
+  order.items[order.items.map(function (e) { return e._id.toString(); }).indexOf(req.body.itemid.toString())].log.push({
+    status: 'transferred',
+    created: new Date()
+  });
 
   order.save(function (err) {
     if (err) {

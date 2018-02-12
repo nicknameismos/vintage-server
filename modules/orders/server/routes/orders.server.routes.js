@@ -45,6 +45,9 @@ module.exports = function (app) {
   app.route('/api/transferitem').all(core.jwtCheck, ordersPolicy.isAllowed)
     .post(orders.getOrderId, orders.transfer);
 
+  app.route('/api/refunditem').all(core.jwtCheck, ordersPolicy.isAllowed)
+    .post(orders.getOrderId, orders.refund);
+
   // Finish by binding the Order middleware
   app.param('orderId', orders.orderByID);
   app.param('orderShopId', orders.orderShopId);
