@@ -29,6 +29,9 @@ module.exports = function (app) {
 
   app.route('/api/getorderdetail/:orderId/:itemId').all(core.jwtCheck, ordersPolicy.isAllowed)
     .get(orders.findShop, orders.cookingOrderDetail, orders.orderDetail);
+
+  app.route('/api/cancelitem').all(core.jwtCheck, ordersPolicy.isAllowed)
+    .post(orders.getOrderId, orders.cancel);
   // Finish by binding the Order middleware
   app.param('orderId', orders.orderByID);
   app.param('orderShopId', orders.orderShopId);

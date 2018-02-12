@@ -59,6 +59,9 @@ exports.invokeRolesPolicies = function () {
     }, {
       resources: '/api/getorderdetail/:orderId/:itemId',
       permissions: ['get']
+    }, {
+      resources: '/api/cancelitem',
+      permissions: ['post']
     }]
   }, {
     roles: ['guest'],

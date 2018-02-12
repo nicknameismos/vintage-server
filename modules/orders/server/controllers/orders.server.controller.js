@@ -600,3 +600,37 @@ exports.cookingOrderDetail = function (req, res, next) {
 exports.orderDetail = function (req, res) {
   res.jsonp(req.resData);
 };
+
+exports.getOrderId = function (req, res, next) {
+  Order.findById(req.body.orderid).exec(function (err, order) {
+    if (err) {
+      return res.status(400).send({
+        message: errorHandler.getErrorMessage(err)
+      });
+    } else {
+      req.order = order;
+      next();
+    }
+  });
+};
+
+exports.cancel = function (req, res) {
+  var order = req.order;
+  if (order.items[order.items.map(function (e) { return e._id.toString(); }).indexOf(req.body.itemid.toString())].status === 'confirm') {
+    order.items[order.items.map(function (e) { return e._id.toString(); }).indexOf(req.body.itemid.toString())].status = 'cancel';
+  } else {
+    return res.status(400).send({
+      message: 'can not cancel item!'
+    });
+  }
+  order.save(function (err) {
+    if (err) {
+      return res.status(400).send({
+        message: errorHandler.getErrorMessage(err)
+      });
+    } else {
+      res.jsonp(order);
+    }
+  });
+
+};
