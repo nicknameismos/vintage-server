@@ -62,6 +62,9 @@ exports.invokeRolesPolicies = function () {
     }, {
       resources: '/api/cancelitem',
       permissions: ['post']
+    }, {
+      resources: '/api/completeitem',
+      permissions: ['post']
     }]
   }, {
     roles: ['guest'],

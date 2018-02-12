@@ -634,3 +634,19 @@ exports.cancel = function (req, res) {
   });
 
 };
+
+exports.complete = function (req, res) {
+  var order = req.order;
+  order.items[order.items.map(function (e) { return e._id.toString(); }).indexOf(req.body.itemid.toString())].status = 'completed';
+
+  order.save(function (err) {
+    if (err) {
+      return res.status(400).send({
+        message: errorHandler.getErrorMessage(err)
+      });
+    } else {
+      res.jsonp(order);
+    }
+  });
+
+};
