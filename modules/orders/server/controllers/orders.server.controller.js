@@ -619,9 +619,15 @@ exports.cancel = function (req, res) {
   if (order.items[order.items.map(function (e) { return e._id.toString(); }).indexOf(req.body.itemid.toString())].status === 'confirm') {
     order.items[order.items.map(function (e) { return e._id.toString(); }).indexOf(req.body.itemid.toString())].status = 'cancel';
   } else {
-    return res.status(400).send({
-      message: 'can not cancel item!'
-    });
+    if (order.items[order.items.map(function (e) { return e._id.toString(); }).indexOf(req.body.itemid.toString())].status === 'reject') {
+      return res.status(400).send({
+        message: 'this item reject by shop!'
+      });
+    } else {
+      return res.status(400).send({
+        message: 'can not cancel item!'
+      });
+    }
   }
   order.save(function (err) {
     if (err) {
@@ -639,6 +645,60 @@ exports.complete = function (req, res) {
   var order = req.order;
   order.items[order.items.map(function (e) { return e._id.toString(); }).indexOf(req.body.itemid.toString())].status = 'completed';
 
+  order.save(function (err) {
+    if (err) {
+      return res.status(400).send({
+        message: errorHandler.getErrorMessage(err)
+      });
+    } else {
+      res.jsonp(order);
+    }
+  });
+
+};
+
+exports.sent = function (req, res) {
+  var order = req.order;
+  if (order.items[order.items.map(function (e) { return e._id.toString(); }).indexOf(req.body.itemid.toString())].status === 'confirm') {
+    order.items[order.items.map(function (e) { return e._id.toString(); }).indexOf(req.body.itemid.toString())].status = 'sent';
+  } else {
+    if (order.items[order.items.map(function (e) { return e._id.toString(); }).indexOf(req.body.itemid.toString())].status === 'cancel') {
+      return res.status(400).send({
+        message: 'this item cancel by user!'
+      });
+    } else {
+      return res.status(400).send({
+        message: 'can not sent item!'
+      });
+    }
+  }
+  order.save(function (err) {
+    if (err) {
+      return res.status(400).send({
+        message: errorHandler.getErrorMessage(err)
+      });
+    } else {
+      res.jsonp(order);
+    }
+  });
+
+};
+
+exports.reject = function (req, res) {
+  var order = req.order;
+  if (order.items[order.items.map(function (e) { return e._id.toString(); }).indexOf(req.body.itemid.toString())].status === 'confirm') {
+    order.items[order.items.map(function (e) { return e._id.toString(); }).indexOf(req.body.itemid.toString())].status = 'reject';
+  } else {
+    if (order.items[order.items.map(function (e) { return e._id.toString(); }).indexOf(req.body.itemid.toString())].status === 'cancel') {
+      return res.status(400).send({
+        message: 'this item cancel by user!'
+      });
+    } else {
+      return res.status(400).send({
+        message: 'can not reject item!'
+      });
+    }
+  }
   order.save(function (err) {
     if (err) {
       return res.status(400).send({

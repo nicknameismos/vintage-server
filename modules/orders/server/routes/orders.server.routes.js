@@ -35,6 +35,13 @@ module.exports = function (app) {
 
   app.route('/api/completeitem').all(core.jwtCheck, ordersPolicy.isAllowed)
     .post(orders.getOrderId, orders.complete);
+
+  app.route('/api/sentitem').all(core.jwtCheck, ordersPolicy.isAllowed)
+    .post(orders.getOrderId, orders.sent);
+
+  app.route('/api/rejectitem').all(core.jwtCheck, ordersPolicy.isAllowed)
+    .post(orders.getOrderId, orders.reject);
+
   // Finish by binding the Order middleware
   app.param('orderId', orders.orderByID);
   app.param('orderShopId', orders.orderShopId);
