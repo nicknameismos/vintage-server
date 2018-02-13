@@ -389,6 +389,7 @@ exports.usermanage = function (req, res) {
   user.dateOfBirth = _user.dateOfBirth ? _user.dateOfBirth : user.dateOfBirth;
   user.citizenid = _user.citizenid ? _user.citizenid : user.citizenid;
   user.bankaccount = _user.bankaccount ? _user.bankaccount : user.bankaccount;
+  user.notificationids = _user.notificationids ? _user.notificationids : user.notificationids;
 
   user.save(function (err) {
     if (err) {
