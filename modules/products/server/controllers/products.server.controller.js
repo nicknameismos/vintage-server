@@ -301,7 +301,10 @@ exports.productDetail = function (req, res) {
     price: productDB.price,
     detail: productDB.detail,
     shippings: productDB.shippings,
-    shopid: productDB.shop ? productDB.shop._id : ''
+    shopid: productDB.shop ? productDB.shop._id : '',
+    ispromotionprice: productDB.ispromotionprice || false,
+    isrecommend: productDB.isrecommend || false,
+    ispopular: false
   };
   product.isCurrentUserOwner = req.user && product.user && product.user._id.toString() === req.user._id.toString();
   res.jsonp(product);
