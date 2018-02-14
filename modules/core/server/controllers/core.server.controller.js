@@ -121,63 +121,67 @@ exports.updateNotification = function (req, res) {
       path: 'items.product.shop'
     }, function (err, orderRes3) {
       User.populate(orderRes3, {
-        path: 'items.product.shop.user'
+        path: 'items.product.shop.shopowner'
       }, function (err, orderRes4) {
-        var item = orderRes4.items[orderRes4.items.map(function (e) { return e._id.toString(); }).indexOf(req.body.itemid.toString())];
-        var userIds = [];
-        var title = '';
-        var detail = '';
-        var isShop = false;
-        if (item.status === 'cancel') {
-          title = 'สินค้าถูกยกเลิก';
-          detail = 'สินค้า ' + item.product.name + ' หมายเลขการสั่งซื้อ ' + orderRes4._id;
-          isShop = true;
-        } else if (item.status === 'complete') {
-          title = 'รายการสินค้าสำเร็จ';
-          detail = 'สินค้า ' + item.product.name + ' หมายเลขการสั่งซื้อ ' + orderRes4._id + ' สำเร็จแล้ว';
-          isShop = true;
-        } else if (item.status === 'sent') {
-          title = 'สินค้าดำเนินการจัดส่ง';
-          detail = 'สินค้า ' + item.product.name + ' หมายเลขการสั่งซื้อ ' + orderRes4._id + ' กำลังดำเนินการจัดส่ง';
-        } else if (item.status === 'reject') {
-          title = 'สินค้าดำเนินการจัดส่ง';
-          detail = 'สินค้า ' + item.product.name + ' หมายเลขการสั่งซื้อ ' + orderRes4._id + ' กำลังดำเนินการจัดส่ง';
-        } else if (item.status === 'transferred') {
-          title = 'ระบบชำระเงิน';
-          detail = 'สินค้า ' + item.product.name + ' หมายเลขการสั่งซื้อ ' + orderRes4._id + ' ชำระเงินจากระบบ';
-          isShop = true;
-        } else if (item.status === 'rejectrefund' || item.status === 'cancelrefund') {
-          title = 'ระบบชำระเงินคืน';
-          detail = 'สินค้า ' + item.product.name + ' หมายเลขการสั่งซื้อ ' + orderRes4._id + ' ชำระเงินคืนจากระบบ';
-        }
-        if (isShop) {
-          notiLog = {
-            title: title,
-            detail: detail,
-            userowner: item.product.shop.user,
-            user: req.user
-          };
-          userIds = item.product && item.product.shop && item.product.shop.shopowner && item.product.shop.shopowner.notificationids ? item.product.shop.shopowner.notificationids : [];
-          shopNoti(title, detail, userIds);
-        } else {
-          notiLog = {
-            title: title,
-            detail: detail,
-            userowner: orderRes4.user,
-            user: req.user
-          };
-          userIds = req.user && req.user.notificationids ? req.user.notificationids : [];
-          userNoti(title, detail, userIds);
-        }
-        // var userIds = req.user && req.user.notificationids ? req.user.notificationids : [];
-        var pushnoti = new pushNotification(notiLog);
-        pushnoti.save(function (err) {
-          if (err) {
-            return res.status(400).send({
-              message: errorHandler.getErrorMessage(err)
-            });
+        User.populate(orderRes4, {
+          path: 'user'
+        }, function (err, orderRes4) {
+          var item = orderRes4.items[orderRes4.items.map(function (e) { return e._id.toString(); }).indexOf(req.body.itemid.toString())];
+          var userIds = [];
+          var title = '';
+          var detail = '';
+          var isShop = false;
+          if (item.status === 'cancel') {
+            title = 'สินค้าถูกยกเลิก';
+            detail = 'สินค้า ' + item.product.name + ' หมายเลขการสั่งซื้อ ' + orderRes4._id;
+            isShop = true;
+          } else if (item.status === 'complete') {
+            title = 'รายการสินค้าสำเร็จ';
+            detail = 'สินค้า ' + item.product.name + ' หมายเลขการสั่งซื้อ ' + orderRes4._id + ' สำเร็จแล้ว';
+            isShop = true;
+          } else if (item.status === 'sent') {
+            title = 'สินค้าดำเนินการจัดส่ง';
+            detail = 'สินค้า ' + item.product.name + ' หมายเลขการสั่งซื้อ ' + orderRes4._id + ' กำลังดำเนินการจัดส่ง';
+          } else if (item.status === 'reject') {
+            title = 'สินค้าดำเนินการจัดส่ง';
+            detail = 'สินค้า ' + item.product.name + ' หมายเลขการสั่งซื้อ ' + orderRes4._id + ' กำลังดำเนินการจัดส่ง';
+          } else if (item.status === 'transferred') {
+            title = 'ระบบชำระเงิน';
+            detail = 'สินค้า ' + item.product.name + ' หมายเลขการสั่งซื้อ ' + orderRes4._id + ' ชำระเงินจากระบบ';
+            isShop = true;
+          } else if (item.status === 'rejectrefund' || item.status === 'cancelrefund') {
+            title = 'ระบบชำระเงินคืน';
+            detail = 'สินค้า ' + item.product.name + ' หมายเลขการสั่งซื้อ ' + orderRes4._id + ' ชำระเงินคืนจากระบบ';
           }
-          res.jsonp(orderRes4);
+          if (isShop) {
+            notiLog = {
+              title: title,
+              detail: detail,
+              userowner: item.product.shop.shopowner,
+              user: req.user
+            };
+            userIds = item.product && item.product.shop && item.product.shop.shopowner && item.product.shop.shopowner.notificationids ? item.product.shop.shopowner.notificationids : [];
+            shopNoti(title, detail, userIds);
+          } else {
+            notiLog = {
+              title: title,
+              detail: detail,
+              userowner: orderRes4.user,
+              user: req.user
+            };
+            userIds = orderRes4.user && orderRes4.user.notificationids ? orderRes4.user.notificationids : [];
+            userNoti(title, detail, userIds);
+          }
+          // var userIds = req.user && req.user.notificationids ? req.user.notificationids : [];
+          var pushnoti = new pushNotification(notiLog);
+          pushnoti.save(function (err) {
+            if (err) {
+              return res.status(400).send({
+                message: errorHandler.getErrorMessage(err)
+              });
+            }
+            res.jsonp(orderRes4);
+          });
         });
       });
     });
