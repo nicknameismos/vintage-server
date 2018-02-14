@@ -6,6 +6,7 @@ var should = require('should'),
   mongoose = require('mongoose'),
   User = mongoose.model('User'),
   Order = mongoose.model('Order'),
+  pushNotification = mongoose.model('Notification'),
   Shop = mongoose.model('Shop'),
   Product = mongoose.model('Product'),
   Categoryshop = mongoose.model('Categoryshop'),
@@ -405,7 +406,9 @@ describe('Order CRUD tests', function () {
     User.remove().exec(function () {
       Product.remove().exec(function () {
         Shop.remove().exec(function () {
-          Order.remove().exec(done);
+          pushNotification.remove().exec(function () {
+            Order.remove().exec(done);
+          });
         });
       });
     });

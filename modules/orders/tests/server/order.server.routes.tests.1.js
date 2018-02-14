@@ -10,6 +10,7 @@ var should = require('should'),
   Product = mongoose.model('Product'),
   Categoryshop = mongoose.model('Categoryshop'),
   Coupon = mongoose.model('Coupon'),
+  pushNotification = mongoose.model('Notification'),
   Categoryproduct = mongoose.model('Categoryproduct'),
   omise = require('omise')({
     'publicKey': 'pkey_test_5asc1ucstk1imcxnhy7',
@@ -367,7 +368,20 @@ describe('Order omise create tests', function () {
                   (ord2[0].items[0].log[0].status).should.match('confirm');
                   (ord2[0].items[0].product).should.match(product.id);
 
-                  done();
+                  // Set assertions
+                  agent.get('/api/notifications')
+                    // .set('authorization', 'Bearer ' + token)
+                    .end(function (notiErr, notiRes) {
+                      // Handle signin error
+                      if (notiErr) {
+                        return done(notiErr);
+                      }
+                      var noti = notiRes.body;
+                      (noti.length).should.match(2);
+
+                      done();
+
+                    });
 
                 });
             });
@@ -1414,9 +1428,20 @@ describe('Order omise create tests', function () {
                 // (cord.qty).should.match(4);
                 // (cord.amount).should.match(800);
                 // (cord.totalamount).should.match(700);
+                agent.get('/api/notifications')
+                  // .set('authorization', 'Bearer ' + token)
+                  .end(function (notiErr, notiRes) {
+                    // Handle signin error
+                    if (notiErr) {
+                      return done(notiErr);
+                    }
+                    var noti = notiRes.body;
+                    (noti.length).should.match(1);
+                    // (noti).should.match(1);
 
+                    done();
 
-                done();
+                  });
 
               });
           });
@@ -3535,7 +3560,9 @@ describe('Order omise create tests', function () {
       Product.remove().exec(function () {
         Shop.remove().exec(function () {
           Coupon.remove().exec(function () {
-            Order.remove().exec(done);
+            pushNotification.remove().exec(function () {
+              Order.remove().exec(done);
+            });
           });
         });
       });

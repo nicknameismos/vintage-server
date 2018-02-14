@@ -87,7 +87,7 @@ exports.omiseCard = function (req, res, next) {
 
 };
 
-exports.create = function (req, res) {
+exports.create = function (req, res, next) {
   var order = new Order(req.body);
   var _order = req.body;
   order.omiseresponse = order.payment.paymenttype === 'Credit Card' ? req.omiseresponse : order.omiseresponse;
@@ -106,7 +106,9 @@ exports.create = function (req, res) {
         message: errorHandler.getErrorMessage(err)
       });
     } else {
-      res.jsonp(order);
+      req.notidata = order;
+      next();
+      // res.jsonp(order);
     }
   });
 };
@@ -614,7 +616,7 @@ exports.getOrderId = function (req, res, next) {
   });
 };
 
-exports.cancel = function (req, res) {
+exports.cancel = function (req, res, next) {
   var order = req.order;
   if (order.items[order.items.map(function (e) { return e._id.toString(); }).indexOf(req.body.itemid.toString())].status === 'confirm') {
     order.items[order.items.map(function (e) { return e._id.toString(); }).indexOf(req.body.itemid.toString())].status = 'cancel';
@@ -639,13 +641,15 @@ exports.cancel = function (req, res) {
         message: errorHandler.getErrorMessage(err)
       });
     } else {
-      res.jsonp(order);
+      req.notidata = order;
+      next();
+      // res.jsonp(order);
     }
   });
 
 };
 
-exports.complete = function (req, res) {
+exports.complete = function (req, res, next) {
   var order = req.order;
   order.items[order.items.map(function (e) { return e._id.toString(); }).indexOf(req.body.itemid.toString())].status = 'completed';
   order.items[order.items.map(function (e) { return e._id.toString(); }).indexOf(req.body.itemid.toString())].log.push({
@@ -659,13 +663,14 @@ exports.complete = function (req, res) {
         message: errorHandler.getErrorMessage(err)
       });
     } else {
-      res.jsonp(order);
+      req.notidata = order;
+      next();
     }
   });
 
 };
 
-exports.sent = function (req, res) {
+exports.sent = function (req, res, next) {
   var order = req.order;
   if (order.items[order.items.map(function (e) { return e._id.toString(); }).indexOf(req.body.itemid.toString())].status === 'confirm') {
     order.items[order.items.map(function (e) { return e._id.toString(); }).indexOf(req.body.itemid.toString())].status = 'sent';
@@ -691,13 +696,14 @@ exports.sent = function (req, res) {
         message: errorHandler.getErrorMessage(err)
       });
     } else {
-      res.jsonp(order);
+      req.notidata = order;
+      next();
     }
   });
 
 };
 
-exports.reject = function (req, res) {
+exports.reject = function (req, res, next) {
   var order = req.order;
   if (order.items[order.items.map(function (e) { return e._id.toString(); }).indexOf(req.body.itemid.toString())].status === 'confirm') {
     order.items[order.items.map(function (e) { return e._id.toString(); }).indexOf(req.body.itemid.toString())].status = 'reject';
@@ -723,13 +729,14 @@ exports.reject = function (req, res) {
         message: errorHandler.getErrorMessage(err)
       });
     } else {
-      res.jsonp(order);
+      req.notidata = order;
+      next();
     }
   });
 
 };
 
-exports.transfer = function (req, res) {
+exports.transfer = function (req, res, next) {
   var order = req.order;
   order.items[order.items.map(function (e) { return e._id.toString(); }).indexOf(req.body.itemid.toString())].status = 'transferred';
   order.items[order.items.map(function (e) { return e._id.toString(); }).indexOf(req.body.itemid.toString())].log.push({
@@ -743,13 +750,14 @@ exports.transfer = function (req, res) {
         message: errorHandler.getErrorMessage(err)
       });
     } else {
-      res.jsonp(order);
+      req.notidata = order;
+      next();
     }
   });
 
 };
 
-exports.refund = function (req, res) {
+exports.refund = function (req, res, next) {
   var order = req.order;
   order.items[order.items.map(function (e) { return e._id.toString(); }).indexOf(req.body.itemid.toString())].status = order.items[order.items.map(function (e) { return e._id.toString(); }).indexOf(req.body.itemid.toString())].status + 'refund';
   order.items[order.items.map(function (e) { return e._id.toString(); }).indexOf(req.body.itemid.toString())].log.push({
@@ -763,7 +771,8 @@ exports.refund = function (req, res) {
         message: errorHandler.getErrorMessage(err)
       });
     } else {
-      res.jsonp(order);
+      req.notidata = order;
+      next();
     }
   });
 

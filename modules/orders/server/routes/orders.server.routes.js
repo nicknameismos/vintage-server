@@ -11,7 +11,7 @@ module.exports = function (app) {
   // Orders Routes
   app.route('/api/orders').all(core.jwtCheck, ordersPolicy.isAllowed)
     .get(orders.list)
-    .post(orders.updateCoupon, orders.omiseCard, orders.create);
+    .post(orders.updateCoupon, orders.omiseCard, orders.create, core.createNotification);
 
   app.route('/api/orders/:orderId').all(core.jwtCheck, ordersPolicy.isAllowed)
     .get(orders.read)
@@ -31,22 +31,22 @@ module.exports = function (app) {
     .get(orders.findShop, orders.cookingOrderDetail, orders.orderDetail);
 
   app.route('/api/cancelitem').all(core.jwtCheck, ordersPolicy.isAllowed)
-    .post(orders.getOrderId, orders.cancel);
+    .post(orders.getOrderId, orders.cancel, core.updateNotification);
 
   app.route('/api/completeitem').all(core.jwtCheck, ordersPolicy.isAllowed)
-    .post(orders.getOrderId, orders.complete);
+    .post(orders.getOrderId, orders.complete, core.updateNotification);
 
   app.route('/api/sentitem').all(core.jwtCheck, ordersPolicy.isAllowed)
-    .post(orders.getOrderId, orders.sent);
+    .post(orders.getOrderId, orders.sent, core.updateNotification);
 
   app.route('/api/rejectitem').all(core.jwtCheck, ordersPolicy.isAllowed)
-    .post(orders.getOrderId, orders.reject);
+    .post(orders.getOrderId, orders.reject, core.updateNotification);
 
   app.route('/api/transferitem').all(core.jwtCheck, ordersPolicy.isAllowed)
-    .post(orders.getOrderId, orders.transfer);
+    .post(orders.getOrderId, orders.transfer, core.updateNotification);
 
   app.route('/api/refunditem').all(core.jwtCheck, ordersPolicy.isAllowed)
-    .post(orders.getOrderId, orders.refund);
+    .post(orders.getOrderId, orders.refund, core.updateNotification);
 
   // Finish by binding the Order middleware
   app.param('orderId', orders.orderByID);
