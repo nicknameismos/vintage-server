@@ -12,11 +12,11 @@ var path = require('path'),
 /**
  * Create a pushNotification
  */
-exports.create = function(req, res) {
+exports.create = function (req, res) {
   var notification = new pushNotification(req.body);
   notification.user = req.user;
 
-  notification.save(function(err) {
+  notification.save(function (err) {
     if (err) {
       return res.status(400).send({
         message: errorHandler.getErrorMessage(err)
@@ -30,7 +30,7 @@ exports.create = function(req, res) {
 /**
  * Show the current pushNotification
  */
-exports.read = function(req, res) {
+exports.read = function (req, res) {
   // convert mongoose document to JSON
   var notification = req.notification ? req.notification.toJSON() : {};
 
@@ -44,12 +44,12 @@ exports.read = function(req, res) {
 /**
  * Update a pushNotification
  */
-exports.update = function(req, res) {
+exports.update = function (req, res) {
   var notification = req.notification;
 
   notification = _.extend(notification, req.body);
 
-  notification.save(function(err) {
+  notification.save(function (err) {
     if (err) {
       return res.status(400).send({
         message: errorHandler.getErrorMessage(err)
@@ -63,10 +63,10 @@ exports.update = function(req, res) {
 /**
  * Delete an pushNotification
  */
-exports.delete = function(req, res) {
+exports.delete = function (req, res) {
   var notification = req.notification;
 
-  notification.remove(function(err) {
+  notification.remove(function (err) {
     if (err) {
       return res.status(400).send({
         message: errorHandler.getErrorMessage(err)
@@ -80,8 +80,8 @@ exports.delete = function(req, res) {
 /**
  * List of pushNotifications
  */
-exports.list = function(req, res) {
-  pushNotification.find().sort('-created').populate('user', 'displayName').exec(function(err, notifications) {
+exports.list = function (req, res) {
+  pushNotification.find().sort('-created').populate('user', 'displayName').exec(function (err, notifications) {
     if (err) {
       return res.status(400).send({
         message: errorHandler.getErrorMessage(err)
@@ -95,7 +95,7 @@ exports.list = function(req, res) {
 /**
  * pushNotification middleware
  */
-exports.notificationByID = function(req, res, next, id) {
+exports.notificationByID = function (req, res, next, id) {
 
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(400).send({
@@ -113,5 +113,17 @@ exports.notificationByID = function(req, res, next, id) {
     }
     req.notification = notification;
     next();
+  });
+};
+
+exports.listOwner = function (req, res) {
+  pushNotification.find({ userowner: req.user._id }).sort('-created').populate('user', 'displayName').exec(function (err, notifications) {
+    if (err) {
+      return res.status(400).send({
+        message: errorHandler.getErrorMessage(err)
+      });
+    } else {
+      res.jsonp(notifications);
+    }
   });
 };

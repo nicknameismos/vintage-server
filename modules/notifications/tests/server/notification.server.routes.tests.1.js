@@ -14,8 +14,10 @@ var should = require('should'),
 var app,
   agent,
   credentials,
+  credentials2,
   token,
   user,
+  shop,
   notification;
 
 /**
@@ -37,6 +39,10 @@ describe('pushNotification CRUD tests with token', function () {
       username: 'username',
       password: 'M3@n.jsI$Aw3$0m3'
     };
+    credentials2 = {
+      username: 'shop',
+      password: 'shop'
+    };
 
     // Create a new user
     user = new User({
@@ -49,25 +55,39 @@ describe('pushNotification CRUD tests with token', function () {
       provider: 'local'
     });
 
+    shop = new User({
+      firstName: 'shop',
+      lastName: 'Name',
+      displayName: 'shop Name',
+      email: 'shop@test.com',
+      username: credentials2.username,
+      password: credentials2.password,
+      provider: 'local',
+      roles: ['shop']
+    });
+
     // Save a user to the test db and create new pushNotification
     user.save(function () {
-      notification = {
-        title: 'pushNotification Name',
-        detail: 'detail',
-        userowner: user
-      };
-      agent.post('/api/auth/signin')
-        .send(credentials)
-        .expect(200)
-        .end(function (signinErr, signinRes) {
-          // Handle signin error
-          if (signinErr) {
-            return done(signinErr);
-          }
-          signinRes.body.loginToken.should.not.be.empty();
-          token = signinRes.body.loginToken;
-          done();
-        });
+      shop.save(function () {
+
+        notification = {
+          title: 'pushNotification Name',
+          detail: 'detail',
+          userowner: user
+        };
+        agent.post('/api/auth/signin')
+          .send(credentials)
+          .expect(200)
+          .end(function (signinErr, signinRes) {
+            // Handle signin error
+            if (signinErr) {
+              return done(signinErr);
+            }
+            signinRes.body.loginToken.should.not.be.empty();
+            token = signinRes.body.loginToken;
+            done();
+          });
+      });
     });
   });
 
@@ -208,6 +228,69 @@ describe('pushNotification CRUD tests with token', function () {
       .end(function (req, res) {
         // Set assertion
         res.body.should.be.instanceof(Object).and.have.property('message', 'No pushNotification with that identifier has been found');
+
+        // Call the assertion callback
+        done();
+      });
+  });
+
+  it('userownernotifications success', function (done) {
+
+    var notiObj = new pushNotification({
+      title: 'pushNotification Name',
+      detail: 'detail',
+      userowner: user,
+      user: user
+    });
+    notiObj.save();
+    // Get a list of pushNotifications
+    agent.get('/api/userownernotifications')
+      .set('authorization', 'Bearer ' + token)
+      .end(function (notificationsGetErr, notificationsGetRes) {
+        // Handle pushNotifications save error
+        if (notificationsGetErr) {
+          return done(notificationsGetErr);
+        }
+
+        // Get pushNotifications list
+        var notifications = notificationsGetRes.body;
+
+        // Set assertions
+        (notifications.length).should.equal(1);
+        (notifications[0].user._id).should.equal(user.id);
+        (notifications[0].title).should.match('pushNotification Name');
+        (notifications[0].detail).should.match('detail');
+        (notifications[0].userowner).should.match(user.id);
+        (notifications[0].isread).should.match(false);
+
+        // Call the assertion callback
+        done();
+      });
+  });
+
+  it('userownernotifications unsuccess', function (done) {
+
+    var notiObj = new pushNotification({
+      title: 'pushNotification Name',
+      detail: 'detail',
+      userowner: shop,
+      user: user
+    });
+    notiObj.save();
+    // Get a list of pushNotifications
+    agent.get('/api/userownernotifications')
+      .set('authorization', 'Bearer ' + token)
+      .end(function (notificationsGetErr, notificationsGetRes) {
+        // Handle pushNotifications save error
+        if (notificationsGetErr) {
+          return done(notificationsGetErr);
+        }
+
+        // Get pushNotifications list
+        var notifications = notificationsGetRes.body;
+
+        // Set assertions
+        (notifications.length).should.equal(0);
 
         // Call the assertion callback
         done();

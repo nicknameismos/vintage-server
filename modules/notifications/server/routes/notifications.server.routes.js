@@ -18,6 +18,8 @@ module.exports = function (app) {
     .put(notifications.update)
     .delete(notifications.delete);
 
+  app.route('/api/userownernotifications').all(core.jwtCheck, notificationsPolicy.isAllowed)
+    .get(notifications.listOwner);
   // Finish by binding the Notification middleware
   app.param('notificationId', notifications.notificationByID);
 };
