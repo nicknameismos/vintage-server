@@ -924,7 +924,6 @@ exports.updateUser = function (req, res, next) {
     user.dateOfBirth = _user.dateOfBirth;
     user.citizenid = _user.citizenid;
     user.bankaccount = _user.bankaccount;
-    user.notificationids = _user.notificationids;
 
     user.save(function (err) {
       if (err) {
