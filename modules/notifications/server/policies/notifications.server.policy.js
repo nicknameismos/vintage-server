@@ -32,6 +32,9 @@ exports.invokeRolesPolicies = function () {
     }, {
       resources: '/api/userownernotifications',
       permissions: ['get']
+    }, {
+      resources: '/api/userownerreadnotification/:notificationId',
+      permissions: ['get']
     }]
   }, {
     roles: ['shop'],
@@ -43,6 +46,9 @@ exports.invokeRolesPolicies = function () {
       permissions: ['get']
     }, {
       resources: '/api/userownernotifications',
+      permissions: ['get']
+    }, {
+      resources: '/api/userownerreadnotification/:notificationId',
       permissions: ['get']
     }]
   }, {

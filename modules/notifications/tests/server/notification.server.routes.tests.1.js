@@ -297,6 +297,59 @@ describe('pushNotification CRUD tests with token', function () {
       });
   });
 
+  it('userownernotifications success is read true', function (done) {
+
+    var notiObj = new pushNotification({
+      title: 'pushNotification Name',
+      detail: 'detail',
+      userowner: user,
+      user: user
+    });
+    notiObj.save();
+    // Get a list of pushNotifications
+    agent.get('/api/userownernotifications')
+      .set('authorization', 'Bearer ' + token)
+      .end(function (notificationsGetErr, notificationsGetRes) {
+        // Handle pushNotifications save error
+        if (notificationsGetErr) {
+          return done(notificationsGetErr);
+        }
+
+        // Get pushNotifications list
+        var notifications = notificationsGetRes.body;
+
+        // Set assertions
+        (notifications.length).should.equal(1);
+        (notifications[0].user._id).should.equal(user.id);
+        (notifications[0].title).should.match('pushNotification Name');
+        (notifications[0].detail).should.match('detail');
+        (notifications[0].userowner).should.match(user.id);
+        (notifications[0].isread).should.match(false);
+
+        agent.get('/api/userownerreadnotification/' + notiObj.id)
+          .set('authorization', 'Bearer ' + token)
+          .end(function (notiGetErr, notisGetRes) {
+            // Handle pushNotifications save error
+            if (notiGetErr) {
+              return done(notiGetErr);
+            }
+
+            // Get pushNotifications list
+            var notifications = notisGetRes.body;
+
+            // Set assertions
+            (notifications.user._id).should.equal(user.id);
+            (notifications.title).should.match('pushNotification Name');
+            (notifications.detail).should.match('detail');
+            (notifications.userowner).should.match(user.id);
+            (notifications.isread).should.match(true);
+
+            // Call the assertion callback
+            done();
+          });
+      });
+  });
+
   afterEach(function (done) {
     User.remove().exec(function () {
       pushNotification.remove().exec(done);

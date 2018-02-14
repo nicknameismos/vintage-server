@@ -127,3 +127,16 @@ exports.listOwner = function (req, res) {
     }
   });
 };
+
+exports.readOwner = function (req, res) {
+  var noti = req.notification;
+  noti.isread = true;
+  noti.save(function (err) {
+    if (err) {
+      return res.status(400).send({
+        message: errorHandler.getErrorMessage(err)
+      });
+    }
+    res.jsonp(noti);
+  });
+};

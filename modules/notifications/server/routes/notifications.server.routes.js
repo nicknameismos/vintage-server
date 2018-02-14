@@ -20,6 +20,9 @@ module.exports = function (app) {
 
   app.route('/api/userownernotifications').all(core.jwtCheck, notificationsPolicy.isAllowed)
     .get(notifications.listOwner);
+
+  app.route('/api/userownerreadnotification/:notificationId').all(core.jwtCheck, notificationsPolicy.isAllowed)
+    .get(notifications.readOwner);
   // Finish by binding the Notification middleware
   app.param('notificationId', notifications.notificationByID);
 };
