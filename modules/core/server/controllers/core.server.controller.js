@@ -143,7 +143,7 @@ exports.updateNotification = function (req, res) {
             title = 'สินค้าดำเนินการจัดส่ง';
             detail = 'สินค้า ' + item.product.name + ' หมายเลขการสั่งซื้อ ' + orderRes4._id + ' กำลังดำเนินการจัดส่ง';
           } else if (item.status === 'reject') {
-            title = 'สินค้าดำเนินการจัดส่ง';
+            title = 'สินค้าถูกยกเลิก';
             detail = 'สินค้า ' + item.product.name + ' หมายเลขการสั่งซื้อ ' + orderRes4._id + ' กำลังดำเนินการจัดส่ง';
           } else if (item.status === 'transferred') {
             title = 'ระบบชำระเงิน';
