@@ -125,7 +125,7 @@ exports.updateNotification = function (req, res) {
       }, function (err, orderRes4) {
         User.populate(orderRes4, {
           path: 'user'
-        }, function (err, orderRes4) {
+        }, function (err, orderRes5) {
           var item = orderRes4.items[orderRes4.items.map(function (e) { return e._id.toString(); }).indexOf(req.body.itemid.toString())];
           var userIds = [];
           var title = '';
