@@ -28,7 +28,7 @@ exports.invokeRolesPolicies = function () {
       permissions: ['get', 'post']
     }, {
       resources: '/api/notifications/:notificationId',
-      permissions: ['get']
+      permissions: ['get', 'post']
     }, {
       resources: '/api/userownernotifications',
       permissions: ['get']
