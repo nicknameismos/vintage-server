@@ -74,7 +74,7 @@ exports.createNotification = function (req, res) {
       path: 'items.product.shop'
     }, function (err, orderRes3) {
       User.populate(orderRes3, {
-        path: 'items.product.shop.user'
+        path: 'items.product.shop.shopowner'
       }, function (err, orderRes4) {
         orderRes4.items.forEach(itm => {
           var title = 'คุณมีรายการสั่งซื้อใหม่';
@@ -82,11 +82,11 @@ exports.createNotification = function (req, res) {
           notiLogs.push({
             title: title,
             detail: detail,
-            userowner: itm.product.shop.user,
+            userowner: itm.product.shop.shopowner,
             user: req.user
           });
           // console.log(notiLogs);
-          var shopIds = itm.product && itm.product.shop && itm.product.shop.user && itm.product.shop.user.notificationids ? itm.product.shop.user.notificationids : [];
+          var shopIds = itm.product && itm.product.shop && itm.product.shop.shopowner && itm.product.shop.shopowner.notificationids ? itm.product.shop.shopowner.notificationids : [];
           shopNoti(title, detail, shopIds);
         });
         var title2 = 'ขอบคุณที่ใช้บริการ';
@@ -157,7 +157,7 @@ exports.updateNotification = function (req, res) {
             userowner: item.product.shop.user,
             user: req.user
           };
-          userIds = item.product && item.product.shop && item.product.shop.user && item.product.shop.user.notificationids ? item.product.shop.user.notificationids : [];
+          userIds = item.product && item.product.shop && item.product.shop.shopowner && item.product.shop.shopowner.notificationids ? item.product.shop.shopowner.notificationids : [];
           shopNoti(title, detail, userIds);
         } else {
           notiLog = {
