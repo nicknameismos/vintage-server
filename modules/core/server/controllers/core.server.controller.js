@@ -135,7 +135,7 @@ exports.updateNotification = function (req, res) {
             title = 'สินค้าถูกยกเลิก';
             detail = 'สินค้า ' + item.product.name + ' หมายเลขการสั่งซื้อ ' + orderRes4._id;
             isShop = true;
-          } else if (item.status === 'complete') {
+          } else if (item.status === 'completed') {
             title = 'รายการสินค้าสำเร็จ';
             detail = 'สินค้า ' + item.product.name + ' หมายเลขการสั่งซื้อ ' + orderRes4._id + ' สำเร็จแล้ว';
             isShop = true;
