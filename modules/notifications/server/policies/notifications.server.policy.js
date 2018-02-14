@@ -35,6 +35,9 @@ exports.invokeRolesPolicies = function () {
     }, {
       resources: '/api/userownerreadnotification/:notificationId',
       permissions: ['get']
+    }, {
+      resources: '/api/getbadge',
+      permissions: ['get']
     }]
   }, {
     roles: ['shop'],
@@ -43,12 +46,15 @@ exports.invokeRolesPolicies = function () {
       permissions: ['get', 'post']
     }, {
       resources: '/api/notifications/:notificationId',
-      permissions: ['get']
+      permissions: ['*']
     }, {
       resources: '/api/userownernotifications',
       permissions: ['get']
     }, {
       resources: '/api/userownerreadnotification/:notificationId',
+      permissions: ['get']
+    }, {
+      resources: '/api/getbadge',
       permissions: ['get']
     }]
   }, {

@@ -23,6 +23,9 @@ module.exports = function (app) {
 
   app.route('/api/userownerreadnotification/:notificationId').all(core.jwtCheck, notificationsPolicy.isAllowed)
     .get(notifications.readOwner);
+
+  app.route('/api/getbadge').all(core.jwtCheck, notificationsPolicy.isAllowed)
+    .get(notifications.badge);
   // Finish by binding the Notification middleware
   app.param('notificationId', notifications.notificationByID);
 };

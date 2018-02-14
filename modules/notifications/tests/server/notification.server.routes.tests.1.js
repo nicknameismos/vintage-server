@@ -350,6 +350,33 @@ describe('pushNotification CRUD tests with token', function () {
       });
   });
 
+  it('get badge', function (done) {
+
+    var notiObj = new pushNotification({
+      title: 'pushNotification Name',
+      detail: 'detail',
+      userowner: user,
+      user: user
+    });
+    notiObj.save();
+    // Get a list of pushNotifications
+    agent.get('/api/getbadge')
+      .set('authorization', 'Bearer ' + token)
+      .end(function (notificationsGetErr, notificationsGetRes) {
+        // Handle pushNotifications save error
+        if (notificationsGetErr) {
+          return done(notificationsGetErr);
+        }
+
+        // Get pushNotifications list
+        var notifications = notificationsGetRes.body;
+
+        // Set assertions
+        (notifications).should.equal(1);
+        done();
+      });
+  });
+
   afterEach(function (done) {
     User.remove().exec(function () {
       pushNotification.remove().exec(done);

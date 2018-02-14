@@ -140,3 +140,15 @@ exports.readOwner = function (req, res) {
     res.jsonp(noti);
   });
 };
+
+exports.badge = function (req, res) {
+  pushNotification.find({ userowner: req.user._id }).sort('-created').populate('user', 'displayName').exec(function (err, notifications) {
+    if (err) {
+      return res.status(400).send({
+        message: errorHandler.getErrorMessage(err)
+      });
+    } else {
+      res.jsonp(notifications.length);
+    }
+  });
+};
