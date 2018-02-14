@@ -141,10 +141,10 @@ exports.updateNotification = function (req, res) {
             isShop = true;
           } else if (item.status === 'sent') {
             title = 'สินค้าดำเนินการจัดส่ง';
-            detail = 'สินค้า ' + item.product.name + ' หมายเลขการสั่งซื้อ ' + orderRes4._id + ' กำลังดำเนินการจัดส่ง \r\n หมายเลขการจัดส่ง ' + item.refid;
+            detail = 'สินค้า ' + item.product.name + ' หมายเลขการสั่งซื้อ ' + orderRes4._id + ' กำลังดำเนินการจัดส่ง\r\nหมายเลขการจัดส่ง ' + item.refid;
           } else if (item.status === 'reject') {
             title = 'สินค้าถูกยกเลิก';
-            detail = 'สินค้า ' + item.product.name + ' หมายเลขการสั่งซื้อ ' + orderRes4._id + ' กำลังดำเนินการจัดส่ง \r\n หมายเหตุ ' + item.remark;
+            detail = 'สินค้า ' + item.product.name + ' หมายเลขการสั่งซื้อ ' + orderRes4._id + ' กำลังดำเนินการจัดส่ง\r\nหมายเหตุ ' + item.remark;
           } else if (item.status === 'transferred') {
             title = 'ระบบชำระเงิน';
             detail = 'สินค้า ' + item.product.name + ' หมายเลขการสั่งซื้อ ' + orderRes4._id + ' ชำระเงินจากระบบ';
