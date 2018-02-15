@@ -10,6 +10,9 @@ var mongoose = require('mongoose'),
  * Order Schema
  */
 var OrderSchema = new Schema({
+  docno: {
+    type: String
+  },
   items: {
     type: [{
       product: {

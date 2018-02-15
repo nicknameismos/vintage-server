@@ -92,6 +92,7 @@ exports.create = function (req, res, next) {
   var _order = req.body;
   order.omiseresponse = order.payment.paymenttype === 'Credit Card' ? req.omiseresponse : order.omiseresponse;
   order.user = req.user;
+  order.docno = +new Date();
   order.items.forEach((element, i) => {
     element.product = _order.items[i].product._id;
     element.shopid = _order.items[i].product.shopid;
@@ -235,6 +236,7 @@ exports.customerCookingListOrder = function (req, res, next) {
         resData[0].items.push({
           itemid: itm._id,
           orderid: order._id,
+          docno: order.docno ? order.docno : order._id,
           name: itm.product && itm.product.name ? itm.product.name : '',
           image: itm.product && itm.product.images ? itm.product.images[0] : '',
           price: itm.unitprice,
@@ -262,6 +264,7 @@ exports.customerCookingListOrder = function (req, res, next) {
         resData[1].items.push({
           itemid: itm._id,
           orderid: order._id,
+          docno: order.docno ? order.docno : order._id,
           name: itm.product && itm.product.name ? itm.product.name : '',
           image: itm.product && itm.product.images ? itm.product.images[0] : '',
           price: itm.unitprice,
@@ -292,6 +295,7 @@ exports.customerCookingListOrder = function (req, res, next) {
         resData[2].items.push({
           itemid: itm._id,
           orderid: order._id,
+          docno: order.docno ? order.docno : order._id,
           name: itm.product && itm.product.name ? itm.product.name : '',
           image: itm.product && itm.product.images ? itm.product.images[0] : '',
           price: itm.unitprice,
@@ -328,6 +332,7 @@ exports.customerCookingListOrder = function (req, res, next) {
         resData[3].items.push({
           itemid: itm._id,
           orderid: order._id,
+          docno: order.docno ? order.docno : order._id,
           name: itm.product && itm.product.name ? itm.product.name : '',
           image: itm.product && itm.product.images ? itm.product.images[0] : '',
           price: itm.unitprice,
@@ -394,6 +399,7 @@ exports.shopCookingListOrder = function (req, res, next) {
           resData[0].items.push({
             itemid: itm._id,
             orderid: order._id,
+            docno: order.docno ? order.docno : order._id,
             name: itm.product && itm.product.name ? itm.product.name : '',
             image: itm.product && itm.product.images ? itm.product.images[0] : '',
             price: itm.unitprice,
@@ -421,6 +427,7 @@ exports.shopCookingListOrder = function (req, res, next) {
           resData[1].items.push({
             itemid: itm._id,
             orderid: order._id,
+            docno: order.docno ? order.docno : order._id,
             name: itm.product && itm.product.name ? itm.product.name : '',
             image: itm.product && itm.product.images ? itm.product.images[0] : '',
             price: itm.unitprice,
@@ -453,6 +460,7 @@ exports.shopCookingListOrder = function (req, res, next) {
           resData[2].items.push({
             itemid: itm._id,
             orderid: order._id,
+            docno: order.docno ? order.docno : order._id,
             name: itm.product && itm.product.name ? itm.product.name : '',
             image: itm.product && itm.product.images ? itm.product.images[0] : '',
             price: itm.unitprice,
@@ -484,6 +492,7 @@ exports.shopCookingListOrder = function (req, res, next) {
           resData[3].items.push({
             itemid: itm._id,
             orderid: order._id,
+            docno: order.docno ? order.docno : order._id,
             name: itm.product && itm.product.name ? itm.product.name : '',
             image: itm.product && itm.product.images ? itm.product.images[0] : '',
             price: itm.unitprice,
@@ -560,6 +569,7 @@ exports.cookingOrderDetail = function (req, res, next) {
   var resData = {
     itemid: req.itm_id,
     orderid: req.order._id,
+    docno: req.order.docno ? req.order.docno : req.order._id,
     shop: {
       _id: req.shop._id,
       name: req.shop.name

@@ -131,27 +131,28 @@ exports.updateNotification = function (req, res) {
           var title = '';
           var detail = '';
           var isShop = false;
+          var orderid = orderRes4.docno ? orderRes4.docno : orderRes4._id;
           if (item.status === 'cancel') {
             title = 'สินค้าถูกยกเลิก';
-            detail = item.product.name + ' หมายเลขการสั่งซื้อ ' + orderRes4._id + ' ถูกยกเลิก';
+            detail = item.product.name + ' หมายเลขการสั่งซื้อ ' + orderid + ' ถูกยกเลิก';
             isShop = true;
           } else if (item.status === 'completed') {
             title = 'รายการสินค้าสำเร็จ';
-            detail = item.product.name + ' หมายเลขการสั่งซื้อ ' + orderRes4._id + ' สำเร็จแล้ว';
+            detail = item.product.name + ' หมายเลขการสั่งซื้อ ' + orderid + ' สำเร็จแล้ว';
             isShop = true;
           } else if (item.status === 'sent') {
             title = 'สินค้าดำเนินการจัดส่ง';
-            detail = item.product.name + ' หมายเลขการสั่งซื้อ ' + orderRes4._id + ' กำลังดำเนินการจัดส่ง\r\nหมายเลขการจัดส่ง ' + item.refid;
+            detail = item.product.name + ' หมายเลขการสั่งซื้อ ' + orderid + ' กำลังดำเนินการจัดส่ง\r\nหมายเลขการจัดส่ง ' + item.refid;
           } else if (item.status === 'reject') {
             title = 'สินค้าถูกยกเลิก';
-            detail = item.product.name + ' หมายเลขการสั่งซื้อ ' + orderRes4._id + ' กำลังดำเนินการจัดส่ง\r\nหมายเหตุ ' + item.remark;
+            detail = item.product.name + ' หมายเลขการสั่งซื้อ ' + orderid + ' กำลังดำเนินการจัดส่ง\r\nหมายเหตุ ' + item.remark;
           } else if (item.status === 'transferred') {
             title = 'ระบบชำระเงิน';
-            detail = item.product.name + ' หมายเลขการสั่งซื้อ ' + orderRes4._id + ' ชำระเงินจากระบบ';
+            detail = item.product.name + ' หมายเลขการสั่งซื้อ ' + orderid + ' ชำระเงินจากระบบ';
             isShop = true;
           } else if (item.status === 'rejectrefund' || item.status === 'cancelrefund') {
             title = 'ระบบชำระเงินคืน';
-            detail = item.product.name + ' หมายเลขการสั่งซื้อ ' + orderRes4._id + ' ชำระเงินคืนจากระบบ';
+            detail = item.product.name + ' หมายเลขการสั่งซื้อ ' + orderid + ' ชำระเงินคืนจากระบบ';
           }
           if (isShop) {
             notiLog = {
