@@ -124,8 +124,17 @@ exports.cookingBid = function (req, res, next) {
         message: errorHandler.getErrorMessage(err)
       });
     } else {
-      var cookingBidsTrue = [];
-      var cookingBidsFalse = [];
+      var cookingData = [{
+        type: 'NOW',
+        items: []
+      }, {
+        type: 'COMING_SOON',
+        items: []
+      }, {
+        type: 'ME',
+        items: []
+      }];
+
       bids.forEach(function (element) {
 
         var startdate = new Date(element.starttime);
@@ -133,7 +142,7 @@ exports.cookingBid = function (req, res, next) {
         var today = new Date();
 
         if (today >= startdate && today <= expiredate) {
-          cookingBidsTrue.push({
+          cookingData[0].items.push({
             _id: element._id,
             created: element.created,
             image: element.image ? element.image[0] : '',
@@ -142,10 +151,26 @@ exports.cookingBid = function (req, res, next) {
             pricestart: element.startprice,
             pricebid: element.bidprice,
             datestart: element.starttime,
-            dateend: element.endtime
+            dateend: element.endtime,
+            time: counttime(expiredate)
           });
         } else if (startdate >= today) {
-          cookingBidsFalse.push({
+          cookingData[1].items.push({
+            _id: element._id,
+            created: element.created,
+            image: element.image ? element.image[0] : '',
+            price: element.price,
+            isBid: false,
+            pricestart: element.startprice,
+            pricebid: element.bidprice,
+            datestart: element.starttime,
+            dateend: element.endtime
+          });
+        }
+
+        if (element.userbid.map(function (e) { return e.user.toString(); }).indexOf(req.user._id.toString()) !== -1) {
+          // console.log(element.userbid.map(function (e) { return e.user.toString(); }).indexOf(req.user._id.toString()));
+          cookingData[2].items.push({
             _id: element._id,
             created: element.created,
             image: element.image ? element.image[0] : '',
@@ -158,11 +183,11 @@ exports.cookingBid = function (req, res, next) {
           });
         }
       });
-      var sortTime = cookingBidsTrue.sort(function (a, b) {
+      // orderRes4.items[orderRes4.items.map(function (e) { return e._id.toString(); }).indexOf(req.body.itemid.toString())]
+      cookingData[0].items = cookingData[0].items.sort(function (a, b) {
         return (a.time > b.time) ? 1 : ((b.time > a.time) ? -1 : 0);
       });
-      var resultbid = sortTime.concat(cookingBidsFalse);
-      req.bids = resultbid;
+      req.bids = cookingData;
       next();
     }
   });
@@ -170,6 +195,7 @@ exports.cookingBid = function (req, res, next) {
 
 exports.resBids = function (req, res) {
   res.jsonp({
+    datenow: new Date(),
     items: req.bids
   });
 };

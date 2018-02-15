@@ -39,6 +39,21 @@ var BidSchema = new Schema({
     type: [String],
     required: 'Please fill Bid image'
   },
+  userbid: {
+    type: [{
+      user: {
+        type: Schema.ObjectId,
+        ref: 'User'
+      },
+      created: {
+        type: Date,
+        default: Date.now
+      },
+      bidprice: {
+        type: Number
+      }
+    }]
+  },
   created: {
     type: Date,
     default: Date.now

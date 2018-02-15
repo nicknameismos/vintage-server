@@ -87,6 +87,10 @@ describe('Bid CRUD tests with token', function () {
 
     bidObj.starttime = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 1);
     bidObj.endtime = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
+    bidObj.userbid = [{
+      user: user,
+      bidprice: 160
+    }];
 
     bidObj1.starttime = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
     bidObj1.endtime = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 2);
@@ -111,13 +115,12 @@ describe('Bid CRUD tests with token', function () {
 
         // Set assertions
         (bids.items.length).should.match(3);
-        (bids.items[0].image).should.match(bid.image[0]);
-        (bids.items[0].price).should.match(bid.price);
-        (bids.items[0].isBid).should.match(true);
-        (bids.items[0].pricestart).should.match(bid.startprice);
-        (bids.items[0].pricebid).should.match(bid.bidprice);
-        (bids.items[0].datestart).should.match(bid.starttime);
-        (bids.items[0].dateend).should.match(bid.endtime);
+        (bids.items[0].type).should.match('NOW');
+        (bids.items[0].items.length).should.match(1);
+        (bids.items[1].type).should.match('COMING_SOON');
+        (bids.items[1].items.length).should.match(2);
+        (bids.items[2].type).should.match('ME');
+        (bids.items[2].items.length).should.match(1);
 
         done();
       });
