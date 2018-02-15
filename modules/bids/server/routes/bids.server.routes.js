@@ -21,7 +21,10 @@ module.exports = function (app) {
   app.route('/api/getbidlist').all(core.jwtCheck, bidsPolicy.isAllowed)
     .get(bids.cookingBid, bids.resBids);
 
-  app.route('/api/biddetail/:bidId').all(core.jwtCheck, bidsPolicy.isAllowed)
+  app.route('/api/bidlist')//.all(core.jwtCheck, bidsPolicy.isAllowed)
+    .get(bids.cookingBid, bids.resBids);
+
+  app.route('/api/biddetail/:bidId').all(bidsPolicy.isAllowed)
     .get(bids.getBidDetail);
   // Finish by binding the Bid middleware
   app.param('bidId', bids.bidByID);
