@@ -83,8 +83,26 @@ describe('Bid CRUD tests with token', function () {
     var bidObj = new Bid(bid);
     var bidObj1 = new Bid(bid);
     var bidObj2 = new Bid(bid);
-
+    var bidObj3 = new Bid(bid);
+    var bidObj4 = new Bid(bid);
     var today = new Date();
+
+    bidObj3.starttime = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 10);
+    bidObj3.endtime = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 8);
+    bidObj3.userbid = [{
+      user: user,
+      bidprice: 160,
+      created: new Date(today.getFullYear(), today.getMonth(), today.getDate() - 10)
+    }];
+    var selectedTime = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 1);
+    selectedTime.setHours(0, 0, 0);
+    bidObj4.starttime = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 10);
+    bidObj4.endtime = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 8);
+    bidObj4.userbid = [{
+      user: user,
+      bidprice: 160,
+      created: selectedTime
+    }];
 
     bidObj.starttime = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 1);
     bidObj.endtime = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
@@ -102,6 +120,8 @@ describe('Bid CRUD tests with token', function () {
     bidObj.save();
     bidObj1.save();
     bidObj2.save();
+    bidObj3.save();
+    bidObj4.save();
 
     agent.get('/api/getbidlist/' + user.id)
       .set('authorization', 'Bearer ' + token)
@@ -117,11 +137,11 @@ describe('Bid CRUD tests with token', function () {
         // Set assertions
         (bids.items.length).should.match(3);
         (bids.items[0].type).should.match('NOW');
-        (bids.items[0].items.length).should.match(1);
+        (bids.items[0].items.length).should.match(2);
         (bids.items[1].type).should.match('COMING_SOON');
         (bids.items[1].items.length).should.match(2);
         (bids.items[2].type).should.match('ME');
-        (bids.items[2].items.length).should.match(1);
+        (bids.items[2].items.length).should.match(2);
 
         done();
       });

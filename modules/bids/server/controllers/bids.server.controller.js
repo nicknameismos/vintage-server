@@ -154,12 +154,12 @@ exports.cookingBid = function (req, res, next) {
         type: 'ME',
         items: []
       }];
+      var today = new Date();
 
       bids.forEach(function (element) {
 
         var startdate = new Date(element.starttime);
         var expiredate = new Date(element.endtime);
-        var today = new Date();
 
         if (today >= startdate && today <= expiredate) {
           cookingData[0].items.push({
@@ -190,17 +190,30 @@ exports.cookingBid = function (req, res, next) {
         if (req.user) {
           if (element.userbid.map(function (e) { return e.user.toString(); }).indexOf(req.user._id.toString()) !== -1) {
             // console.log(element.userbid.map(function (e) { return e.user.toString(); }).indexOf(req.user._id.toString()));
-            cookingData[2].items.push({
-              _id: element._id,
-              created: element.created,
-              image: element.image ? element.image[0] : '',
-              price: element.price,
-              isBid: false,
-              pricestart: element.startprice,
-              pricebid: element.bidprice,
-              datestart: element.starttime,
-              dateend: element.endtime
-            });
+            var reverseUserBid = element.userbid.reverse();
+            var selectedDate = reverseUserBid[reverseUserBid.map(function (e) { return e.user.toString(); }).indexOf(req.user._id.toString())].created;
+            var lastWeek = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 7);
+            console.log('selectedDate', selectedDate);
+            console.log('today', today);
+            console.log('lastWeek', lastWeek);
+            if (selectedDate >= lastWeek && selectedDate <= today) {
+              cookingData[2].items.push({
+                _id: element._id,
+                created: element.created,
+                image: element.image ? element.image[0] : '',
+                price: element.price,
+                isBid: false,
+                pricestart: element.startprice,
+                pricebid: element.bidprice,
+                datestart: element.starttime,
+                dateend: element.endtime,
+                time: counttime(selectedDate)
+              });
+              cookingData[2].items = cookingData[0].items.sort(function (a, b) {
+                return (a.time > b.time) ? 1 : ((b.time > a.time) ? -1 : 0);
+              });
+            }
+
           }
         }
 
