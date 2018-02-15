@@ -46,7 +46,8 @@ describe('Bid CRUD tests with token', function () {
       email: 'test@test.com',
       username: credentials.username,
       password: credentials.password,
-      provider: 'local'
+      provider: 'local',
+      profileImageURL: 'profileImageURL'
     });
     token = '';
     // Save a user to the test db and create new Bid
@@ -122,6 +123,50 @@ describe('Bid CRUD tests with token', function () {
         (bids.items[2].type).should.match('ME');
         (bids.items[2].items.length).should.match(1);
 
+        done();
+      });
+  });
+
+  it('get biddetail', function (done) {
+    var bidObj = new Bid(bid);
+
+    var today = new Date();
+
+    bidObj.starttime = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 1);
+    bidObj.endtime = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
+    bidObj.userbid = [{
+      user: user,
+      bidprice: 400
+    }];
+
+    bidObj.save();
+
+    agent.get('/api/biddetail/' + bidObj.id)
+      .set('authorization', 'Bearer ' + token)
+      .end(function (bidsGetErr, bidsGetRes) {
+        // Handle bids save error
+        if (bidsGetErr) {
+          return done(bidsGetErr);
+        }
+
+        // Get bids list
+        var bids = bidsGetRes.body;
+
+        // Set assertions
+        (bids._id).should.match(bidObj.id);
+        (bids.product.name).should.match(bidObj.name);
+        (bids.product.images).should.match(bid.image);
+        (bids.product.detail).should.match(bidObj.detail);
+        (bids.datestart).should.match(bidObj.starttime);
+        (bids.dateend).should.match(bidObj.endtime);
+        (bids.price).should.match(400);
+        (bids.pricestart).should.match(bidObj.startprice);
+        (bids.pricebid).should.match(bidObj.bidprice);
+        (bids.isBid).should.match(true);
+        (bids.currentuser._id).should.match(user.id);
+        (bids.currentuser.name).should.match(user.displayName);
+        (bids.currentuser.profileImageURL).should.match(user.profileImageURL);
+        (bids.datenow).should.match(new Date());
         done();
       });
   });

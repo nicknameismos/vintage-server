@@ -103,7 +103,7 @@ exports.bidByID = function (req, res, next, id) {
     });
   }
 
-  Bid.findById(id).populate('user', 'displayName').exec(function (err, bid) {
+  Bid.findById(id).populate('user', 'displayName profileImageURL').populate('userbid.user', 'displayName profileImageURL').exec(function (err, bid) {
     if (err) {
       return next(err);
     } else if (!bid) {
@@ -167,21 +167,23 @@ exports.cookingBid = function (req, res, next) {
             dateend: element.endtime
           });
         }
-
-        if (element.userbid.map(function (e) { return e.user.toString(); }).indexOf(req.user._id.toString()) !== -1) {
-          // console.log(element.userbid.map(function (e) { return e.user.toString(); }).indexOf(req.user._id.toString()));
-          cookingData[2].items.push({
-            _id: element._id,
-            created: element.created,
-            image: element.image ? element.image[0] : '',
-            price: element.price,
-            isBid: false,
-            pricestart: element.startprice,
-            pricebid: element.bidprice,
-            datestart: element.starttime,
-            dateend: element.endtime
-          });
+        if (req.user) {
+          if (element.userbid.map(function (e) { return e.user.toString(); }).indexOf(req.user._id.toString()) !== -1) {
+            // console.log(element.userbid.map(function (e) { return e.user.toString(); }).indexOf(req.user._id.toString()));
+            cookingData[2].items.push({
+              _id: element._id,
+              created: element.created,
+              image: element.image ? element.image[0] : '',
+              price: element.price,
+              isBid: false,
+              pricestart: element.startprice,
+              pricebid: element.bidprice,
+              datestart: element.starttime,
+              dateend: element.endtime
+            });
+          }
         }
+
       });
       // orderRes4.items[orderRes4.items.map(function (e) { return e._id.toString(); }).indexOf(req.body.itemid.toString())]
       cookingData[0].items = cookingData[0].items.sort(function (a, b) {
@@ -198,6 +200,48 @@ exports.resBids = function (req, res) {
     datenow: new Date(),
     items: req.bids
   });
+};
+
+exports.getBidDetail = function (req, res) {
+  var bid = req.bid ? req.bid.toJSON() : {};
+  var isBid = false;
+  var startdate = new Date(bid.starttime);
+  var expiredate = new Date(bid.endtime);
+  var today = new Date();
+  var price = 0;
+  var userid = '';
+  var displayName = '';
+  var image = '';
+  if (today >= startdate && today <= expiredate) {
+    isBid = true;
+  }
+  if (bid && bid.userbid && bid.userbid.length > 0) {
+    price = bid.userbid[bid.userbid.length - 1].bidprice || 0;
+    userid = bid.userbid[bid.userbid.length - 1].user._id;
+    displayName = bid.userbid[bid.userbid.length - 1].user.displayName;
+    image = bid.userbid[bid.userbid.length - 1].user.profileImageURL;
+  }
+  var resbid = {
+    _id: bid._id,
+    product: {
+      name: bid.name,
+      images: bid.image,
+      detail: bid.detail
+    },
+    datestart: bid.starttime,
+    dateend: bid.endtime,
+    datenow: new Date(),
+    price: price,
+    pricestart: bid.startprice,
+    pricebid: bid.bidprice,
+    isBid: isBid,
+    currentuser: {
+      _id: userid,
+      name: displayName,
+      profileImageURL: image
+    }
+  };
+  res.jsonp(resbid);
 };
 
 function counttime(expire) {

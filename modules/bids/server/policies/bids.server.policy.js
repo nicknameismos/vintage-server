@@ -47,6 +47,9 @@ exports.invokeRolesPolicies = function () {
     }, {
       resources: '/api/getbidlist',
       permissions: ['get']
+    }, {
+      resources: '/api/biddetail/:bidId',
+      permissions: ['get']
     }]
   }, {
     roles: ['guest'],
@@ -58,6 +61,9 @@ exports.invokeRolesPolicies = function () {
       permissions: ['get']
     }, {
       resources: '/api/getbidlist',
+      permissions: ['get']
+    }, {
+      resources: '/api/biddetail/:bidId',
       permissions: ['get']
     }]
   }]);
