@@ -18,7 +18,7 @@ module.exports = function (app) {
     .put(bids.update)
     .delete(bids.delete);
 
-  app.route('/api/getbidlist').all(core.jwtCheck, bidsPolicy.isAllowed)
+  app.route('/api/getbidlist/:userBidId').all(bidsPolicy.isAllowed)
     .get(bids.cookingBid, bids.resBids);
 
   app.route('/api/bidlist')//.all(core.jwtCheck, bidsPolicy.isAllowed)
@@ -28,4 +28,5 @@ module.exports = function (app) {
     .get(bids.getBidDetail);
   // Finish by binding the Bid middleware
   app.param('bidId', bids.bidByID);
+  app.param('userBidId', bids.userBidId);
 };

@@ -103,7 +103,7 @@ describe('Bid CRUD tests with token', function () {
     bidObj1.save();
     bidObj2.save();
 
-    agent.get('/api/getbidlist')
+    agent.get('/api/getbidlist/' + user.id)
       .set('authorization', 'Bearer ' + token)
       .end(function (bidsGetErr, bidsGetRes) {
         // Handle bids save error

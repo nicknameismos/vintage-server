@@ -6,6 +6,7 @@
 var path = require('path'),
   mongoose = require('mongoose'),
   Bid = mongoose.model('Bid'),
+  User = mongoose.model('User'),
   errorHandler = require(path.resolve('./modules/core/server/controllers/errors.server.controller')),
   _ = require('lodash');
 
@@ -114,6 +115,25 @@ exports.bidByID = function (req, res, next, id) {
     req.bid = bid;
     next();
   });
+};
+
+exports.userBidId = function (req, res, next, userbidid) {
+  if (userbidid !== 'nouser') {
+    User.findById(userbidid).exec(function (err, user) {
+      if (err) {
+        return next(err);
+      } else if (!user) {
+        return res.status(404).send({
+          message: 'No User with that identifier has been found'
+        });
+      }
+      req.user = user;
+      next();
+    });
+  } else {
+    next();
+  }
+
 };
 
 exports.cookingBid = function (req, res, next) {

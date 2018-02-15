@@ -21,7 +21,7 @@ exports.invokeRolesPolicies = function () {
       resources: '/api/bids/:bidId',
       permissions: '*'
     }, {
-      resources: '/api/getbidlist',
+      resources: '/api/getbidlist/:userBidId',
       permissions: '*'
     }]
   }, {
@@ -33,7 +33,7 @@ exports.invokeRolesPolicies = function () {
       resources: '/api/bids/:bidId',
       permissions: '*'
     }, {
-      resources: '/api/getbidlist',
+      resources: '/api/getbidlist/:userBidId',
       permissions: ['get']
     }]
   }, {
@@ -45,7 +45,7 @@ exports.invokeRolesPolicies = function () {
       resources: '/api/bids/:bidId',
       permissions: ['get']
     }, {
-      resources: '/api/getbidlist',
+      resources: '/api/getbidlist/:userBidId',
       permissions: ['get']
     }, {
       resources: '/api/biddetail/:bidId',
@@ -60,7 +60,7 @@ exports.invokeRolesPolicies = function () {
       resources: '/api/bids/:bidId',
       permissions: ['get']
     }, {
-      resources: '/api/getbidlist',
+      resources: '/api/getbidlist/:userBidId',
       permissions: ['get']
     }, {
       resources: '/api/biddetail/:bidId',
