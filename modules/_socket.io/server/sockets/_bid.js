@@ -34,18 +34,10 @@ module.exports = function (io, socket) {
             }
             var bid = bid;
 
-            _item.item.currentuser = {
-                name: _item.user.displayName,
-                profileImageURL: _item.user.profileImageURL,
-                _id: _item.user._id
-            };
-
-            _item.item.price += _item.item.pricebid;
-
-            bid.price = _item.item.price;
+            bid.price += bid.pricebid;
             bid.userbid.push({
                 user: _item.user,
-                bidprice: _item.item.price,
+                bidprice: bid.price,
                 created: new Date()
             });
 
@@ -58,6 +50,15 @@ module.exports = function (io, socket) {
                         message: 'save bid item error.'
                     });
                 } else {
+
+                    _item.item.currentuser = {
+                        name: _item.user.displayName,
+                        profileImageURL: _item.user.profileImageURL,
+                        _id: _item.user._id
+                    };
+
+                    _item.item.price = bid.price;
+
                     io.emit(_item.item._id, {
                         status: 200,
                         response: _item
