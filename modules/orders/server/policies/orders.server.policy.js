@@ -32,6 +32,9 @@ exports.invokeRolesPolicies = function () {
     }, {
       resources: '/api/getordersbyadmin',
       permissions: ['post']
+    }, {
+      resources: '/api/getorderdetail/:orderId/:itemId',
+      permissions: ['get']
     }]
   }, {
     roles: ['shop'],

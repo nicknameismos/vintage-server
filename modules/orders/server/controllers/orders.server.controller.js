@@ -865,6 +865,7 @@ exports.getOrderListAdmin = function (req, res, next) {
           });
         });
       }
+      req.pagins = countPage(dataOrders);
       req.orders = dataOrders.slice(firstIndex, lastIndex);
       next();
     }
@@ -875,7 +876,7 @@ exports.cookingOrderListAdmin = function (req, res, next) {
   var data = {
     titles: ['รอชำระเงิน', 'รอจัดส่ง', 'รอรับสินค้า', 'สำเร็จ', 'ลูกค้ายกเลิก', 'ร้านค้าปฏิเสธ', 'คืนเงินแล้ว', 'จ่ายเงินแล้ว'],
     items: req.orders,
-    paging: countPage(req.orders)
+    paging: req.pagins
   };
   req.data = data;
   next();
