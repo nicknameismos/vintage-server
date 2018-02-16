@@ -485,6 +485,7 @@ exports.resHomeShop = function (req, res) {
     issendmail: shop.issendmail,
     importform: shop.importform,
     times: shop.times,
+    islaunch: shop.islaunch,
     isopen: true
   };
   res.jsonp(resShop);
