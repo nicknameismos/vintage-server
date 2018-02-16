@@ -161,6 +161,7 @@ exports.cookingBid = function (req, res, next) {
         var startdate = new Date(element.starttime);
         var expiredate = new Date(element.endtime);
         var endShow = expiredate.setHours(expiredate.getHours() - 7);
+        var isbid = false;
 
         if (today >= startdate && today <= expiredate) {
           cookingData[0].items.push({
@@ -175,6 +176,7 @@ exports.cookingBid = function (req, res, next) {
             dateend: endShow,
             time: counttime(expiredate)
           });
+          isbid = true;
         } else if (startdate >= today) {
           cookingData[1].items.push({
             _id: element._id,
@@ -188,7 +190,7 @@ exports.cookingBid = function (req, res, next) {
             dateend: endShow
           });
         }
-        if (req.user) {
+        if (req.user && element.userbid && element.userbid.length > 0) {
           if (element.userbid.map(function (e) { return e.user.toString(); }).indexOf(req.user._id.toString()) !== -1) {
             // console.log(element.userbid.map(function (e) { return e.user.toString(); }).indexOf(req.user._id.toString()));
             var reverseUserBid = element.userbid.reverse();
@@ -200,14 +202,14 @@ exports.cookingBid = function (req, res, next) {
                 created: element.created,
                 image: element.image ? element.image[0] : '',
                 price: element.price ? element.price : element.startprice,
-                isBid: false,
+                isBid: isbid,
                 pricestart: element.startprice,
                 pricebid: element.bidprice,
                 datestart: startdate,
                 dateend: endShow,
                 time: counttime(selectedDate)
               });
-              cookingData[2].items = cookingData[0].items.sort(function (a, b) {
+              cookingData[2].items = cookingData[2].items.sort(function (a, b) {
                 return (a.time > b.time) ? 1 : ((b.time > a.time) ? -1 : 0);
               });
             }
