@@ -13,12 +13,12 @@ module.exports = function (io, socket) {
 
         var _item = data;
 
-        if (!mongoose.Types.ObjectId.isValid(_item.item._id)) {
-            io.emit(_item.item._id, {
-                status: 400,
-                message: "_id is invalid."
-            });
-        }
+        // if (!mongoose.Types.ObjectId.isValid(_item.item._id)) {
+        //     io.emit(_item.item._id, {
+        //         status: 400,
+        //         message: "_id is invalid."
+        //     });
+        // }
         // get bid item
         Bid.findById(_item.item._id).exec(function (err, bid) {
             if (err) {
