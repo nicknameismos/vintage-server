@@ -167,7 +167,7 @@ exports.cookingBid = function (req, res, next) {
             _id: element._id,
             created: element.created,
             image: element.image ? element.image[0] : '',
-            price: element.price,
+            price: element.price ? element.price : element.startprice,
             isBid: true,
             pricestart: element.startprice,
             pricebid: element.bidprice,
@@ -180,7 +180,7 @@ exports.cookingBid = function (req, res, next) {
             _id: element._id,
             created: element.created,
             image: element.image ? element.image[0] : '',
-            price: element.price,
+            price: element.price ? element.price : element.startprice,
             isBid: false,
             pricestart: element.startprice,
             pricebid: element.bidprice,
@@ -199,7 +199,7 @@ exports.cookingBid = function (req, res, next) {
                 _id: element._id,
                 created: element.created,
                 image: element.image ? element.image[0] : '',
-                price: element.price,
+                price: element.price ? element.price : element.startprice,
                 isBid: false,
                 pricestart: element.startprice,
                 pricebid: element.bidprice,
@@ -238,7 +238,7 @@ exports.getBidDetail = function (req, res) {
   var isBid = false;
   var startdate = new Date(bid.starttime);
   var expiredate = new Date(bid.endtime);
-  var endShow = expiredate.setHours(expiredate.getHours() - 7);  
+  var endShow = expiredate.setHours(expiredate.getHours() - 7);
   var today = new Date();
   var price = 0;
   var userid = '';
