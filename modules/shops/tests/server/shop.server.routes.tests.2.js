@@ -118,6 +118,7 @@ describe('Shop CRUD edit and delete items token tests', function () {
               isactiveshop: false,
               issendmail: false,
               importform: 'manual',
+              islaunch: true,
               categories: [categoryshop],
               user: user,
               shopowner: user

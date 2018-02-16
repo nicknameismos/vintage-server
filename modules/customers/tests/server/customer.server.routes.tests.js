@@ -142,6 +142,7 @@ describe('Customer Home Stories Test', function () {
       ],
       isactiveshop: true,
       issendmail: false,
+      islaunch: true,
       importform: 'manual',
       categories: [categoryshop],
       user: user
@@ -559,6 +560,7 @@ describe('Customer Home Stories Test', function () {
       promotionprice: 40,
       isrecommend: false,
       ispromotionprice: true,
+      shop: shop1,
       startdate: new Date(),
       expiredate: new Date(),
       created: new Date(2018, 1, 31)

@@ -11,7 +11,8 @@ var mongoose = require('mongoose'),
  */
 var OrderSchema = new Schema({
   docno: {
-    type: String
+    type: String,
+    unique: true
   },
   items: {
     type: [{

@@ -1005,6 +1005,7 @@ exports.updateShop = function (req, res, next) {
       shop.tel = _shop.tel;
       shop.times = _shop.times;
       shop.address = _shop.address;
+      shop.islaunch = true;
       shop.save(function (err) {
         if (err) {
           console.log(err);
@@ -1426,7 +1427,7 @@ exports.resSearch = function (req, res) {
 };
 
 exports.getShopsList = function (req, res) {
-  Shop.find({}, '_id coverimage').sort('-created').exec(function (err, shops) {
+  Shop.find({ islaunch: true }, '_id coverimage').sort('-created').exec(function (err, shops) {
     if (err) {
       return res.status(400).send({
         message: errorHandler.getErrorMessage(err)

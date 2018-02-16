@@ -115,6 +115,10 @@ var ShopSchema = new Schema({
   ishave: {
     type: Boolean,
   },
+  islaunch: {
+    type: Boolean,
+    default: false
+  },
   created: {
     type: Date,
     default: Date.now
@@ -123,7 +127,7 @@ var ShopSchema = new Schema({
     type: Schema.ObjectId,
     ref: 'User'
   },
-  isAds : {
+  isAds: {
     type: Boolean,
     default: false
   }

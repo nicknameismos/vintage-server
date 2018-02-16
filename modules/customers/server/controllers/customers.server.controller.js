@@ -466,13 +466,14 @@ exports.cookingListAds = function (req, res, next) {
 };
 
 exports.getListProducts = function (req, res, next) {
-  Product.find({ issale: true }).sort('-created').limit(54).exec(function (err, products) {
+  Product.find({ issale: true }).populate('shop').sort('-created').limit(54).exec(function (err, products) {
     if (err) {
       return res.status(400).send({
         message: errorHandler.getErrorMessage(err)
       });
     } else {
-      req.products = products;
+      var productsFilter = products.filter(function (obj) { return obj.shop && obj.shop.islaunch === true; });
+      req.products = productsFilter;
       next();
     }
   });

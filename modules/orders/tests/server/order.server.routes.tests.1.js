@@ -141,6 +141,7 @@ describe('Order omise create tests', function () {
       promoteimage: ['http://ed.files-media.com/ud/images/1/22/63943/IMG_7799_Cover.jpg'],
       isactiveshop: false,
       importform: 'manual',
+      islaunch: true,
       categories: categoryshop,
       user: user
     });
@@ -742,7 +743,8 @@ describe('Order omise create tests', function () {
       discountamount: 100,
       totalamount: 200,
       omiseresponse: {},
-      user: user
+      user: user,
+      docno: +new Date()
     });
 
     var orderObj2 = new Order({
@@ -799,7 +801,8 @@ describe('Order omise create tests', function () {
       discountamount: 100,
       totalamount: 200,
       omiseresponse: {},
-      user: user
+      user: user,
+      docno: +new Date()      
     });
 
     orderObj.save(function (err) {
@@ -1063,7 +1066,8 @@ describe('Order omise create tests', function () {
       discountamount: 100,
       totalamount: 200,
       omiseresponse: {},
-      user: user
+      user: user,
+      docno: +new Date()      
     });
 
     var orderObj2 = new Order({
@@ -1120,7 +1124,8 @@ describe('Order omise create tests', function () {
       discountamount: 100,
       totalamount: 200,
       omiseresponse: {},
-      user: user
+      user: user,
+      docno: +new Date()      
     });
 
     orderObj.save(function (err) {
@@ -1320,7 +1325,8 @@ describe('Order omise create tests', function () {
       discountamount: 100,
       totalamount: 900,
       omiseresponse: {},
-      user: user
+      user: user,
+      docno: +new Date()      
     });
 
     var orderObj2 = new Order({
@@ -1377,7 +1383,8 @@ describe('Order omise create tests', function () {
       discountamount: 100,
       totalamount: 200,
       omiseresponse: {},
-      user: user
+      user: user,
+      docno: +new Date()      
     });
 
     orderObj.save(function (err) {
@@ -1568,7 +1575,8 @@ describe('Order omise create tests', function () {
       discountamount: 100,
       totalamount: 200,
       omiseresponse: {},
-      user: user
+      user: user,
+      docno: +new Date()      
     });
 
     var orderObj2 = new Order({
@@ -1625,7 +1633,8 @@ describe('Order omise create tests', function () {
       discountamount: 100,
       totalamount: 200,
       omiseresponse: {},
-      user: user
+      user: user,
+      docno: +new Date()      
     });
 
     orderObj.save(function (err) {
@@ -1801,7 +1810,8 @@ describe('Order omise create tests', function () {
       discountamount: 100,
       totalamount: 200,
       omiseresponse: {},
-      user: user
+      user: user,
+      docno: +new Date()      
     });
 
     var orderObj2 = new Order({
@@ -1858,7 +1868,8 @@ describe('Order omise create tests', function () {
       discountamount: 100,
       totalamount: 200,
       omiseresponse: {},
-      user: user
+      user: user,
+      docno: +new Date()      
     });
 
     orderObj.save(function (err) {
@@ -2035,7 +2046,8 @@ describe('Order omise create tests', function () {
       discountamount: 100,
       totalamount: 200,
       omiseresponse: {},
-      user: user
+      user: user,
+      docno: +new Date()      
     });
 
     var orderObj2 = new Order({
@@ -2092,7 +2104,8 @@ describe('Order omise create tests', function () {
       discountamount: 100,
       totalamount: 200,
       omiseresponse: {},
-      user: user
+      user: user,
+      docno: +new Date()      
     });
 
     orderObj.save(function (err) {
@@ -2271,7 +2284,8 @@ describe('Order omise create tests', function () {
       discountamount: 100,
       totalamount: 200,
       omiseresponse: {},
-      user: user
+      user: user,
+      docno: +new Date()      
     });
 
     var orderObj2 = new Order({
@@ -2328,7 +2342,8 @@ describe('Order omise create tests', function () {
       discountamount: 100,
       totalamount: 200,
       omiseresponse: {},
-      user: user
+      user: user,
+      docno: +new Date()      
     });
 
     orderObj.save(function (err) {
@@ -2504,7 +2519,8 @@ describe('Order omise create tests', function () {
       discountamount: 100,
       totalamount: 200,
       omiseresponse: {},
-      user: user
+      user: user,
+      docno: +new Date()      
     });
 
     var orderObj2 = new Order({
@@ -2561,7 +2577,8 @@ describe('Order omise create tests', function () {
       discountamount: 100,
       totalamount: 200,
       omiseresponse: {},
-      user: user
+      user: user,
+      docno: +new Date()      
     });
 
     orderObj.save(function (err) {
@@ -2623,6 +2640,7 @@ describe('Order omise create tests', function () {
   it('shop reject order item unsuccess', function (done) {
     // Save a new Order
     var orderObj = new Order({
+      docno: +new Date(),      
       items: [{
         product: product,
         unitprice: 200,
@@ -2744,6 +2762,7 @@ describe('Order omise create tests', function () {
     });
 
     var orderObj2 = new Order({
+      docno: +new Date(),      
       items: [{
         product: product,
         unitprice: 200,
@@ -2856,6 +2875,7 @@ describe('Order omise create tests', function () {
   it('admin transferred order item success', function (done) {
     // Save a new Order
     var orderObj = new Order({
+      docno: +new Date(),      
       items: [{
         product: product,
         unitprice: 200,
@@ -2977,6 +2997,7 @@ describe('Order omise create tests', function () {
     });
 
     var orderObj2 = new Order({
+      docno: +new Date(),      
       items: [{
         product: product,
         unitprice: 200,
@@ -3090,6 +3111,7 @@ describe('Order omise create tests', function () {
   it('admin cancelrefund order item success', function (done) {
     // Save a new Order
     var orderObj = new Order({
+      docno: +new Date(),      
       items: [{
         product: product,
         unitprice: 200,
@@ -3211,6 +3233,7 @@ describe('Order omise create tests', function () {
     });
 
     var orderObj2 = new Order({
+      docno: +new Date(),      
       items: [{
         product: product,
         unitprice: 200,
@@ -3324,6 +3347,7 @@ describe('Order omise create tests', function () {
   it('admin rejectrefund order item success', function (done) {
     // Save a new Order
     var orderObj = new Order({
+      docno: +new Date(),      
       items: [{
         product: product,
         unitprice: 200,
@@ -3445,6 +3469,7 @@ describe('Order omise create tests', function () {
     });
 
     var orderObj2 = new Order({
+      docno: +new Date(),      
       items: [{
         product: product,
         unitprice: 200,

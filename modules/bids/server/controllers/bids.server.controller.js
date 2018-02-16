@@ -193,9 +193,6 @@ exports.cookingBid = function (req, res, next) {
             var reverseUserBid = element.userbid.reverse();
             var selectedDate = reverseUserBid[reverseUserBid.map(function (e) { return e.user.toString(); }).indexOf(req.user._id.toString())].created;
             var lastWeek = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 7);
-            console.log('selectedDate', selectedDate);
-            console.log('today', today);
-            console.log('lastWeek', lastWeek);
             if (selectedDate >= lastWeek && selectedDate <= today) {
               cookingData[2].items.push({
                 _id: element._id,
@@ -264,7 +261,7 @@ exports.getBidDetail = function (req, res) {
     datestart: bid.starttime,
     dateend: bid.endtime,
     datenow: new Date(),
-    price: price,
+    price: price > 0 ? price : bid.startprice,
     pricestart: bid.startprice,
     pricebid: bid.bidprice,
     isBid: isBid,
