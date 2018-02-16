@@ -20,24 +20,24 @@ module.exports = function (io, socket) {
             });
         }
         // get bid item
-        Bid.findById(_item.item._id).exec(function (err, bid) {
+        Bid.findById(_item.item._id).exec(function (err, bidR) {
             if (err) {
                 io.emit(_item.item._id, {
                     status: 400,
                     message: "find by id fail."
                 });
-            } else if (!bid) {
+            } else if (!bidR) {
                 io.emit(_item.item._id, {
                     status: 404,
                     message: 'No Bid with that identifier has been found'
                 });
             }
-            var bid = bid;
+            var bid = bidR;
 
-            bid.price = bid.price + bid.pricebid;
+            bid.price = bidR.price + bidR.pricebid;
             bid.userbid.push({
                 user: _item.user,
-                bidprice: bid.price,
+                bidprice: bidR.price,
                 created: new Date()
             });
 
