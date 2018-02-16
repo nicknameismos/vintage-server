@@ -161,6 +161,7 @@ exports.cookingBid = function (req, res, next) {
         var startdate = new Date(element.starttime);
         var expiredate = new Date(element.endtime);
         var endShow = expiredate.setHours(expiredate.getHours() - 7);
+        var isbid = false;
 
         if (today >= startdate && today <= expiredate) {
           cookingData[0].items.push({
@@ -175,6 +176,7 @@ exports.cookingBid = function (req, res, next) {
             dateend: endShow,
             time: counttime(expiredate)
           });
+          isbid = true;
         } else if (startdate >= today) {
           cookingData[1].items.push({
             _id: element._id,
@@ -200,7 +202,7 @@ exports.cookingBid = function (req, res, next) {
                 created: element.created,
                 image: element.image ? element.image[0] : '',
                 price: element.price ? element.price : element.startprice,
-                isBid: false,
+                isBid: isbid,
                 pricestart: element.startprice,
                 pricebid: element.bidprice,
                 datestart: startdate,
