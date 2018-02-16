@@ -160,6 +160,7 @@ exports.cookingBid = function (req, res, next) {
 
         var startdate = new Date(element.starttime);
         var expiredate = new Date(element.endtime);
+        var endShow = expiredate.setHours(expiredate.getHours() - 7);
 
         if (today >= startdate && today <= expiredate) {
           cookingData[0].items.push({
@@ -171,7 +172,7 @@ exports.cookingBid = function (req, res, next) {
             pricestart: element.startprice,
             pricebid: element.bidprice,
             datestart: startdate,
-            dateend: expiredate,
+            dateend: endShow,
             time: counttime(expiredate)
           });
         } else if (startdate >= today) {
@@ -184,7 +185,7 @@ exports.cookingBid = function (req, res, next) {
             pricestart: element.startprice,
             pricebid: element.bidprice,
             datestart: startdate,
-            dateend: expiredate
+            dateend: endShow
           });
         }
         if (req.user) {
@@ -203,7 +204,7 @@ exports.cookingBid = function (req, res, next) {
                 pricestart: element.startprice,
                 pricebid: element.bidprice,
                 datestart: startdate,
-                dateend: expiredate,
+                dateend: endShow,
                 time: counttime(selectedDate)
               });
               cookingData[2].items = cookingData[0].items.sort(function (a, b) {
@@ -237,6 +238,7 @@ exports.getBidDetail = function (req, res) {
   var isBid = false;
   var startdate = new Date(bid.starttime);
   var expiredate = new Date(bid.endtime);
+  var endShow = expiredate.setHours(expiredate.getHours() - 7);  
   var today = new Date();
   var price = 0;
   var userid = '';
@@ -259,7 +261,7 @@ exports.getBidDetail = function (req, res) {
       detail: bid.detail
     },
     datestart: startdate,
-    dateend: expiredate,
+    dateend: endShow,
     datenow: new Date(),
     price: price > 0 ? price : bid.startprice,
     pricestart: bid.startprice,
