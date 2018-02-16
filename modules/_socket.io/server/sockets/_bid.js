@@ -1,6 +1,7 @@
 'use strict';
 var path = require('path'),
     mongoose = require('mongoose'),
+    Bid = mongoose.model('Bid'),
     errorHandler = require(path.resolve('./modules/core/server/controllers/errors.server.controller')),
     _ = require('lodash');
 
