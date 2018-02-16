@@ -20,45 +20,44 @@ module.exports = function (io, socket) {
             });
         }
         // get bid item
-        Bid.findById(_item.item._id).exec(function (err, bidR) {
+        Bid.findById(_item.item._id).exec(function (err, bid) {
             if (err) {
                 io.emit(_item.item._id, {
                     status: 400,
                     message: "find by id fail."
                 });
-            } else if (!bidR) {
+            } else if (!bid) {
                 io.emit(_item.item._id, {
                     status: 404,
                     message: 'No Bid with that identifier has been found'
                 });
             }
-            var bid = bidR;
+            var bid = bid;
 
-            bid.price = bidR.price + bidR.pricebid;
+            _item.item.currentuser = {
+                name: _item.user.displayName,
+                profileImageURL: _item.user.profileImageURL,
+                _id: _item.user._id
+            };
+
+            _item.item.price += _item.item.pricebid;
+
+            bid.price = _item.item.price;
             bid.userbid.push({
                 user: _item.user,
-                bidprice: bidR.price,
+                bidprice: _item.item.price,
                 created: new Date()
             });
 
             // update bid item
 
-            bid.save(function (err, bidRes) {
+            bid.save(function (err) {
                 if (err) {
                     io.emit(_item.item._id, {
                         status: 400,
                         message: 'save bid item error.'
                     });
                 } else {
-
-                    _item.item.currentuser = {
-                        name: _item.user.displayName,
-                        profileImageURL: _item.user.profileImageURL,
-                        _id: _item.user._id
-                    };
-
-                    _item.item.price = bidRes.price;
-
                     io.emit(_item.item._id, {
                         status: 200,
                         response: _item
