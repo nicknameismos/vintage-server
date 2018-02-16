@@ -34,7 +34,7 @@ module.exports = function (io, socket) {
             }
             var bid = bid;
 
-            bid.price += bid.pricebid;
+            bid.price = bid.price + bid.pricebid;
             bid.userbid.push({
                 user: _item.user,
                 bidprice: bid.price,
