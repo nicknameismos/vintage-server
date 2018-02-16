@@ -29,6 +29,9 @@ exports.invokeRolesPolicies = function () {
     }, {
       resources: '/api/refunditem',
       permissions: ['post']
+    }, {
+      resources: '/api/getordersbyadmin',
+      permissions: ['post']
     }]
   }, {
     roles: ['shop'],
