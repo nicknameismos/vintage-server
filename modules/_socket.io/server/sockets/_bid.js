@@ -43,7 +43,7 @@ module.exports = function (io, socket) {
 
             // update bid item
 
-            bid.save(function (err) {
+            bid.save(function (err, bidRes) {
                 if (err) {
                     io.emit(_item.item._id, {
                         status: 400,
@@ -57,7 +57,7 @@ module.exports = function (io, socket) {
                         _id: _item.user._id
                     };
 
-                    _item.item.price = bid.price;
+                    _item.item.price = bidRes.price;
 
                     io.emit(_item.item._id, {
                         status: 200,
