@@ -170,8 +170,8 @@ exports.cookingBid = function (req, res, next) {
             isBid: true,
             pricestart: element.startprice,
             pricebid: element.bidprice,
-            datestart: element.starttime,
-            dateend: element.endtime,
+            datestart: startdate,
+            dateend: expiredate,
             time: counttime(expiredate)
           });
         } else if (startdate >= today) {
@@ -183,8 +183,8 @@ exports.cookingBid = function (req, res, next) {
             isBid: false,
             pricestart: element.startprice,
             pricebid: element.bidprice,
-            datestart: element.starttime,
-            dateend: element.endtime
+            datestart: startdate,
+            dateend: expiredate
           });
         }
         if (req.user) {
@@ -202,8 +202,8 @@ exports.cookingBid = function (req, res, next) {
                 isBid: false,
                 pricestart: element.startprice,
                 pricebid: element.bidprice,
-                datestart: element.starttime,
-                dateend: element.endtime,
+                datestart: startdate,
+                dateend: expiredate,
                 time: counttime(selectedDate)
               });
               cookingData[2].items = cookingData[0].items.sort(function (a, b) {
@@ -258,8 +258,8 @@ exports.getBidDetail = function (req, res) {
       images: bid.image,
       detail: bid.detail
     },
-    datestart: bid.starttime,
-    dateend: bid.endtime,
+    datestart: startdate,
+    dateend: expiredate,
     datenow: new Date(),
     price: price > 0 ? price : bid.startprice,
     pricestart: bid.startprice,
