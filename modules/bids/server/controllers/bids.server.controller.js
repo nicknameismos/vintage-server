@@ -188,7 +188,7 @@ exports.cookingBid = function (req, res, next) {
             dateend: endShow
           });
         }
-        if (req.user) {
+        if (req.user && element.userbid && element.userbid.length > 0) {
           if (element.userbid.map(function (e) { return e.user.toString(); }).indexOf(req.user._id.toString()) !== -1) {
             // console.log(element.userbid.map(function (e) { return e.user.toString(); }).indexOf(req.user._id.toString()));
             var reverseUserBid = element.userbid.reverse();
