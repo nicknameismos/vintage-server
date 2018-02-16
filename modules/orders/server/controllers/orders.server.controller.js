@@ -787,3 +787,126 @@ exports.refund = function (req, res, next) {
   });
 
 };
+
+exports.getOrderListAdmin = function (req, res, next) {
+  var firstIndex = 0;
+  var lastIndex = 10;
+  var statusTH = ['รอชำระเงิน', 'รอจัดส่ง', 'รอรับสินค้า', 'สำเร็จ', 'ลูกค้ายกเลิก', 'ร้านค้าปฏิเสธ', 'คืนเงินแล้ว', 'จ่ายเงินแล้ว'];
+  var statusEN = ['topay', 'confirm', 'sent', 'completed', 'cancel', 'reject', 'refund', 'transferred'];
+  var status = 'topay';
+  if (req.body.currentpage > 1) {
+    firstIndex = ((req.body.currentpage - 1) * 10);
+    lastIndex = (req.body.currentpage * 10);
+  }
+  var filter = {};
+  if (req.body.title && req.body.title !== '') {
+    status = statusEN[statusTH.indexOf(req.body.title)];
+  }
+  // console.log(status);
+  if (req.body.keyword && req.body.keyword !== '') {
+    filter = searchName(req.body.keyword);
+  }
+  Order.find(filter).sort('-created').populate('items.product').populate('user', 'firstName').exec(function (err, orders) {
+    if (err) {
+      return res.status(400).send({
+        message: errorHandler.getErrorMessage(err)
+      });
+    } else {
+      var dataOrders = [];
+      if (orders && orders.length > 0) {
+        orders.forEach(function (order) {
+          var sentdate2 = '';
+          var completed2 = '';
+          var canceldate = '';
+          var isrefund = false;
+          var remark = '';
+          order.items.forEach(function (itm) {
+
+            if (itm.status === 'rejectrefund' || itm.status === 'cancelrefund') {
+              isrefund = true;
+            }
+            if (itm.status === 'reject') {
+              remark = itm.remark;
+            }
+            if (itm.log && itm.log.length > 0) {
+              itm.log.forEach(function (it) {
+                if (it.status === 'sent') {
+                  sentdate2 = it.created;
+                } else if (it.status === 'completed') {
+                  completed2 = it.created;
+                } else if (it.status === 'transferred') {
+                  completed2 = it.created;
+                } else if (it.status === 'cancel' || it.status === 'reject') {
+                  canceldate = it.created;
+                }
+              });
+            }
+            if (status.toString() === 'refund' ? itm.status.toString() === 'cancelrefund' || itm.status.toString() === 'rejectrefund' : itm.status.toString() === status.toString()) {
+              dataOrders.push({
+                itemid: itm._id,
+                orderid: order._id,
+                docno: order.docno ? order.docno : order._id,
+                name: itm.product && itm.product.name ? itm.product.name : '',
+                image: itm.product && itm.product.images ? itm.product.images[0] : '',
+                price: itm.unitprice,
+                qty: itm.qty,
+                shippingtype: itm.shipping.ref.name,
+                shippingprice: itm.shipping.price,
+                amount: itm.amount,
+                sentdate: sentdate2,
+                receivedate: completed2,
+                canceldate: canceldate,
+                isrefund: isrefund,
+                status: itm.status,
+                rejectreason: remark,
+                refid: itm.refid ? itm.refid : ''
+              });
+            }
+          });
+        });
+      }
+      req.orders = dataOrders.slice(firstIndex, lastIndex);
+      next();
+    }
+  });
+};
+
+exports.cookingOrderListAdmin = function (req, res, next) {
+  var data = {
+    titles: ['รอชำระเงิน', 'รอจัดส่ง', 'รอรับสินค้า', 'สำเร็จ', 'ลูกค้ายกเลิก', 'ร้านค้าปฏิเสธ', 'คืนเงินแล้ว', 'จ่ายเงินแล้ว'],
+    items: req.orders,
+    paging: countPage(req.orders)
+  };
+  req.data = data;
+  next();
+};
+
+exports.resOrderListAdmin = function (req, res) {
+  res.jsonp(req.data);
+};
+
+function countPage(orders) {
+  var numpage = [];
+  if (orders && orders.length > 0) {
+    var pages = orders.length / 10;
+    var pagings = Math.ceil(pages);
+    for (var i = 0; i < pagings; i++) {
+      numpage.push(i + 1);
+    }
+
+  }
+  return numpage;
+}
+
+function searchName(keyWordName) {
+  var keywordname = {
+    $or: [{
+      'docno': {
+        '$regex': keyWordName,
+        '$options': 'i'
+      }
+    }],
+
+  };
+  return keywordname;
+}
