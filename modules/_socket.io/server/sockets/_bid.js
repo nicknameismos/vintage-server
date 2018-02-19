@@ -14,7 +14,7 @@ module.exports = function (io, socket) {
         var _item = data;
         // console.log(_item.item);
         var enddate = new Date(_item.item.enddate);
-        var current = new Date();
+        var current = '';
         console.log(enddate + ' ' + current);
         if (enddate > current) {
 
