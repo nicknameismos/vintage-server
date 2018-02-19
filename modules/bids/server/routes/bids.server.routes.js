@@ -15,7 +15,7 @@ module.exports = function (app) {
 
   app.route('/api/bids/:bidId').all(core.jwtCheck, bidsPolicy.isAllowed)
     .get(bids.read)
-    .put(bids.update)
+    .put(bids.update, bids.scheduleBid)
     .delete(bids.delete);
 
   app.route('/api/getbidlist/:userBidId').all(bidsPolicy.isAllowed)

@@ -49,7 +49,7 @@ exports.read = function (req, res) {
 /**
  * Update a Bid
  */
-exports.update = function (req, res) {
+exports.update = function (req, res, next) {
   var bid = req.bid;
 
   bid = _.extend(bid, req.body);
@@ -60,7 +60,9 @@ exports.update = function (req, res) {
         message: errorHandler.getErrorMessage(err)
       });
     } else {
-      res.jsonp(bid);
+      req.bid = bid;
+      // res.jsonp(bid);
+      next();
     }
   });
 };
