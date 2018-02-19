@@ -217,7 +217,7 @@ exports.cookingBid = function (req, res, next) {
                 isBid: isbid,
                 pricestart: element.startprice,
                 pricebid: element.bidprice,
-                datestart: startdate.setHours(expiredate.getHours() + 7),
+                datestart: new Date(startdate).setHours(expiredate.getHours() + 7),
                 dateend: endShow,
                 time: counttime(selectedDate)
               });
