@@ -163,7 +163,9 @@ exports.cookingBid = function (req, res, next) {
       bids.forEach(function (element) {
 
         var startdate = new Date(element.starttime);
+        startdate = startdate.setHours(startdate.getHours() - 7);
         var expiredate = new Date(element.endtime);
+        // expiredate = expiredate.setHours(expiredate.getHours() - 7);
         var endShow = expiredate.setHours(expiredate.getHours() - 7);
         var isbid = false;
 
@@ -196,8 +198,8 @@ exports.cookingBid = function (req, res, next) {
         }
         if (req.user && element.userbid && element.userbid.length > 0) {
           if (element.userbid.map(function (e) {
-              return e.user.toString();
-            }).indexOf(req.user._id.toString()) !== -1) {
+            return e.user.toString();
+          }).indexOf(req.user._id.toString()) !== -1) {
             // console.log(element.userbid.map(function (e) { return e.user.toString(); }).indexOf(req.user._id.toString()));
             var reverseUserBid = element.userbid.reverse();
             var selectedDate = reverseUserBid[reverseUserBid.map(function (e) {
@@ -247,7 +249,9 @@ exports.getBidDetail = function (req, res) {
   var bid = req.bid ? req.bid.toJSON() : {};
   var isBid = false;
   var startdate = new Date(bid.starttime);
+  startdate = startdate.setHours(startdate.getHours() - 7);
   var expiredate = new Date(bid.endtime);
+  // expiredate = expiredate.setHours(expiredate.getHours() - 7);  
   var endShow = expiredate;
   var today = new Date();
   var price = 0;
