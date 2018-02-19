@@ -14,7 +14,6 @@ module.exports = function (io, socket) {
         var _item = data;
         var enddate = new Date(_item.item.dateend);
         var current = new Date();
-        console.log(enddate + ' ' + current);
         if (enddate > current) {
 
             if (!mongoose.Types.ObjectId.isValid(_item.item._id)) {
@@ -65,7 +64,6 @@ module.exports = function (io, socket) {
                             user_id: _item.user._id
                         });
                     } else {
-                        console.log(bidRes);
                         _item.item.price = bidRes.price;
                         io.emit(_item.item._id, {
                             status: 200,
