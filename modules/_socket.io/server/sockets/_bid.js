@@ -13,58 +13,74 @@ module.exports = function (io, socket) {
 
         var _item = data;
         // console.log(_item.item);
-        if (!mongoose.Types.ObjectId.isValid(_item.item._id)) {
-            io.emit(_item.item._id, {
-                status: 400,
-                message: "_id is invalid."
-            });
-        }
-        // get bid item
-        Bid.findById(_item.item._id).exec(function (err, bid) {
-            if (err) {
+        var enddate = new Date(_item.item.enddate);
+        var current = new Date();
+        if (enddate > current) {
+
+            if (!mongoose.Types.ObjectId.isValid(_item.item._id)) {
                 io.emit(_item.item._id, {
                     status: 400,
-                    message: "find by id fail."
-                });
-            } else if (!bid) {
-                io.emit(_item.item._id, {
-                    status: 404,
-                    message: 'No Bid with that identifier has been found'
+                    message: "_id is invalid.(400)"
                 });
             }
-            var bid = bid;
-
-            _item.item.currentuser = {
-                name: _item.user.displayName,
-                profileImageURL: _item.user.profileImageURL,
-                _id: _item.user._id
-            };
-
-            _item.item.price += _item.item.pricebid;
-
-            bid.price = _item.item.price;
-            bid.userbid.push({
-                user: _item.user,
-                bidprice: _item.item.price,
-                created: new Date()
-            });
-
-            // update bid item
-
-            bid.save(function (err) {
+            // get bid item
+            Bid.findById(_item.item._id).exec(function (err, bid) {
                 if (err) {
                     io.emit(_item.item._id, {
                         status: 400,
-                        message: 'save bid item error.'
+                        message: "find by id fail.(400)",
+                        user_id: _item.user._id
                     });
-                } else {
+                } else if (!bid) {
                     io.emit(_item.item._id, {
-                        status: 200,
-                        response: _item
+                        status: 404,
+                        message: 'No Bid with that identifier has been found.(404)',
+                        user_id: _item.user._id
                     });
                 }
+                var bid = bid;
+
+                _item.item.currentuser = {
+                    name: _item.user.displayName,
+                    profileImageURL: _item.user.profileImageURL,
+                    _id: _item.user._id
+                };
+
+                _item.item.price += _item.item.pricebid;
+
+                bid.price = _item.item.price;
+                bid.userbid.push({
+                    user: _item.user,
+                    bidprice: _item.item.price,
+                    created: new Date()
+                });
+
+                // update bid item
+
+                bid.save(function (err, bidRes) {
+                    if (err) {
+                        io.emit(_item.item._id, {
+                            status: 400,
+                            message: 'save bid item error.(400)',
+                            user_id: _item.user._id
+                        });
+                    } else {
+                        console.log(bidRes);
+                        _item.item.price = bidRes.price;
+                        io.emit(_item.item._id, {
+                            status: 200,
+                            response: _item
+                        });
+                    }
+                });
             });
-        });
+        } else {
+            io.emit(_item.item._id, {
+                status: 400,
+                message: "Time out.",
+                user_id: _item.user._id
+            });
+        }
     });
 
     // Emit the status event when a socket client is disconnected
