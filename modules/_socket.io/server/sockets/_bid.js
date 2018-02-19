@@ -12,14 +12,13 @@ module.exports = function (io, socket) {
     // Send a chat messages to all connected sockets when a message is received
     socket.on('_bid', function (data) {
 
-        var startTime = new Date(new Date + 5000);
-        var endTime = new Date(startTime.getTime() + 5000);
+        var startTime = new Date(new Date + 10000);
+        var endTime = new Date(startTime.getTime() + 10000);
         var j = schedule.scheduleJob({
             start: startTime,
-            end: endTime,
-            rule: '*/1 * * * * *'
+            end: endTime
         }, function () {
-            console.log('Time for tea!');
+            console.log(data.user._id);
         });
 
         var _item = data;
