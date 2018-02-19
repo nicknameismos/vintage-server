@@ -412,6 +412,7 @@ exports.cookingListBids = function (req, res, next) {
     var startdate = new Date(bid.starttime);
     startdate = startdate.setHours(startdate.getHours() - 7);
     var expiredate = new Date(bid.endtime);
+    expiredate = expiredate.setHours(expiredate.getHours() - 7);
     var today = new Date();
     // timeStart = today
 
