@@ -106,6 +106,7 @@ describe('Bid CRUD tests with token', function () {
 
     bidObj.starttime = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 1);
     bidObj.endtime = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
+    bidObj.endtime = bidObj.endtime.setHours(23);
     bidObj.userbid = [{
       user: user,
       bidprice: 160

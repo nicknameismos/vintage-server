@@ -165,7 +165,9 @@ exports.cookingBid = function (req, res, next) {
       bids.forEach(function (element) {
 
         var startdate = new Date(element.starttime);
+        startdate = startdate.setHours(startdate.getHours() - 7);
         var expiredate = new Date(element.endtime);
+        // expiredate = expiredate.setHours(expiredate.getHours() - 7);
         var endShow = expiredate.setHours(expiredate.getHours() - 7);
         var isbid = false;
 
@@ -249,6 +251,7 @@ exports.getBidDetail = function (req, res) {
   var bid = req.bid ? req.bid.toJSON() : {};
   var isBid = false;
   var startdate = new Date(bid.starttime);
+  startdate = startdate.setHours(startdate.getHours() - 7);
   var expiredate = new Date(bid.endtime);
   var endShow = expiredate.setHours(expiredate.getHours() - 7);;
   var today = new Date();
