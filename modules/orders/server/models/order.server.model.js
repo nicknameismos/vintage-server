@@ -38,7 +38,7 @@ var OrderSchema = new Schema({
       },
       status: {
         type: String,
-        enum: ['confirm', 'sent', 'completed', 'cancel', 'reject', 'transferred', 'rejectrefund', 'cancelrefund'],
+        enum: ['confirm', 'sent', 'completed', 'cancel', 'admincancel', 'reject', 'transferred', 'rejectrefund', 'cancelrefund', 'admincancelrefund'],
         default: 'confirm'
       },
       remark: {

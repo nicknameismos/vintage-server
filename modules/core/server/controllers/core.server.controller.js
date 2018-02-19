@@ -147,12 +147,15 @@ exports.updateNotification = function (req, res) {
             detail = item.product.name + ' หมายเลขการสั่งซื้อ ' + orderid + ' กำลังดำเนินการจัดส่ง\r\nหมายเลขการจัดส่ง ' + item.refid;
           } else if (item.status === 'reject') {
             title = 'สินค้าถูกยกเลิก';
-            detail = item.product.name + ' หมายเลขการสั่งซื้อ ' + orderid + ' กำลังดำเนินการจัดส่ง\r\nหมายเหตุ ' + item.remark;
+            detail = item.product.name + ' หมายเลขการสั่งซื้อ ' + orderid + ' ถูกยกเลิก\r\nหมายเหตุ ' + item.remark;
+          } else if (item.status === 'admincancel') {
+            title = 'ระบบยกเลิกสินค้า';
+            detail = item.product.name + ' หมายเลขการสั่งซื้อ ' + orderid + ' ถูกยกเลิกโดยระบบ\r\nหมายเหตุ ' + item.remark;
           } else if (item.status === 'transferred') {
             title = 'ระบบชำระเงิน';
             detail = item.product.name + ' หมายเลขการสั่งซื้อ ' + orderid + ' ชำระเงินจากระบบ';
             isShop = true;
-          } else if (item.status === 'rejectrefund' || item.status === 'cancelrefund') {
+          } else if (item.status === 'rejectrefund' || item.status === 'cancelrefund' || item.status === 'admincancelrefund') {
             title = 'ระบบชำระเงินคืน';
             detail = item.product.name + ' หมายเลขการสั่งซื้อ ' + orderid + ' ชำระเงินคืนจากระบบ';
           }
