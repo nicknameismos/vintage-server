@@ -15,6 +15,7 @@ module.exports = function (io, socket) {
         // console.log(_item.item);
         var enddate = new Date(_item.item.enddate);
         var current = new Date();
+        console.log(enddate + ' ' + current);
         if (enddate > current) {
 
             if (!mongoose.Types.ObjectId.isValid(_item.item._id)) {
