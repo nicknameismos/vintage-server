@@ -27,8 +27,8 @@ module.exports = function (io, socket) {
             Bid.findById(_item.item._id).exec(function (err, bid) {
                 if (err) {
                     io.emit(_item.item._id, {
-                        status: 400,
-                        message: "find by id fail.(400)",
+                        status: 401,
+                        message: "find by id fail.(401)",
                         user_id: _item.user._id
                     });
                 } else if (!bid) {
@@ -76,7 +76,7 @@ module.exports = function (io, socket) {
             });
         } else {
             io.emit(_item.item._id, {
-                status: 400,
+                status: 402,
                 message: "Time out.",
                 user_id: _item.user._id
             });
