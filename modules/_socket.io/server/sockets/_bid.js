@@ -5,12 +5,18 @@ var path = require('path'),
     errorHandler = require(path.resolve('./modules/core/server/controllers/errors.server.controller')),
     _ = require('lodash');
 
+var schedule = require('node-schedule');
 // Create the chat configuration
 module.exports = function (io, socket) {
 
     // Send a chat messages to all connected sockets when a message is received
     socket.on('_bid', function (data) {
+        var date = new Date();
 
+        var j = schedule.scheduleJob(date, function () {
+            console.log('The world is going to end today.');
+        });
+        
         var _item = data;
         var enddate = new Date(_item.item.dateend);
         var current = new Date();
