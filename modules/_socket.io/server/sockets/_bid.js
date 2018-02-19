@@ -4,21 +4,11 @@ var path = require('path'),
     Bid = mongoose.model('Bid'),
     errorHandler = require(path.resolve('./modules/core/server/controllers/errors.server.controller')),
     _ = require('lodash');
-
-var schedule = require('node-schedule');
 // Create the chat configuration
 module.exports = function (io, socket) {
 
     // Send a chat messages to all connected sockets when a message is received
     socket.on('_bid', function (data) {
-
-        var startTime = new Date(new Date + 5000);
-        var j = schedule.scheduleJob({
-            start: startTime
-        }, function () {
-            console.log(data.user._id);
-            j.cancel();
-        });
 
         var _item = data;
         var enddate = new Date(_item.item.dateend);
@@ -32,21 +22,21 @@ module.exports = function (io, socket) {
                 });
             }
             // get bid item
-            Bid.findById(_item.item._id).exec(function (err, bid) {
+            Bid.findById(_item.item._id).exec(function (err, bidR) {
                 if (err) {
                     io.emit(_item.item._id, {
                         status: 401,
                         message: "find by id fail.(401)",
                         user_id: _item.user._id
                     });
-                } else if (!bid) {
+                } else if (!bidR) {
                     io.emit(_item.item._id, {
                         status: 404,
                         message: 'No Bid with that identifier has been found.(404)',
                         user_id: _item.user._id
                     });
                 }
-                var bid = bid;
+                var bid = bidR;
 
                 _item.item.currentuser = {
                     name: _item.user.displayName,

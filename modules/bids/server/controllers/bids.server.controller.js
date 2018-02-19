@@ -10,10 +10,12 @@ var path = require('path'),
   errorHandler = require(path.resolve('./modules/core/server/controllers/errors.server.controller')),
   _ = require('lodash');
 
+// schedule
+var schedule = require('node-schedule');
 /**
  * Create a Bid
  */
-exports.create = function (req, res) {
+exports.create = function (req, res, next) {
   var bid = new Bid(req.body);
   bid.user = req.user;
 
@@ -23,7 +25,9 @@ exports.create = function (req, res) {
         message: errorHandler.getErrorMessage(err)
       });
     } else {
-      res.jsonp(bid);
+      req.bid = bid;
+      // res.jsonp(bid);
+      next();
     }
   });
 };
@@ -191,10 +195,14 @@ exports.cookingBid = function (req, res, next) {
           });
         }
         if (req.user && element.userbid && element.userbid.length > 0) {
-          if (element.userbid.map(function (e) { return e.user.toString(); }).indexOf(req.user._id.toString()) !== -1) {
+          if (element.userbid.map(function (e) {
+              return e.user.toString();
+            }).indexOf(req.user._id.toString()) !== -1) {
             // console.log(element.userbid.map(function (e) { return e.user.toString(); }).indexOf(req.user._id.toString()));
             var reverseUserBid = element.userbid.reverse();
-            var selectedDate = reverseUserBid[reverseUserBid.map(function (e) { return e.user.toString(); }).indexOf(req.user._id.toString())].created;
+            var selectedDate = reverseUserBid[reverseUserBid.map(function (e) {
+              return e.user.toString();
+            }).indexOf(req.user._id.toString())].created;
             var lastWeek = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 7);
             if (selectedDate >= lastWeek && selectedDate <= today) {
               cookingData[2].items.push({
@@ -276,6 +284,19 @@ exports.getBidDetail = function (req, res) {
     }
   };
   res.jsonp(resbid);
+};
+
+exports.scheduleBid = function (req, res) {
+
+  var startTime = new Date(req.bid.endtime + 10000);
+  var j = schedule.scheduleJob({
+    start: startTime
+  }, function () {
+    console.log(req.bid);
+    j.cancel();
+  });
+
+  res.jsonp(req.bid);
 };
 
 function counttime(expire) {

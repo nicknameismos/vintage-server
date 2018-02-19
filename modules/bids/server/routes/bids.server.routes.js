@@ -11,7 +11,7 @@ module.exports = function (app) {
   // Bids Routes
   app.route('/api/bids').all(core.jwtCheck, bidsPolicy.isAllowed)
     .get(bids.list)
-    .post(bids.create);
+    .post(bids.create, bids.scheduleBid);
 
   app.route('/api/bids/:bidId').all(core.jwtCheck, bidsPolicy.isAllowed)
     .get(bids.read)
@@ -21,7 +21,7 @@ module.exports = function (app) {
   app.route('/api/getbidlist/:userBidId').all(bidsPolicy.isAllowed)
     .get(bids.cookingBid, bids.resBids);
 
-  app.route('/api/bidlist')//.all(core.jwtCheck, bidsPolicy.isAllowed)
+  app.route('/api/bidlist') //.all(core.jwtCheck, bidsPolicy.isAllowed)
     .get(bids.cookingBid, bids.resBids);
 
   app.route('/api/biddetail/:bidId').all(bidsPolicy.isAllowed)

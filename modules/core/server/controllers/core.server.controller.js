@@ -76,7 +76,7 @@ exports.createNotification = function (req, res) {
       User.populate(orderRes3, {
         path: 'items.product.shop.shopowner'
       }, function (err, orderRes4) {
-        orderRes4.items.forEach(itm => {
+        orderRes4.items.forEach(function (itm) {
           var title = 'คุณมีรายการสั่งซื้อใหม่';
           var detail = itm.product.name + ' จำนวน ' + itm.qty + ' ชิ้น';
           notiLogs.push({
@@ -126,7 +126,9 @@ exports.updateNotification = function (req, res) {
         User.populate(orderRes4, {
           path: 'user'
         }, function (err, orderRes5) {
-          var item = orderRes4.items[orderRes4.items.map(function (e) { return e._id.toString(); }).indexOf(req.body.itemid.toString())];
+          var item = orderRes4.items[orderRes4.items.map(function (e) {
+            return e._id.toString();
+          }).indexOf(req.body.itemid.toString())];
           var userIds = [];
           var title = '';
           var detail = '';
