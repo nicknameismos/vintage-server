@@ -292,7 +292,8 @@ exports.getBidDetail = function (req, res) {
 };
 
 exports.scheduleBid = function (req, res) {
-  var startTime = new Date(req.bid.endtime + 10000).setHours(expiredate.getHours() - 7);
+  var startTime = new Date(req.bid.endtime + 10000).setHours(expiredate.getHours() + 7);
+  console.log(startTime);
   var j = schedule.scheduleJob({
     start: startTime
   }, function () {
