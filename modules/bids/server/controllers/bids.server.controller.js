@@ -253,7 +253,7 @@ exports.getBidDetail = function (req, res) {
   var startdate = new Date(bid.starttime);
   startdate = startdate.setHours(startdate.getHours() - 7);
   var expiredate = new Date(bid.endtime);
-  var endShow = expiredate.setHours(expiredate.getHours() - 7);;
+  var endShow = expiredate.setHours(expiredate.getHours() - 7);
   var today = new Date();
   var price = 0;
   var userid = '';
@@ -275,8 +275,8 @@ exports.getBidDetail = function (req, res) {
       images: bid.image,
       detail: bid.detail
     },
-    datestart: new Date(bid.starttime),
-    dateend: new Date(bid.endtime),
+    datestart: startdate,
+    dateend: endShow,
     datenow: new Date(),
     price: price > 0 ? price : bid.startprice,
     pricestart: bid.startprice,
