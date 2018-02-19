@@ -11,12 +11,17 @@ module.exports = function (io, socket) {
 
     // Send a chat messages to all connected sockets when a message is received
     socket.on('_bid', function (data) {
-        var date = new Date();
 
-        var j = schedule.scheduleJob(date, function () {
-            console.log('The world is going to end today.');
+        var startTime = new Date(new Date + 5000);
+        var endTime = new Date(startTime.getTime() + 5000);
+        var j = schedule.scheduleJob({
+            start: startTime,
+            end: endTime,
+            rule: '*/1 * * * * *'
+        }, function () {
+            console.log('Time for tea!');
         });
-        
+
         var _item = data;
         var enddate = new Date(_item.item.dateend);
         var current = new Date();
