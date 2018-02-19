@@ -294,7 +294,7 @@ exports.getBidDetail = function (req, res) {
 exports.scheduleBid = function (req, res) {
   var bid = req.bid;
   var date = new Date(bid.endtime);
-  var startTime = new Date(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours() - 7, date.getMinutes(), 10);
+  var startTime = new Date(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours() - 7, date.getMinutes(), 5);
   var j = schedule.scheduleJob(startTime, function () {
     console.log(bid);
     j.cancel();
