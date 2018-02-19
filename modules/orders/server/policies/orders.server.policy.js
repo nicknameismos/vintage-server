@@ -47,6 +47,9 @@ exports.invokeRolesPolicies = function () {
     }, {
       resources: '/api/completeitem',
       permissions: ['post']
+    }, {
+      resources: '/api/admincancelitem',
+      permissions: ['post']
     }]
   }, {
     roles: ['shop'],

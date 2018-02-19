@@ -311,7 +311,7 @@ exports.customerCookingListOrder = function (req, res, next) {
           rejectreason: '',
           refid: itm.refid ? itm.refid : ''
         });
-      } else if (itm.status === 'cancel' || itm.status === 'reject' || itm.status === 'rejectrefund' || itm.status === 'cancelrefund') {
+      } else if (itm.status === 'cancel' || itm.status === 'admincancel' || itm.status === 'reject' || itm.status === 'rejectrefund' || itm.status === 'cancelrefund' || itm.status === 'admincancelrefund') {
         var canceldate = '';
         var remark = '';
         if (itm.log && itm.log.length > 0) {
@@ -325,6 +325,10 @@ exports.customerCookingListOrder = function (req, res, next) {
               canceldate = it.created;
               remark = itm.remark;
             } else if (it.status === 'cancelrefund') {
+              canceldate = it.created;
+            } else if (it.status === 'admincancelrefund') {
+              canceldate = it.created;
+            } else if (it.status === 'admincancel') {
               canceldate = it.created;
             }
           });
@@ -394,8 +398,19 @@ exports.shopCookingListOrder = function (req, res, next) {
   }];
   req.orders.forEach(function (order) {
     order.items.forEach(function (itm) {
+      var sentdate = '';
+      var condate = '';
+      var receivedate = '';
+      var canceldate = '';
       if (itm.shopid.toString() === req.shopid.toString()) {
         if (itm.status === 'confirm') {
+          if (itm.log && itm.log.length > 0) {
+            itm.log.forEach(function (it) {
+              if (it.status === 'confirm') {
+                condate = it.created;
+              }
+            });
+          }
           resData[0].items.push({
             itemid: itm._id,
             orderid: order._id,
@@ -407,20 +422,22 @@ exports.shopCookingListOrder = function (req, res, next) {
             shippingtype: itm.shipping.ref.name,
             shippingprice: itm.shipping.price,
             amount: itm.amount,
-            sentdate: '',
-            receivedate: '',
-            canceldate: '',
+            confirmdate: condate,
+            sentdate: sentdate,
+            receivedate: receivedate,
+            canceldate: canceldate,
             isrefund: false,
             status: 'confirm',
             rejectreason: '',
             refid: itm.refid ? itm.refid : ''
           });
         } else if (itm.status === 'sent') {
-          var sentdate = '';
           if (itm.log && itm.log.length > 0) {
             itm.log.forEach(function (it) {
               if (it.status === 'sent') {
                 sentdate = it.created;
+              } else if (it.status === 'confirm') {
+                condate = it.created;
               }
             });
           }
@@ -435,25 +452,26 @@ exports.shopCookingListOrder = function (req, res, next) {
             shippingtype: itm.shipping.ref.name,
             shippingprice: itm.shipping.price,
             amount: itm.amount,
+            confirmdate: condate,
             sentdate: sentdate,
-            receivedate: '',
-            canceldate: '',
+            receivedate: receivedate,
+            canceldate: canceldate,
             isrefund: false,
             status: 'sent',
             rejectreason: '',
             refid: itm.refid ? itm.refid : ''
           });
         } else if (itm.status === 'completed' || itm.status === 'transferred') {
-          var sentdate2 = '';
-          var completed2 = '';
           if (itm.log && itm.log.length > 0) {
             itm.log.forEach(function (it) {
               if (it.status === 'sent') {
-                sentdate2 = it.created;
+                sentdate = it.created;
               } else if (it.status === 'completed') {
-                completed2 = it.created;
+                receivedate = it.created;
               } else if (it.status === 'transferred') {
-                completed2 = it.created;
+                receivedate = it.created;
+              } else if (it.status === 'confirm') {
+                condate = it.created;
               }
             });
           }
@@ -468,22 +486,25 @@ exports.shopCookingListOrder = function (req, res, next) {
             shippingtype: itm.shipping.ref.name,
             shippingprice: itm.shipping.price,
             amount: itm.amount,
-            sentdate: sentdate2,
-            receivedate: completed2,
-            canceldate: '',
+            confirmdate: condate,
+            sentdate: sentdate,
+            receivedate: receivedate,
+            canceldate: canceldate,
             isrefund: false,
             status: itm.status,
             rejectreason: '',
             refid: itm.refid ? itm.refid : ''
           });
-        } else if (itm.status === 'cancel' || itm.status === 'reject' || itm.status === 'rejectrefund' || itm.status === 'cancelrefund') {
-          var canceldate = '';
+        } else if (itm.status === 'cancel' || itm.status === 'admincancel' || itm.status === 'reject' || itm.status === 'rejectrefund' || itm.status === 'cancelrefund' || itm.status === 'admincancelrefund') {
           var remark = '';
           if (itm.log && itm.log.length > 0) {
             itm.log.forEach(function (it) {
               if (it.status === 'cancel') {
                 canceldate = it.created;
               } else if (it.status === 'reject') {
+                canceldate = it.created;
+                remark = itm.remark;
+              } else if (it.status === 'admincancel') {
                 canceldate = it.created;
                 remark = itm.remark;
               }
@@ -500,8 +521,9 @@ exports.shopCookingListOrder = function (req, res, next) {
             shippingtype: itm.shipping.ref.name,
             shippingprice: itm.shipping.price,
             amount: itm.amount,
-            sentdate: '',
-            receivedate: '',
+            confirmdate: condate,
+            sentdate: sentdate,
+            receivedate: receivedate,
             canceldate: canceldate,
             isrefund: false,
             status: itm.status,
@@ -557,11 +579,11 @@ exports.cookingOrderDetail = function (req, res, next) {
       sentdate = l.created;
     } else if (l.status.toString() === 'completed') {
       receiveddate = l.created;
-    } else if (l.status.toString() === 'cancel' || l.status.toString() === 'reject') {
+    } else if (l.status.toString() === 'cancel' || l.status.toString() === 'reject' || l.status.toString() === 'admincancel') {
       canceldate = l.created;
     } else if (l.status.toString() === 'transferred') {
       transferdate = l.created;
-    } else if (l.status.toString() === 'rejectrefund' || l.status.toString() === 'cancelrefund') {
+    } else if (l.status.toString() === 'rejectrefund' || l.status.toString() === 'cancelrefund' || l.status.toString() === 'admincancelrefund') {
       refunddate = l.created;
     }
   });
@@ -788,11 +810,32 @@ exports.refund = function (req, res, next) {
 
 };
 
+exports.admincancel = function (req, res, next) {
+  var order = req.order;
+  order.items[order.items.map(function (e) { return e._id.toString(); }).indexOf(req.body.itemid.toString())].status = 'admincancel';
+  order.items[order.items.map(function (e) { return e._id.toString(); }).indexOf(req.body.itemid.toString())].remark = req.body.remark;
+  order.items[order.items.map(function (e) { return e._id.toString(); }).indexOf(req.body.itemid.toString())].log.push({
+    status: 'admincancel',
+    created: new Date()
+  });
+
+  order.save(function (err) {
+    if (err) {
+      return res.status(400).send({
+        message: errorHandler.getErrorMessage(err)
+      });
+    } else {
+      req.notidata = order;
+      next();
+    }
+  });
+};
+
 exports.getOrderListAdmin = function (req, res, next) {
   var firstIndex = 0;
   var lastIndex = 10;
-  var statusTH = ['รอชำระเงิน', 'รอจัดส่ง', 'รอรับสินค้า', 'สำเร็จ', 'ลูกค้ายกเลิก', 'ร้านค้าปฏิเสธ', 'คืนเงินแล้ว', 'จ่ายเงินแล้ว'];
-  var statusEN = ['topay', 'confirm', 'sent', 'completed', 'cancel', 'reject', 'refund', 'transferred'];
+  var statusTH = ['รอชำระเงิน', 'รอจัดส่ง', 'รอรับสินค้า', 'สำเร็จ', 'ลูกค้ายกเลิก', 'ระบบยกเลิก', 'คืนเงินแล้ว', 'จ่ายเงินแล้ว'];
+  var statusEN = ['topay', 'confirm', 'sent', 'completed', 'cancel', 'admincancel', 'refund', 'transferred'];
   var status = 'topay';
   if (req.body.currentpage > 1) {
     firstIndex = ((req.body.currentpage - 1) * 10);
@@ -822,10 +865,10 @@ exports.getOrderListAdmin = function (req, res, next) {
           var remark = '';
           order.items.forEach(function (itm) {
 
-            if (itm.status === 'rejectrefund' || itm.status === 'cancelrefund') {
+            if (itm.status === 'rejectrefund' || itm.status === 'cancelrefund' || itm.status === 'admincancelrefund') {
               isrefund = true;
             }
-            if (itm.status === 'reject') {
+            if (itm.status === 'reject' || itm.status === 'admincancel') {
               remark = itm.remark;
             }
             if (itm.log && itm.log.length > 0) {
@@ -841,7 +884,7 @@ exports.getOrderListAdmin = function (req, res, next) {
                 }
               });
             }
-            if (status.toString() === 'refund' ? itm.status.toString() === 'cancelrefund' || itm.status.toString() === 'rejectrefund' : itm.status.toString() === status.toString()) {
+            if (status.toString() === 'refund' ? itm.status.toString() === 'cancelrefund' || itm.status.toString() === 'rejectrefund' || itm.status.toString() === 'admincancelrefund' : status.toString() === 'admincancel' ? itm.status.toString() === 'admincancel' || itm.status.toString() === 'reject' : itm.status.toString() === status.toString()) {
               dataOrders.push({
                 itemid: itm._id,
                 orderid: order._id,
@@ -874,7 +917,7 @@ exports.getOrderListAdmin = function (req, res, next) {
 
 exports.cookingOrderListAdmin = function (req, res, next) {
   var data = {
-    titles: ['รอชำระเงิน', 'รอจัดส่ง', 'รอรับสินค้า', 'สำเร็จ', 'ลูกค้ายกเลิก', 'ร้านค้าปฏิเสธ', 'คืนเงินแล้ว', 'จ่ายเงินแล้ว'],
+    titles: ['รอชำระเงิน', 'รอจัดส่ง', 'รอรับสินค้า', 'สำเร็จ', 'ลูกค้ายกเลิก', 'ระบบยกเลิก', 'คืนเงินแล้ว', 'จ่ายเงินแล้ว'],
     items: req.orders,
     paging: req.pagins
   };
