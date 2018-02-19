@@ -215,7 +215,7 @@ exports.cookingBid = function (req, res, next) {
                 isBid: isbid,
                 pricestart: element.startprice,
                 pricebid: element.bidprice,
-                datestart: startdate,
+                datestart: startdate.setHours(expiredate.getHours() + 7),
                 dateend: endShow,
                 time: counttime(selectedDate)
               });
@@ -250,7 +250,7 @@ exports.getBidDetail = function (req, res) {
   var isBid = false;
   var startdate = new Date(bid.starttime);
   var expiredate = new Date(bid.endtime);
-  var endShow = expiredate;
+  var endShow = expiredate.setHours(expiredate.getHours() - 7);;
   var today = new Date();
   var price = 0;
   var userid = '';
@@ -289,8 +289,7 @@ exports.getBidDetail = function (req, res) {
 };
 
 exports.scheduleBid = function (req, res) {
-
-  var startTime = new Date(req.bid.endtime + 10000);
+  var startTime = new Date(req.bid.endtime + 10000).setHours(expiredate.getHours() - 7);
   var j = schedule.scheduleJob({
     start: startTime
   }, function () {
