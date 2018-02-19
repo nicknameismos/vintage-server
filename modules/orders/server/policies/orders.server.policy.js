@@ -35,6 +35,18 @@ exports.invokeRolesPolicies = function () {
     }, {
       resources: '/api/getorderdetail/:orderId/:itemId',
       permissions: ['get']
+    }, {
+      resources: '/api/sentitem',
+      permissions: ['post']
+    }, {
+      resources: '/api/rejectitem',
+      permissions: ['post']
+    }, {
+      resources: '/api/cancelitem',
+      permissions: ['post']
+    }, {
+      resources: '/api/completeitem',
+      permissions: ['post']
     }]
   }, {
     roles: ['shop'],
