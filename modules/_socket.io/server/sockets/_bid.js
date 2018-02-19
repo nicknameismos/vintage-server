@@ -13,12 +13,11 @@ module.exports = function (io, socket) {
     socket.on('_bid', function (data) {
 
         var startTime = new Date(new Date + 10000);
-        var endTime = new Date(startTime.getTime() + 10000);
         var j = schedule.scheduleJob({
-            start: startTime,
-            end: endTime
+            start: startTime
         }, function () {
             console.log(data.user._id);
+            j.cancel();
         });
 
         var _item = data;
