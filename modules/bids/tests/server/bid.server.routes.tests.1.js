@@ -137,7 +137,7 @@ describe('Bid CRUD tests with token', function () {
         // Set assertions
         (bids.items.length).should.match(3);
         (bids.items[0].type).should.match('NOW');
-        (bids.items[0].items.length).should.match(2);
+        (bids.items[0].items.length).should.match(1);
         (bids.items[1].type).should.match('COMING_SOON');
         (bids.items[1].items.length).should.match(2);
         (bids.items[2].type).should.match('ME');
