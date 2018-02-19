@@ -12,8 +12,7 @@ module.exports = function (io, socket) {
     socket.on('_bid', function (data) {
 
         var _item = data;
-        console.log(_item.item.enddate);
-        var enddate = new Date(_item.item.enddate);
+        var enddate = new Date(_item.item.dateend);
         var current = new Date();
         console.log(enddate + ' ' + current);
         if (enddate > current) {
