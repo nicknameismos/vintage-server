@@ -292,7 +292,7 @@ exports.getBidDetail = function (req, res) {
   };
   res.jsonp(resbid);
 };
-
+// 
 exports.scheduleBid = function (req, res) {
   var date = new Date(req.bid.endtime);
   var startTime = new Date(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours() - 7, date.getMinutes(), 0);
