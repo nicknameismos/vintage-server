@@ -57,7 +57,7 @@ module.exports.start = function start(callback) {
       console.log('--');
 
       if (callback) callback(app, db, config);
-      console.log(request.headers.host);
+      console.log(config);
       request({
         url: serverUrl + '/api/createBidsScheduleJob',
         method: 'GET',
