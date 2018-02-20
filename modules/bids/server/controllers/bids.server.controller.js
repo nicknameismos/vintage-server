@@ -305,13 +305,6 @@ exports.scheduleBid = function (req, res) {
 
 function scheduleBidJob(req, res, param, job) {
   Bid.findById(param._id).populate('user', 'displayName profileImageURL').populate('userbid.user', 'displayName profileImageURL').exec(function (err, bid) {
-    if (err) {
-      return next(err);
-    } else if (!bid) {
-      return res.status(404).send({
-        message: 'No Bid with that identifier has been found'
-      });
-    }
     req.bid = bid;
 
     var dateParam = new Date(param.endtime);
