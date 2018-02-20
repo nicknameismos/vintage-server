@@ -296,7 +296,7 @@ exports.scheduleBid = function (req, res) {
   var date = new Date(bid.endtime);
   var startTime = new Date(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours() - 7, date.getMinutes(), 5);
   var j = schedule.scheduleJob(startTime, function () {
-    scheduleJob(req, res, bid);
+    scheduleBidJob(req, res, bid);
     j.cancel();
   });
 
@@ -305,7 +305,7 @@ exports.scheduleBid = function (req, res) {
 
 // 
 
-function scheduleJob(req, res, bid) {
+function scheduleBidJob(req, res, bid) {
   Bid.findById(bid._id).populate('user', 'displayName profileImageURL').populate('userbid.user', 'displayName profileImageURL').exec(function (err, bid) {
     if (err) {
       return next(err);
