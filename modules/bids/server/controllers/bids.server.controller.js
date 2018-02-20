@@ -296,12 +296,28 @@ exports.scheduleBid = function (req, res) {
   var date = new Date(bid.endtime);
   var startTime = new Date(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours() - 7, date.getMinutes(), 5);
   var j = schedule.scheduleJob(startTime, function () {
-    console.log(bid);
+    scheduleJob(req, res, bid);
     j.cancel();
   });
 
   res.jsonp(req.bid);
 };
+
+// 
+
+function scheduleJob(req, res, bid) {
+  Bid.findById(bid._id).populate('user', 'displayName profileImageURL').populate('userbid.user', 'displayName profileImageURL').exec(function (err, bid) {
+    if (err) {
+      return next(err);
+    } else if (!bid) {
+      return res.status(404).send({
+        message: 'No Bid with that identifier has been found'
+      });
+    }
+    req.bid = bid;
+    console.log(req.bid);
+  });
+}
 
 function counttime(expire) {
   var time = 0;
