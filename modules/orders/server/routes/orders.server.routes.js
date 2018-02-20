@@ -33,6 +33,9 @@ module.exports = function (app) {
   app.route('/api/cancelitem').all(core.jwtCheck, ordersPolicy.isAllowed)
     .post(orders.getOrderId, orders.cancel, core.updateNotification);
 
+  app.route('/api/confirmitem').all(core.jwtCheck, ordersPolicy.isAllowed)
+    .post(orders.getOrderId, orders.confirm, core.updateNotification);
+
   app.route('/api/completeitem').all(core.jwtCheck, ordersPolicy.isAllowed)
     .post(orders.getOrderId, orders.complete, core.updateNotification);
 

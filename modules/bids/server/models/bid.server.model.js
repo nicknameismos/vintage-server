@@ -59,6 +59,17 @@ var BidSchema = new Schema({
     enum: ['active', 'end', 'paid'],
     default: 'active'
   },
+  shippings: {
+    type: [{
+      ref: {
+        type: Schema.ObjectId,
+        ref: 'Shippingmaster'
+      },
+      price: {
+        type: Number
+      }
+    }]
+  },
   created: {
     type: Date,
     default: Date.now

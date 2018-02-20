@@ -4,6 +4,7 @@ var mongoose = require('mongoose'),
   pushNotification = mongoose.model('Notification'),
   Product = mongoose.model('Product'),
   Shop = mongoose.model('Shop'),
+  Bid = mongoose.model('Bid'),
   User = mongoose.model('User'),
   path = require('path'),
   request = require('request'),
@@ -114,84 +115,145 @@ exports.createNotification = function (req, res) {
 
 exports.updateNotification = function (req, res) {
   var notiLog = {};
-  Product.populate(req.notidata, {
-    path: 'items.product'
-  }, function (err, orderRes2) {
-    Shop.populate(orderRes2, {
-      path: 'items.product.shop'
-    }, function (err, orderRes3) {
-      User.populate(orderRes3, {
-        path: 'items.product.shop.shopowner'
-      }, function (err, orderRes4) {
-        User.populate(orderRes4, {
-          path: 'user'
-        }, function (err, orderRes5) {
-          var item = orderRes4.items[orderRes4.items.map(function (e) {
-            return e._id.toString();
-          }).indexOf(req.body.itemid.toString())];
-          var userIds = [];
-          var title = '';
-          var detail = '';
-          var isShop = false;
-          var orderid = orderRes4.docno ? orderRes4.docno : orderRes4._id;
-          if (item.status === 'cancel') {
-            title = 'สินค้าถูกยกเลิก';
-            detail = item.product.name + ' หมายเลขการสั่งซื้อ ' + orderid + ' ถูกยกเลิก';
-            isShop = true;
-          } else if (item.status === 'completed') {
-            title = 'รายการสินค้าสำเร็จ';
-            detail = item.product.name + ' หมายเลขการสั่งซื้อ ' + orderid + ' สำเร็จแล้ว';
-            isShop = true;
-          } else if (item.status === 'sent') {
-            title = 'สินค้าดำเนินการจัดส่ง';
-            detail = item.product.name + ' หมายเลขการสั่งซื้อ ' + orderid + ' กำลังดำเนินการจัดส่ง\r\nหมายเลขการจัดส่ง ' + item.refid;
-          } else if (item.status === 'reject') {
-            title = 'สินค้าถูกยกเลิก';
-            detail = item.product.name + ' หมายเลขการสั่งซื้อ ' + orderid + ' ถูกยกเลิก\r\nหมายเหตุ ' + item.remark;
-          } else if (item.status === 'admincancel') {
-            title = 'ระบบยกเลิกสินค้า';
-            detail = item.product.name + ' หมายเลขการสั่งซื้อ ' + orderid + ' ถูกยกเลิกโดยระบบ\r\nหมายเหตุ ' + item.remark;
-          } else if (item.status === 'transferred') {
-            title = 'ระบบชำระเงิน';
-            detail = item.product.name + ' หมายเลขการสั่งซื้อ ' + orderid + ' ชำระเงินจากระบบ';
-            isShop = true;
-          } else if (item.status === 'rejectrefund' || item.status === 'cancelrefund' || item.status === 'admincancelrefund') {
-            title = 'ระบบชำระเงินคืน';
-            detail = item.product.name + ' หมายเลขการสั่งซื้อ ' + orderid + ' ชำระเงินคืนจากระบบ';
-          }
-          if (isShop) {
-            notiLog = {
-              title: title,
-              detail: detail,
-              userowner: item.product.shop.shopowner,
-              user: req.user
-            };
-            userIds = item.product && item.product.shop && item.product.shop.shopowner && item.product.shop.shopowner.notificationids ? item.product.shop.shopowner.notificationids : [];
-            shopNoti(title, detail, userIds);
-          } else {
-            notiLog = {
-              title: title,
-              detail: detail,
-              userowner: orderRes4.user,
-              user: req.user
-            };
-            userIds = orderRes4.user && orderRes4.user.notificationids ? orderRes4.user.notificationids : [];
-            userNoti(title, detail, userIds);
-          }
-          // var userIds = req.user && req.user.notificationids ? req.user.notificationids : [];
-          var pushnoti = new pushNotification(notiLog);
-          pushnoti.save(function (err) {
-            if (err) {
-              return res.status(400).send({
-                message: errorHandler.getErrorMessage(err)
-              });
+  if (req.notidata.channel === 'order') {
+    Product.populate(req.notidata, {
+      path: 'items.product'
+    }, function (err, orderRes2) {
+      Shop.populate(orderRes2, {
+        path: 'items.product.shop'
+      }, function (err, orderRes3) {
+        User.populate(orderRes3, {
+          path: 'items.product.shop.shopowner'
+        }, function (err, orderRes4) {
+          User.populate(orderRes4, {
+            path: 'user'
+          }, function (err, orderRes5) {
+            var item = orderRes4.items[orderRes4.items.map(function (e) {
+              return e._id.toString();
+            }).indexOf(req.body.itemid.toString())];
+            var userIds = [];
+            var title = '';
+            var detail = '';
+            var isShop = false;
+            var orderid = orderRes4.docno ? orderRes4.docno : orderRes4._id;
+            if (item.status === 'cancel') {
+              title = 'สินค้าถูกยกเลิก';
+              detail = item.product.name + ' หมายเลขการสั่งซื้อ ' + orderid + ' ถูกยกเลิก';
+              isShop = true;
+            } else if (item.status === 'completed') {
+              title = 'รายการสินค้าสำเร็จ';
+              detail = item.product.name + ' หมายเลขการสั่งซื้อ ' + orderid + ' สำเร็จแล้ว';
+              isShop = true;
+            } else if (item.status === 'sent') {
+              title = 'สินค้าดำเนินการจัดส่ง';
+              detail = item.product.name + ' หมายเลขการสั่งซื้อ ' + orderid + ' กำลังดำเนินการจัดส่ง\r\nหมายเลขการจัดส่ง ' + item.refid;
+            } else if (item.status === 'reject') {
+              title = 'สินค้าถูกยกเลิก';
+              detail = item.product.name + ' หมายเลขการสั่งซื้อ ' + orderid + ' ถูกยกเลิก\r\nหมายเหตุ ' + item.remark;
+            } else if (item.status === 'admincancel') {
+              title = 'ระบบยกเลิกสินค้า';
+              detail = item.product.name + ' หมายเลขการสั่งซื้อ ' + orderid + ' ถูกยกเลิกโดยระบบ\r\nหมายเหตุ ' + item.remark;
+            } else if (item.status === 'transferred') {
+              title = 'ระบบชำระเงิน';
+              detail = item.product.name + ' หมายเลขการสั่งซื้อ ' + orderid + ' ชำระเงินจากระบบ';
+              isShop = true;
+            } else if (item.status === 'rejectrefund' || item.status === 'cancelrefund' || item.status === 'admincancelrefund') {
+              title = 'ระบบชำระเงินคืน';
+              detail = item.product.name + ' หมายเลขการสั่งซื้อ ' + orderid + ' ชำระเงินคืนจากระบบ';
             }
-            res.jsonp(orderRes4);
+            if (isShop) {
+              notiLog = {
+                title: title,
+                detail: detail,
+                userowner: item.product.shop.shopowner,
+                user: req.user
+              };
+              userIds = item.product && item.product.shop && item.product.shop.shopowner && item.product.shop.shopowner.notificationids ? item.product.shop.shopowner.notificationids : [];
+              shopNoti(title, detail, userIds);
+            } else {
+              notiLog = {
+                title: title,
+                detail: detail,
+                userowner: orderRes4.user,
+                user: req.user
+              };
+              userIds = orderRes4.user && orderRes4.user.notificationids ? orderRes4.user.notificationids : [];
+              userNoti(title, detail, userIds);
+            }
+            // var userIds = req.user && req.user.notificationids ? req.user.notificationids : [];
+            var pushnoti = new pushNotification(notiLog);
+            pushnoti.save(function (err) {
+              if (err) {
+                return res.status(400).send({
+                  message: errorHandler.getErrorMessage(err)
+                });
+              }
+              res.jsonp(orderRes4);
+            });
           });
         });
       });
     });
-  });
+  } else {
+    Bid.populate(req.notidata, {
+      path: 'items.bid'
+    }, function (err, orderRes2) {
+      User.populate(orderRes2, {
+        path: 'user'
+      }, function (err, orderRes4) {
+        var item = orderRes4.itemsbid[orderRes4.itemsbid.map(function (e) {
+          return e._id.toString();
+        }).indexOf(req.body.itemid.toString())];
+        var userIds = [];
+        var title = '';
+        var detail = '';
+        var orderid = orderRes4.docno ? orderRes4.docno : orderRes4._id;
+        if (item.status === 'cancel') {
+          title = 'สินค้าถูกยกเลิก';
+          detail = item.bid.name + ' หมายเลขการสั่งซื้อ ' + orderid + ' ถูกยกเลิก';
+        } else if (item.status === 'completed') {
+          title = 'รายการสินค้าสำเร็จ';
+          detail = item.bid.name + ' หมายเลขการสั่งซื้อ ' + orderid + ' สำเร็จแล้ว';
+        } else if (item.status === 'sent') {
+          title = 'สินค้าดำเนินการจัดส่ง';
+          detail = item.bid.name + ' หมายเลขการสั่งซื้อ ' + orderid + ' กำลังดำเนินการจัดส่ง\r\nหมายเลขการจัดส่ง ' + item.refid;
+        } else if (item.status === 'reject') {
+          title = 'สินค้าถูกยกเลิก';
+          detail = item.bid.name + ' หมายเลขการสั่งซื้อ ' + orderid + ' ถูกยกเลิก\r\nหมายเหตุ ' + item.remark;
+        } else if (item.status === 'admincancel') {
+          title = 'ระบบยกเลิกสินค้า';
+          detail = item.bid.name + ' หมายเลขการสั่งซื้อ ' + orderid + ' ถูกยกเลิกโดยระบบ\r\nหมายเหตุ ' + item.remark;
+        } else if (item.status === 'transferred') {
+          title = 'ระบบชำระเงิน';
+          detail = item.bid.name + ' หมายเลขการสั่งซื้อ ' + orderid + ' ชำระเงินจากระบบ';
+        } else if (item.status === 'rejectrefund' || item.status === 'cancelrefund' || item.status === 'admincancelrefund') {
+          title = 'ระบบชำระเงินคืน';
+          detail = item.bid.name + ' หมายเลขการสั่งซื้อ ' + orderid + ' ชำระเงินคืนจากระบบ';
+        } else if (item.status === 'confirm') {
+          title = 'ชำระเงินระบบ';
+          detail = item.bid.name + ' หมายเลขการสั่งซื้อ ' + orderid + ' ถูกชำระเงินแล้ว';
+        }
+        notiLog = {
+          title: title,
+          detail: detail,
+          userowner: orderRes4.user,
+          user: req.user
+        };
+        userIds = orderRes4.user && orderRes4.user.notificationids ? orderRes4.user.notificationids : [];
+        userNoti(title, detail, userIds);
+        // var userIds = req.user && req.user.notificationids ? req.user.notificationids : [];
+        var pushnoti = new pushNotification(notiLog);
+        pushnoti.save(function (err) {
+          if (err) {
+            return res.status(400).send({
+              message: errorHandler.getErrorMessage(err)
+            });
+          }
+          res.jsonp(orderRes4);
+        });
+      });
+    });
+  }
 };
 
 function userNoti(title, message, ids) {

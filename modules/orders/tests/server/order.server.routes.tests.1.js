@@ -8,6 +8,7 @@ var should = require('should'),
   Order = mongoose.model('Order'),
   Shop = mongoose.model('Shop'),
   Product = mongoose.model('Product'),
+  Bid = mongoose.model('Bid'),
   Categoryshop = mongoose.model('Categoryshop'),
   Coupon = mongoose.model('Coupon'),
   pushNotification = mongoose.model('Notification'),
@@ -5782,13 +5783,1770 @@ describe('Order omise create tests', function () {
       });
   });
 
+  it('admin get orderlist item success', function (done) {
+    // Save a new Order
+    var bid = new Bid({
+      name: 'Bid name',
+      detail: 'bid detail',
+      price: 300,
+      startprice: 50,
+      bidprice: 100,
+      starttime: new Date(),
+      endtime: new Date(),
+      status: 'end',
+      image: ['https://www.felex-lederwaren.de/bilder/produkte/gross/Billy-the-Kid-by-Greenburry-Rebel-of-Vintage-Greenburry-Damenumhaengetasche-UEberschlagtasche-rot-braun.jpg'],
+      user: user,
+      userbid: [{
+        user: user,
+        created: new Date(),
+        bidprice: 300
+      }]
+    });
+    bid.save();
+
+    var orderObj = new Order({
+      docno: +new Date(),
+      channel: 'bid',
+      itemsbid: [{
+        bid: bid,
+        unitprice: 300,
+        shipping: {
+          ref: {
+            name: 'EMS'
+          },
+          price: 100
+        },
+        status: 'topay',
+        remark: '',
+        log: [{ status: 'topay', created: new Date() }],
+        qty: 1,
+        amount: 400
+      }],
+      shippingAddress: {
+        name: 'Ass',
+        tel: '0999999999',
+        address: {
+          address: 'address',
+          district: 'districe',
+          subdistrict: 'subdistrict',
+          province: 'province',
+          postcode: '12150'
+        },
+        location: {
+          lat: 19999,
+          lng: 20000
+        }
+      },
+      coupon: {
+        code: 'AC-100',
+        discount: 100
+      },
+      payment: {
+        paymenttype: 'Internal Banking',
+        creditno: '',
+        creditname: '',
+        expdate: '',
+        creditcvc: ''
+      },
+      omiseToken: '',
+      qty: 1,
+      amount: 300,
+      shippingamount: 100,
+      discountamount: 100,
+      totalamount: 300,
+      omiseresponse: {},
+      user: user
+    });
+
+    var orderObj2 = new Order({
+      docno: +new Date(),
+      items: [{
+        product: product,
+        unitprice: 200,
+        shopid: shop.id,
+        shipping: {
+          ref: {
+            name: 'EMS'
+          },
+          price: 100
+        },
+        status: 'transferred',
+        remark: '',
+        log: [
+          { status: 'sent', created: new Date() },
+          { status: 'transferred', created: new Date() }
+        ],
+        qty: 1,
+        amount: 300,
+        refid: '123'
+      }, {
+        product: product,
+        unitprice: 200,
+        shopid: shop.id,
+        shipping: {
+          ref: {
+            name: 'EMS'
+          },
+          price: 100
+        },
+        status: 'rejectrefund',
+        remark: '',
+        log: [
+          { status: 'sent', created: new Date() },
+          { status: 'rejectrefund', created: new Date() }
+        ],
+        qty: 1,
+        amount: 300,
+        refid: '123'
+      }, {
+        product: product,
+        unitprice: 200,
+        shopid: shop.id,
+        shipping: {
+          ref: {
+            name: 'EMS'
+          },
+          price: 100
+        },
+        status: 'cancelrefund',
+        remark: '',
+        log: [
+          { status: 'sent', created: new Date() },
+          { status: 'cancelrefund', created: new Date() }
+        ],
+        qty: 1,
+        amount: 300,
+        refid: '123'
+      }],
+      shippingAddress: {
+        name: 'Ass',
+        tel: '0999999999',
+        address: {
+          address: 'address',
+          district: 'districe',
+          subdistrict: 'subdistrict',
+          province: 'province',
+          postcode: '12150'
+        },
+        location: {
+          lat: 19999,
+          lng: 20000
+        }
+      },
+      coupon: {
+        code: 'AC-100',
+        discount: 100
+      },
+      payment: {
+        paymenttype: 'Internal Banking',
+        creditno: '',
+        creditname: '',
+        expdate: '',
+        creditcvc: ''
+      },
+      omiseToken: '',
+      qty: 1,
+      amount: 200,
+      shippingamount: 100,
+      discountamount: 100,
+      totalamount: 200,
+      omiseresponse: {},
+      user: user
+    });
+
+    orderObj.save(function (err) {
+      // console.log(err);
+      orderObj2.save(function (err) {
+        // console.log(err);
+      });
+    });
+    agent.get('/api/orders')
+      // .set('authorization', 'Bearer ' + token)
+      .end(function (order2Err, order2Res) {
+        // Handle signin error
+        if (order2Err) {
+          return done(order2Err);
+        }
+        var ord2 = order2Res.body;
+        (ord2.length).should.match(2);
+        // (ord2[0].items.length).should.match(5);
+        // (ord2[0].items[0].status).should.match('confirm');
+        // (ord2[0].items[0].log.length).should.match(1);
+        // (ord2[0].items[0].log[0].status).should.match('confirm');
+        // (ord2[0].items[0].product.name).should.match('confirm');
+        agent.post('/api/auth/signin')
+          .send(credentials3)
+          .expect(200)
+          .end(function (signinErr, signinRes) {
+            // Handle signin error
+            if (signinErr) {
+              return done(signinErr);
+            }
+            var item = {
+              title: '',
+              currentpage: null,
+              keyword: ''
+            };
+            agent.post('/api/getordersbyadmin')
+              .set('authorization', 'Bearer ' + signinRes.body.loginToken)
+              .send(item)
+              .end(function (customergetordersErr, customergetordersRes) {
+                // Handle signin error
+                if (customergetordersErr) {
+                  return done(customergetordersErr);
+                }
+                var cord = customergetordersRes.body;
+                // (cord).should.match(orderObj.id);
+                (cord.titles.length).should.match(8);
+                (cord.items.length).should.match(1);
+                // (cord.items[0].name).should.match(product.name);
+                // (cord.items[0].image).should.match(product.images[0]);
+                // (cord.items[0].price).should.match(product.price);
+                // (cord.items[0].qty).should.match(orderObj.items[0].qty);
+                // (cord.items[0].shippingtype).should.match(orderObj.items[0].shipping.ref.name);
+                // (cord.items[0].shippingprice).should.match(orderObj.items[0].shipping.price);
+                // (cord.items[0].amount).should.match(orderObj.items[0].amount);
+                // (cord.items[0].sentdate).should.match('');
+                // (cord.items[0].receivedate).should.match('');
+                // (cord.items[0].canceldate).should.match('');
+                // (cord.items[0].isrefund).should.match(false);
+                // (cord.items[0].status).should.match('confirm');
+                // (cord.items[0].rejectreason).should.match('');
+                (cord.paging.length).should.match(1);
+
+
+                done();
+
+              });
+          });
+      });
+  });
+
+  it('admin get orderlist channel bid item success', function (done) {
+    // Save a new Order
+    var bid = new Bid({
+      name: 'Bid name',
+      detail: 'bid detail',
+      price: 300,
+      startprice: 50,
+      bidprice: 100,
+      starttime: new Date(),
+      endtime: new Date(),
+      status: 'end',
+      image: ['https://www.felex-lederwaren.de/bilder/produkte/gross/Billy-the-Kid-by-Greenburry-Rebel-of-Vintage-Greenburry-Damenumhaengetasche-UEberschlagtasche-rot-braun.jpg'],
+      user: user,
+      userbid: [{
+        user: user,
+        created: new Date(),
+        bidprice: 300
+      }]
+    });
+    bid.save();
+
+    var orderObj = new Order({
+      docno: +new Date(),
+      channel: 'bid',
+      itemsbid: [{
+        bid: bid,
+        unitprice: 300,
+        shipping: {
+          ref: {
+            name: 'EMS'
+          },
+          price: 100
+        },
+        status: 'topay',
+        remark: '',
+        log: [{ status: 'topay', created: new Date() }],
+        qty: 1,
+        amount: 400
+      }],
+      shippingAddress: {
+        name: 'Ass',
+        tel: '0999999999',
+        address: {
+          address: 'address',
+          district: 'districe',
+          subdistrict: 'subdistrict',
+          province: 'province',
+          postcode: '12150'
+        },
+        location: {
+          lat: 19999,
+          lng: 20000
+        }
+      },
+      coupon: {
+        code: 'AC-100',
+        discount: 100
+      },
+      payment: {
+        paymenttype: 'Internal Banking',
+        creditno: '',
+        creditname: '',
+        expdate: '',
+        creditcvc: ''
+      },
+      omiseToken: '',
+      qty: 1,
+      amount: 300,
+      shippingamount: 100,
+      discountamount: 100,
+      totalamount: 300,
+      omiseresponse: {},
+      user: user
+    });
+
+    var orderObj2 = new Order({
+      docno: +new Date(),
+      items: [{
+        product: product,
+        unitprice: 200,
+        shopid: shop.id,
+        shipping: {
+          ref: {
+            name: 'EMS'
+          },
+          price: 100
+        },
+        status: 'transferred',
+        remark: '',
+        log: [
+          { status: 'sent', created: new Date() },
+          { status: 'transferred', created: new Date() }
+        ],
+        qty: 1,
+        amount: 300,
+        refid: '123'
+      }, {
+        product: product,
+        unitprice: 200,
+        shopid: shop.id,
+        shipping: {
+          ref: {
+            name: 'EMS'
+          },
+          price: 100
+        },
+        status: 'rejectrefund',
+        remark: '',
+        log: [
+          { status: 'sent', created: new Date() },
+          { status: 'rejectrefund', created: new Date() }
+        ],
+        qty: 1,
+        amount: 300,
+        refid: '123'
+      }, {
+        product: product,
+        unitprice: 200,
+        shopid: shop.id,
+        shipping: {
+          ref: {
+            name: 'EMS'
+          },
+          price: 100
+        },
+        status: 'cancelrefund',
+        remark: '',
+        log: [
+          { status: 'sent', created: new Date() },
+          { status: 'cancelrefund', created: new Date() }
+        ],
+        qty: 1,
+        amount: 300,
+        refid: '123'
+      }],
+      shippingAddress: {
+        name: 'Ass',
+        tel: '0999999999',
+        address: {
+          address: 'address',
+          district: 'districe',
+          subdistrict: 'subdistrict',
+          province: 'province',
+          postcode: '12150'
+        },
+        location: {
+          lat: 19999,
+          lng: 20000
+        }
+      },
+      coupon: {
+        code: 'AC-100',
+        discount: 100
+      },
+      payment: {
+        paymenttype: 'Internal Banking',
+        creditno: '',
+        creditname: '',
+        expdate: '',
+        creditcvc: ''
+      },
+      omiseToken: '',
+      qty: 1,
+      amount: 200,
+      shippingamount: 100,
+      discountamount: 100,
+      totalamount: 200,
+      omiseresponse: {},
+      user: user
+    });
+
+    orderObj.save(function (err) {
+      // console.log(err);
+      orderObj2.save(function (err) {
+        // console.log(err);
+      });
+    });
+    agent.get('/api/orders')
+      // .set('authorization', 'Bearer ' + token)
+      .end(function (order2Err, order2Res) {
+        // Handle signin error
+        if (order2Err) {
+          return done(order2Err);
+        }
+        var ord2 = order2Res.body;
+        (ord2.length).should.match(2);
+        // (ord2[0].items.length).should.match(5);
+        // (ord2[0].items[0].status).should.match('confirm');
+        // (ord2[0].items[0].log.length).should.match(1);
+        // (ord2[0].items[0].log[0].status).should.match('confirm');
+        // (ord2[0].items[0].product.name).should.match('confirm');
+        agent.post('/api/auth/signin')
+          .send(credentials3)
+          .expect(200)
+          .end(function (signinErr, signinRes) {
+            // Handle signin error
+            if (signinErr) {
+              return done(signinErr);
+            }
+            var item = {
+              title: '',
+              currentpage: null,
+              keyword: ''
+            };
+            agent.post('/api/getordersbyadmin')
+              .set('authorization', 'Bearer ' + signinRes.body.loginToken)
+              .send(item)
+              .end(function (customergetordersErr, customergetordersRes) {
+                // Handle signin error
+                if (customergetordersErr) {
+                  return done(customergetordersErr);
+                }
+                var cord = customergetordersRes.body;
+                // (cord).should.match(orderObj.id);
+                (cord.titles.length).should.match(8);
+                (cord.items.length).should.match(1);
+                (cord.paging.length).should.match(1);
+
+
+                done();
+
+              });
+          });
+      });
+  });
+
+  it('admin get order detail channel bid item success', function (done) {
+    // Save a new Order
+    var bid = new Bid({
+      name: 'Bid name',
+      detail: 'bid detail',
+      price: 300,
+      startprice: 50,
+      bidprice: 100,
+      starttime: new Date(),
+      endtime: new Date(),
+      status: 'end',
+      image: ['https://www.felex-lederwaren.de/bilder/produkte/gross/Billy-the-Kid-by-Greenburry-Rebel-of-Vintage-Greenburry-Damenumhaengetasche-UEberschlagtasche-rot-braun.jpg'],
+      user: user,
+      userbid: [{
+        user: user,
+        created: new Date(),
+        bidprice: 300
+      }]
+    });
+    bid.save();
+
+    var orderObj = new Order({
+      docno: +new Date(),
+      channel: 'bid',
+      itemsbid: [{
+        bid: bid,
+        unitprice: 300,
+        shipping: {
+          ref: {
+            name: 'EMS'
+          },
+          price: 100
+        },
+        status: 'topay',
+        remark: '',
+        log: [{ status: 'topay', created: new Date() }],
+        qty: 1,
+        amount: 400
+      }],
+      shippingAddress: {
+        name: 'Ass',
+        tel: '0999999999',
+        address: {
+          address: 'address',
+          district: 'districe',
+          subdistrict: 'subdistrict',
+          province: 'province',
+          postcode: '12150'
+        },
+        location: {
+          lat: 19999,
+          lng: 20000
+        }
+      },
+      coupon: {
+        code: 'AC-100',
+        discount: 100
+      },
+      payment: {
+        paymenttype: 'Internal Banking',
+        creditno: '',
+        creditname: '',
+        expdate: '',
+        creditcvc: ''
+      },
+      omiseToken: '',
+      qty: 1,
+      amount: 300,
+      shippingamount: 100,
+      discountamount: 100,
+      totalamount: 300,
+      omiseresponse: {},
+      user: user
+    });
+
+    var orderObj2 = new Order({
+      docno: +new Date(),
+      items: [{
+        product: product,
+        unitprice: 200,
+        shopid: shop.id,
+        shipping: {
+          ref: {
+            name: 'EMS'
+          },
+          price: 100
+        },
+        status: 'transferred',
+        remark: '',
+        log: [
+          { status: 'sent', created: new Date() },
+          { status: 'transferred', created: new Date() }
+        ],
+        qty: 1,
+        amount: 300,
+        refid: '123'
+      }, {
+        product: product,
+        unitprice: 200,
+        shopid: shop.id,
+        shipping: {
+          ref: {
+            name: 'EMS'
+          },
+          price: 100
+        },
+        status: 'rejectrefund',
+        remark: '',
+        log: [
+          { status: 'sent', created: new Date() },
+          { status: 'rejectrefund', created: new Date() }
+        ],
+        qty: 1,
+        amount: 300,
+        refid: '123'
+      }, {
+        product: product,
+        unitprice: 200,
+        shopid: shop.id,
+        shipping: {
+          ref: {
+            name: 'EMS'
+          },
+          price: 100
+        },
+        status: 'cancelrefund',
+        remark: '',
+        log: [
+          { status: 'sent', created: new Date() },
+          { status: 'cancelrefund', created: new Date() }
+        ],
+        qty: 1,
+        amount: 300,
+        refid: '123'
+      }],
+      shippingAddress: {
+        name: 'Ass',
+        tel: '0999999999',
+        address: {
+          address: 'address',
+          district: 'districe',
+          subdistrict: 'subdistrict',
+          province: 'province',
+          postcode: '12150'
+        },
+        location: {
+          lat: 19999,
+          lng: 20000
+        }
+      },
+      coupon: {
+        code: 'AC-100',
+        discount: 100
+      },
+      payment: {
+        paymenttype: 'Internal Banking',
+        creditno: '',
+        creditname: '',
+        expdate: '',
+        creditcvc: ''
+      },
+      omiseToken: '',
+      qty: 1,
+      amount: 200,
+      shippingamount: 100,
+      discountamount: 100,
+      totalamount: 200,
+      omiseresponse: {},
+      user: user
+    });
+
+    orderObj.save(function (err) {
+      // console.log(err);
+      orderObj2.save(function (err) {
+        // console.log(err);
+      });
+    });
+    agent.get('/api/orders')
+      // .set('authorization', 'Bearer ' + token)
+      .end(function (order2Err, order2Res) {
+        // Handle signin error
+        if (order2Err) {
+          return done(order2Err);
+        }
+        var ord2 = order2Res.body;
+        (ord2.length).should.match(2);
+        // (ord2[0].items.length).should.match(5);
+        // (ord2[0].items[0].status).should.match('confirm');
+        // (ord2[0].items[0].log.length).should.match(1);
+        // (ord2[0].items[0].log[0].status).should.match('confirm');
+        // (ord2[0].items[0].product.name).should.match('confirm');
+        agent.post('/api/auth/signin')
+          .send(credentials3)
+          .expect(200)
+          .end(function (signinErr, signinRes) {
+            // Handle signin error
+            if (signinErr) {
+              return done(signinErr);
+            }
+            var item = {
+              title: '',
+              currentpage: null,
+              keyword: ''
+            };
+            agent.post('/api/getordersbyadmin')
+              .set('authorization', 'Bearer ' + signinRes.body.loginToken)
+              .send(item)
+              .end(function (customergetordersErr, customergetordersRes) {
+                // Handle signin error
+                if (customergetordersErr) {
+                  return done(customergetordersErr);
+                }
+                var cord = customergetordersRes.body;
+                // (cord).should.match(orderObj.id);
+                (cord.titles.length).should.match(8);
+                (cord.items.length).should.match(1);
+
+                // (cord.items[0].name).should.match(product.name);
+                // (cord.items[0].image).should.match(product.images[0]);
+                // (cord.items[0].price).should.match(product.price);
+                // (cord.items[0].qty).should.match(orderObj.items[0].qty);
+                // (cord.items[0].shippingtype).should.match(orderObj.items[0].shipping.ref.name);
+                // (cord.items[0].shippingprice).should.match(orderObj.items[0].shipping.price);
+                // (cord.items[0].amount).should.match(orderObj.items[0].amount);
+                // (cord.items[0].sentdate).should.match('');
+                // (cord.items[0].receivedate).should.match('');
+                // (cord.items[0].canceldate).should.match('');
+                // (cord.items[0].isrefund).should.match(false);
+                // (cord.items[0].status).should.match('confirm');
+                // (cord.items[0].rejectreason).should.match('');
+                (cord.paging.length).should.match(1);
+
+
+                agent.get('/api/getorderdetail/' + orderObj.id + '/' + orderObj.itemsbid[0].id)
+                  .set('authorization', 'Bearer ' + signinRes.body.loginToken)
+                  .end(function (customergetordersErr, customergetordersRes) {
+                    // Handle signin error
+                    if (customergetordersErr) {
+                      return done(customergetordersErr);
+                    }
+                    var cord = customergetordersRes.body;
+                    // (cord).should.match('');
+                    // (cord._id).should.match(orderObj2.id);
+                    // (cord.itm_id).should.match(orderObj2.items[0].id);
+                    (cord.itemid).should.match(orderObj.itemsbid[0].id);
+                    (cord.orderid).should.match(orderObj.id);
+                    (cord.product._id).should.match(bid.id);
+                    (cord.product.name).should.match(bid.name);
+                    (cord.product.image).should.match(bid.image[0]);
+                    (cord.product.price).should.match(bid.price);
+                    (cord.product.qty).should.match(1);
+                    (cord.product.shippingtype).should.match(orderObj.itemsbid[0].shipping.ref.name);
+                    (cord.product.shippingtrack).should.match('');
+                    (cord.product.shippingprice).should.match(orderObj.itemsbid[0].shipping.price);
+                    (cord.amount).should.match(orderObj.itemsbid[0].amount);
+                    (cord.paymenttype).should.match(orderObj.payment.paymenttype);
+                    (cord.shipping.name).should.match(orderObj.shippingAddress.name);
+                    (cord.shipping.tel).should.match(orderObj.shippingAddress.tel);
+                    (cord.shipping.address).should.match(orderObj.shippingAddress.address.address);
+                    (cord.shipping.subdistrict).should.match(orderObj.shippingAddress.address.subdistrict);
+                    (cord.shipping.district).should.match(orderObj.shippingAddress.address.district);
+                    (cord.shipping.province).should.match(orderObj.shippingAddress.address.province);
+                    (cord.shipping.postcode).should.match(orderObj.shippingAddress.address.postcode);
+                    (cord.topaydate).should.match(orderObj.itemsbid[0].log[0].created);
+                    (cord.confirmdate).should.match('');
+                    (cord.sentdate).should.match('');
+                    (cord.receiveddate).should.match('');
+                    (cord.canceldate).should.match('');
+                    (cord.transferdate).should.match('');
+                    (cord.isrefund).should.match(false);
+                    (cord.status).should.match('topay');
+                    (cord.rejectreason).should.match('');
+
+
+                    done();
+
+                  });
+
+              });
+          });
+      });
+  });
+
+  it('user confirm bid item success', function (done) {
+    // Save a new Order
+    var bid = new Bid({
+      name: 'Bid name',
+      detail: 'bid detail',
+      price: 300,
+      startprice: 50,
+      bidprice: 100,
+      starttime: new Date(),
+      endtime: new Date(),
+      status: 'end',
+      image: ['https://www.felex-lederwaren.de/bilder/produkte/gross/Billy-the-Kid-by-Greenburry-Rebel-of-Vintage-Greenburry-Damenumhaengetasche-UEberschlagtasche-rot-braun.jpg'],
+      user: user,
+      userbid: [{
+        user: user,
+        created: new Date(),
+        bidprice: 300
+      }]
+    });
+    bid.save();
+
+    var orderObj = new Order({
+      channel: 'bid',
+      itemsbid: [{
+        bid: bid,
+        unitprice: 300,
+        shipping: {
+          ref: {
+            name: 'EMS'
+          },
+          price: 100
+        },
+        status: 'topay',
+        remark: '',
+        log: [{ status: 'topay', created: new Date() }],
+        qty: 1,
+        amount: 400
+      }],
+      shippingAddress: {
+        name: 'Ass',
+        tel: '0999999999',
+        address: {
+          address: 'address',
+          district: 'districe',
+          subdistrict: 'subdistrict',
+          province: 'province',
+          postcode: '12150'
+        },
+        location: {
+          lat: 19999,
+          lng: 20000
+        }
+      },
+      coupon: {
+        code: 'AC-100',
+        discount: 100
+      },
+      payment: {
+        paymenttype: 'Internal Banking',
+        creditno: '',
+        creditname: '',
+        expdate: '',
+        creditcvc: ''
+      },
+      omiseToken: '',
+      qty: 5,
+      amount: 1000,
+      shippingamount: 100,
+      discountamount: 100,
+      totalamount: 900,
+      omiseresponse: {},
+      user: user,
+      docno: +new Date()
+    });
+
+    var orderObj2 = new Order({
+      items: [{
+        product: product,
+        unitprice: 200,
+        shopid: shop.id,
+        shipping: {
+          ref: {
+            name: 'EMS'
+          },
+          price: 100
+        },
+        status: 'transferred',
+        remark: '',
+        log: [
+          { status: 'sent', created: new Date() },
+          { status: 'transferred', created: new Date() }
+        ],
+        qty: 1,
+        amount: 300,
+        refid: '123'
+      }],
+      shippingAddress: {
+        name: 'Ass',
+        tel: '0999999999',
+        address: {
+          address: 'address',
+          district: 'districe',
+          subdistrict: 'subdistrict',
+          province: 'province',
+          postcode: '12150'
+        },
+        location: {
+          lat: 19999,
+          lng: 20000
+        }
+      },
+      coupon: {
+        code: 'AC-100',
+        discount: 100
+      },
+      payment: {
+        paymenttype: 'Internal Banking',
+        creditno: '',
+        creditname: '',
+        expdate: '',
+        creditcvc: ''
+      },
+      omiseToken: '',
+      qty: 1,
+      amount: 200,
+      shippingamount: 100,
+      discountamount: 100,
+      totalamount: 200,
+      omiseresponse: {},
+      user: user,
+      docno: +new Date()
+    });
+
+    orderObj.save(function (err) {
+      // console.log(err);
+      orderObj2.save(function (err) {
+        // console.log(err);
+      });
+    });
+    agent.get('/api/orders')
+      // .set('authorization', 'Bearer ' + token)
+      .end(function (order2Err, order2Res) {
+        // Handle signin error
+        if (order2Err) {
+          return done(order2Err);
+        }
+        var ord2 = order2Res.body;
+        (ord2.length).should.match(2);
+        // (ord2[0].items.length).should.match(5);
+        // (ord2[0].items[0].status).should.match('confirm');
+        // (ord2[0].items[0].log.length).should.match(1);
+        // (ord2[0].items[0].log[0].status).should.match('confirm');
+        // (ord2[0].items[0].product.name).should.match('confirm');
+        agent.post('/api/auth/signin')
+          .send(credentials)
+          .expect(200)
+          .end(function (signinErr, signinRes) {
+            // Handle signin error
+            if (signinErr) {
+              return done(signinErr);
+            }
+            var item = {
+              orderid: orderObj.id,
+              itemid: orderObj.itemsbid[0].id
+            };
+            agent.post('/api/confirmitem')
+              .set('authorization', 'Bearer ' + signinRes.body.loginToken)
+              .send(item)
+              .end(function (customergetordersErr, customergetordersRes) {
+                // Handle signin error
+                if (customergetordersErr) {
+                  return done(customergetordersErr);
+                }
+                var cord = customergetordersRes.body;
+                // (cord).should.match(orderObj.id);
+                (cord._id).should.match(orderObj.id);
+                (cord.itemsbid[0]._id).should.match(orderObj.itemsbid[0].id);
+                (cord.itemsbid[0].status).should.match('confirm');
+                // (cord.qty).should.match(4);
+                // (cord.amount).should.match(800);
+                // (cord.totalamount).should.match(700);
+                agent.get('/api/notifications')
+                  // .set('authorization', 'Bearer ' + token)
+                  .end(function (notiErr, notiRes) {
+                    // Handle signin error
+                    if (notiErr) {
+                      return done(notiErr);
+                    }
+                    var noti = notiRes.body;
+                    (noti.length).should.match(1);
+                    // (noti).should.match(1);
+
+                    done();
+
+                  });
+
+              });
+          });
+      });
+  });
+
+  it('user complete bid item success', function (done) {
+    // Save a new Order
+    var bid = new Bid({
+      name: 'Bid name',
+      detail: 'bid detail',
+      price: 300,
+      startprice: 50,
+      bidprice: 100,
+      starttime: new Date(),
+      endtime: new Date(),
+      status: 'end',
+      image: ['https://www.felex-lederwaren.de/bilder/produkte/gross/Billy-the-Kid-by-Greenburry-Rebel-of-Vintage-Greenburry-Damenumhaengetasche-UEberschlagtasche-rot-braun.jpg'],
+      user: user,
+      userbid: [{
+        user: user,
+        created: new Date(),
+        bidprice: 300
+      }]
+    });
+    bid.save();
+
+    var orderObj = new Order({
+      channel: 'bid',
+      itemsbid: [{
+        bid: bid,
+        unitprice: 300,
+        shipping: {
+          ref: {
+            name: 'EMS'
+          },
+          price: 100
+        },
+        status: 'topay',
+        remark: '',
+        log: [{ status: 'topay', created: new Date() }],
+        qty: 1,
+        amount: 400
+      }],
+      shippingAddress: {
+        name: 'Ass',
+        tel: '0999999999',
+        address: {
+          address: 'address',
+          district: 'districe',
+          subdistrict: 'subdistrict',
+          province: 'province',
+          postcode: '12150'
+        },
+        location: {
+          lat: 19999,
+          lng: 20000
+        }
+      },
+      coupon: {
+        code: 'AC-100',
+        discount: 100
+      },
+      payment: {
+        paymenttype: 'Internal Banking',
+        creditno: '',
+        creditname: '',
+        expdate: '',
+        creditcvc: ''
+      },
+      omiseToken: '',
+      qty: 5,
+      amount: 1000,
+      shippingamount: 100,
+      discountamount: 100,
+      totalamount: 900,
+      omiseresponse: {},
+      user: user,
+      docno: +new Date()
+    });
+
+    var orderObj2 = new Order({
+      items: [{
+        product: product,
+        unitprice: 200,
+        shopid: shop.id,
+        shipping: {
+          ref: {
+            name: 'EMS'
+          },
+          price: 100
+        },
+        status: 'transferred',
+        remark: '',
+        log: [
+          { status: 'sent', created: new Date() },
+          { status: 'transferred', created: new Date() }
+        ],
+        qty: 1,
+        amount: 300,
+        refid: '123'
+      }],
+      shippingAddress: {
+        name: 'Ass',
+        tel: '0999999999',
+        address: {
+          address: 'address',
+          district: 'districe',
+          subdistrict: 'subdistrict',
+          province: 'province',
+          postcode: '12150'
+        },
+        location: {
+          lat: 19999,
+          lng: 20000
+        }
+      },
+      coupon: {
+        code: 'AC-100',
+        discount: 100
+      },
+      payment: {
+        paymenttype: 'Internal Banking',
+        creditno: '',
+        creditname: '',
+        expdate: '',
+        creditcvc: ''
+      },
+      omiseToken: '',
+      qty: 1,
+      amount: 200,
+      shippingamount: 100,
+      discountamount: 100,
+      totalamount: 200,
+      omiseresponse: {},
+      user: user,
+      docno: +new Date()
+    });
+
+    orderObj.save(function (err) {
+      // console.log(err);
+      orderObj2.save(function (err) {
+        // console.log(err);
+      });
+    });
+    agent.get('/api/orders')
+      // .set('authorization', 'Bearer ' + token)
+      .end(function (order2Err, order2Res) {
+        // Handle signin error
+        if (order2Err) {
+          return done(order2Err);
+        }
+        var ord2 = order2Res.body;
+        (ord2.length).should.match(2);
+        // (ord2[0].items.length).should.match(5);
+        // (ord2[0].items[0].status).should.match('confirm');
+        // (ord2[0].items[0].log.length).should.match(1);
+        // (ord2[0].items[0].log[0].status).should.match('confirm');
+        // (ord2[0].items[0].product.name).should.match('confirm');
+        agent.post('/api/auth/signin')
+          .send(credentials)
+          .expect(200)
+          .end(function (signinErr, signinRes) {
+            // Handle signin error
+            if (signinErr) {
+              return done(signinErr);
+            }
+            var item = {
+              orderid: orderObj.id,
+              itemid: orderObj.itemsbid[0].id
+            };
+            agent.post('/api/completeitem')
+              .set('authorization', 'Bearer ' + signinRes.body.loginToken)
+              .send(item)
+              .end(function (customergetordersErr, customergetordersRes) {
+                // Handle signin error
+                if (customergetordersErr) {
+                  return done(customergetordersErr);
+                }
+                var cord = customergetordersRes.body;
+                // (cord).should.match(orderObj.id);
+                (cord._id).should.match(orderObj.id);
+                (cord.itemsbid[0]._id).should.match(orderObj.itemsbid[0].id);
+                (cord.itemsbid[0].status).should.match('completed');
+                // (cord.qty).should.match(4);
+                // (cord.amount).should.match(800);
+                // (cord.totalamount).should.match(700);
+                agent.get('/api/notifications')
+                  // .set('authorization', 'Bearer ' + token)
+                  .end(function (notiErr, notiRes) {
+                    // Handle signin error
+                    if (notiErr) {
+                      return done(notiErr);
+                    }
+                    var noti = notiRes.body;
+                    (noti.length).should.match(1);
+                    // (noti).should.match(1);
+
+                    done();
+
+                  });
+
+              });
+          });
+      });
+  });
+
+  it('admin admincancel bid item success', function (done) {
+    // Save a new Order
+    var bid = new Bid({
+      name: 'Bid name',
+      detail: 'bid detail',
+      price: 300,
+      startprice: 50,
+      bidprice: 100,
+      starttime: new Date(),
+      endtime: new Date(),
+      status: 'end',
+      image: ['https://www.felex-lederwaren.de/bilder/produkte/gross/Billy-the-Kid-by-Greenburry-Rebel-of-Vintage-Greenburry-Damenumhaengetasche-UEberschlagtasche-rot-braun.jpg'],
+      user: user,
+      userbid: [{
+        user: user,
+        created: new Date(),
+        bidprice: 300
+      }]
+    });
+    bid.save();
+
+    var orderObj = new Order({
+      channel: 'bid',
+      itemsbid: [{
+        bid: bid,
+        unitprice: 300,
+        shipping: {
+          ref: {
+            name: 'EMS'
+          },
+          price: 100
+        },
+        status: 'topay',
+        remark: '',
+        log: [{ status: 'topay', created: new Date() }],
+        qty: 1,
+        amount: 400
+      }],
+      shippingAddress: {
+        name: 'Ass',
+        tel: '0999999999',
+        address: {
+          address: 'address',
+          district: 'districe',
+          subdistrict: 'subdistrict',
+          province: 'province',
+          postcode: '12150'
+        },
+        location: {
+          lat: 19999,
+          lng: 20000
+        }
+      },
+      coupon: {
+        code: 'AC-100',
+        discount: 100
+      },
+      payment: {
+        paymenttype: 'Internal Banking',
+        creditno: '',
+        creditname: '',
+        expdate: '',
+        creditcvc: ''
+      },
+      omiseToken: '',
+      qty: 5,
+      amount: 1000,
+      shippingamount: 100,
+      discountamount: 100,
+      totalamount: 900,
+      omiseresponse: {},
+      user: user,
+      docno: +new Date()
+    });
+
+    var orderObj2 = new Order({
+      items: [{
+        product: product,
+        unitprice: 200,
+        shopid: shop.id,
+        shipping: {
+          ref: {
+            name: 'EMS'
+          },
+          price: 100
+        },
+        status: 'transferred',
+        remark: '',
+        log: [
+          { status: 'sent', created: new Date() },
+          { status: 'transferred', created: new Date() }
+        ],
+        qty: 1,
+        amount: 300,
+        refid: '123'
+      }],
+      shippingAddress: {
+        name: 'Ass',
+        tel: '0999999999',
+        address: {
+          address: 'address',
+          district: 'districe',
+          subdistrict: 'subdistrict',
+          province: 'province',
+          postcode: '12150'
+        },
+        location: {
+          lat: 19999,
+          lng: 20000
+        }
+      },
+      coupon: {
+        code: 'AC-100',
+        discount: 100
+      },
+      payment: {
+        paymenttype: 'Internal Banking',
+        creditno: '',
+        creditname: '',
+        expdate: '',
+        creditcvc: ''
+      },
+      omiseToken: '',
+      qty: 1,
+      amount: 200,
+      shippingamount: 100,
+      discountamount: 100,
+      totalamount: 200,
+      omiseresponse: {},
+      user: user,
+      docno: +new Date()
+    });
+
+    orderObj.save(function (err) {
+      // console.log(err);
+      orderObj2.save(function (err) {
+        // console.log(err);
+      });
+    });
+    agent.get('/api/orders')
+      // .set('authorization', 'Bearer ' + token)
+      .end(function (order2Err, order2Res) {
+        // Handle signin error
+        if (order2Err) {
+          return done(order2Err);
+        }
+        var ord2 = order2Res.body;
+        (ord2.length).should.match(2);
+        // (ord2[0].items.length).should.match(5);
+        // (ord2[0].items[0].status).should.match('confirm');
+        // (ord2[0].items[0].log.length).should.match(1);
+        // (ord2[0].items[0].log[0].status).should.match('confirm');
+        // (ord2[0].items[0].product.name).should.match('confirm');
+        agent.post('/api/auth/signin')
+          .send(credentials3)
+          .expect(200)
+          .end(function (signinErr, signinRes) {
+            // Handle signin error
+            if (signinErr) {
+              return done(signinErr);
+            }
+            var item = {
+              orderid: orderObj.id,
+              itemid: orderObj.itemsbid[0].id,
+              remark: 'sxxx'
+            };
+            agent.post('/api/admincancelitem')
+              .set('authorization', 'Bearer ' + signinRes.body.loginToken)
+              .send(item)
+              .end(function (customergetordersErr, customergetordersRes) {
+                // Handle signin error
+                if (customergetordersErr) {
+                  return done(customergetordersErr);
+                }
+                var cord = customergetordersRes.body;
+                // (cord).should.match(orderObj.id);
+                (cord._id).should.match(orderObj.id);
+                (cord.itemsbid[0]._id).should.match(orderObj.itemsbid[0].id);
+                (cord.itemsbid[0].status).should.match('admincancel');
+                // (cord.qty).should.match(4);
+                // (cord.amount).should.match(800);
+                // (cord.totalamount).should.match(700);
+                agent.get('/api/notifications')
+                  // .set('authorization', 'Bearer ' + token)
+                  .end(function (notiErr, notiRes) {
+                    // Handle signin error
+                    if (notiErr) {
+                      return done(notiErr);
+                    }
+                    var noti = notiRes.body;
+                    (noti.length).should.match(1);
+                    // (noti).should.match(1);
+
+                    done();
+
+                  });
+
+              });
+          });
+      });
+  });
+
+  it('admin sent bid item success', function (done) {
+    // Save a new Order
+    var bid = new Bid({
+      name: 'Bid name',
+      detail: 'bid detail',
+      price: 300,
+      startprice: 50,
+      bidprice: 100,
+      starttime: new Date(),
+      endtime: new Date(),
+      status: 'end',
+      image: ['https://www.felex-lederwaren.de/bilder/produkte/gross/Billy-the-Kid-by-Greenburry-Rebel-of-Vintage-Greenburry-Damenumhaengetasche-UEberschlagtasche-rot-braun.jpg'],
+      user: user,
+      userbid: [{
+        user: user,
+        created: new Date(),
+        bidprice: 300
+      }]
+    });
+    bid.save();
+
+    var orderObj = new Order({
+      channel: 'bid',
+      itemsbid: [{
+        bid: bid,
+        unitprice: 300,
+        shipping: {
+          ref: {
+            name: 'EMS'
+          },
+          price: 100
+        },
+        status: 'topay',
+        remark: '',
+        log: [{ status: 'topay', created: new Date() }],
+        qty: 1,
+        amount: 400
+      }],
+      shippingAddress: {
+        name: 'Ass',
+        tel: '0999999999',
+        address: {
+          address: 'address',
+          district: 'districe',
+          subdistrict: 'subdistrict',
+          province: 'province',
+          postcode: '12150'
+        },
+        location: {
+          lat: 19999,
+          lng: 20000
+        }
+      },
+      coupon: {
+        code: 'AC-100',
+        discount: 100
+      },
+      payment: {
+        paymenttype: 'Internal Banking',
+        creditno: '',
+        creditname: '',
+        expdate: '',
+        creditcvc: ''
+      },
+      omiseToken: '',
+      qty: 5,
+      amount: 1000,
+      shippingamount: 100,
+      discountamount: 100,
+      totalamount: 900,
+      omiseresponse: {},
+      user: user,
+      docno: +new Date()
+    });
+
+    var orderObj2 = new Order({
+      items: [{
+        product: product,
+        unitprice: 200,
+        shopid: shop.id,
+        shipping: {
+          ref: {
+            name: 'EMS'
+          },
+          price: 100
+        },
+        status: 'transferred',
+        remark: '',
+        log: [
+          { status: 'sent', created: new Date() },
+          { status: 'transferred', created: new Date() }
+        ],
+        qty: 1,
+        amount: 300,
+        refid: '123'
+      }],
+      shippingAddress: {
+        name: 'Ass',
+        tel: '0999999999',
+        address: {
+          address: 'address',
+          district: 'districe',
+          subdistrict: 'subdistrict',
+          province: 'province',
+          postcode: '12150'
+        },
+        location: {
+          lat: 19999,
+          lng: 20000
+        }
+      },
+      coupon: {
+        code: 'AC-100',
+        discount: 100
+      },
+      payment: {
+        paymenttype: 'Internal Banking',
+        creditno: '',
+        creditname: '',
+        expdate: '',
+        creditcvc: ''
+      },
+      omiseToken: '',
+      qty: 1,
+      amount: 200,
+      shippingamount: 100,
+      discountamount: 100,
+      totalamount: 200,
+      omiseresponse: {},
+      user: user,
+      docno: +new Date()
+    });
+
+    orderObj.save(function (err) {
+      // console.log(err);
+      orderObj2.save(function (err) {
+        // console.log(err);
+      });
+    });
+    agent.get('/api/orders')
+      // .set('authorization', 'Bearer ' + token)
+      .end(function (order2Err, order2Res) {
+        // Handle signin error
+        if (order2Err) {
+          return done(order2Err);
+        }
+        var ord2 = order2Res.body;
+        (ord2.length).should.match(2);
+        // (ord2[0].items.length).should.match(5);
+        // (ord2[0].items[0].status).should.match('confirm');
+        // (ord2[0].items[0].log.length).should.match(1);
+        // (ord2[0].items[0].log[0].status).should.match('confirm');
+        // (ord2[0].items[0].product.name).should.match('confirm');
+        agent.post('/api/auth/signin')
+          .send(credentials3)
+          .expect(200)
+          .end(function (signinErr, signinRes) {
+            // Handle signin error
+            if (signinErr) {
+              return done(signinErr);
+            }
+            var item = {
+              orderid: orderObj.id,
+              itemid: orderObj.itemsbid[0].id,
+              refid: 'xxxx'
+            };
+            agent.post('/api/sentitem')
+              .set('authorization', 'Bearer ' + signinRes.body.loginToken)
+              .send(item)
+              .end(function (customergetordersErr, customergetordersRes) {
+                // Handle signin error
+                if (customergetordersErr) {
+                  return done(customergetordersErr);
+                }
+                var cord = customergetordersRes.body;
+                // (cord).should.match(orderObj.id);
+                (cord._id).should.match(orderObj.id);
+                (cord.itemsbid[0]._id).should.match(orderObj.itemsbid[0].id);
+                (cord.itemsbid[0].status).should.match('sent');
+                // (cord.qty).should.match(4);
+                // (cord.amount).should.match(800);
+                // (cord.totalamount).should.match(700);
+                agent.get('/api/notifications')
+                  // .set('authorization', 'Bearer ' + token)
+                  .end(function (notiErr, notiRes) {
+                    // Handle signin error
+                    if (notiErr) {
+                      return done(notiErr);
+                    }
+                    var noti = notiRes.body;
+                    (noti.length).should.match(1);
+                    // (noti).should.match(1);
+
+                    done();
+
+                  });
+
+              });
+          });
+      });
+  });
+
+  it('admin admincancelrefund bid item success', function (done) {
+    // Save a new Order
+    var bid = new Bid({
+      name: 'Bid name',
+      detail: 'bid detail',
+      price: 300,
+      startprice: 50,
+      bidprice: 100,
+      starttime: new Date(),
+      endtime: new Date(),
+      status: 'end',
+      image: ['https://www.felex-lederwaren.de/bilder/produkte/gross/Billy-the-Kid-by-Greenburry-Rebel-of-Vintage-Greenburry-Damenumhaengetasche-UEberschlagtasche-rot-braun.jpg'],
+      user: user,
+      userbid: [{
+        user: user,
+        created: new Date(),
+        bidprice: 300
+      }]
+    });
+    bid.save();
+
+    var orderObj = new Order({
+      channel: 'bid',
+      itemsbid: [{
+        bid: bid,
+        unitprice: 300,
+        shipping: {
+          ref: {
+            name: 'EMS'
+          },
+          price: 100
+        },
+        status: 'admincancel',
+        remark: 'sasas',
+        log: [{ status: 'admincancel', created: new Date() }],
+        qty: 1,
+        amount: 400
+      }],
+      shippingAddress: {
+        name: 'Ass',
+        tel: '0999999999',
+        address: {
+          address: 'address',
+          district: 'districe',
+          subdistrict: 'subdistrict',
+          province: 'province',
+          postcode: '12150'
+        },
+        location: {
+          lat: 19999,
+          lng: 20000
+        }
+      },
+      coupon: {
+        code: 'AC-100',
+        discount: 100
+      },
+      payment: {
+        paymenttype: 'Internal Banking',
+        creditno: '',
+        creditname: '',
+        expdate: '',
+        creditcvc: ''
+      },
+      omiseToken: '',
+      qty: 5,
+      amount: 1000,
+      shippingamount: 100,
+      discountamount: 100,
+      totalamount: 900,
+      omiseresponse: {},
+      user: user,
+      docno: +new Date()
+    });
+
+    var orderObj2 = new Order({
+      items: [{
+        product: product,
+        unitprice: 200,
+        shopid: shop.id,
+        shipping: {
+          ref: {
+            name: 'EMS'
+          },
+          price: 100
+        },
+        status: 'transferred',
+        remark: '',
+        log: [
+          { status: 'sent', created: new Date() },
+          { status: 'transferred', created: new Date() }
+        ],
+        qty: 1,
+        amount: 300,
+        refid: '123'
+      }],
+      shippingAddress: {
+        name: 'Ass',
+        tel: '0999999999',
+        address: {
+          address: 'address',
+          district: 'districe',
+          subdistrict: 'subdistrict',
+          province: 'province',
+          postcode: '12150'
+        },
+        location: {
+          lat: 19999,
+          lng: 20000
+        }
+      },
+      coupon: {
+        code: 'AC-100',
+        discount: 100
+      },
+      payment: {
+        paymenttype: 'Internal Banking',
+        creditno: '',
+        creditname: '',
+        expdate: '',
+        creditcvc: ''
+      },
+      omiseToken: '',
+      qty: 1,
+      amount: 200,
+      shippingamount: 100,
+      discountamount: 100,
+      totalamount: 200,
+      omiseresponse: {},
+      user: user,
+      docno: +new Date()
+    });
+
+    orderObj.save(function (err) {
+      // console.log(err);
+      orderObj2.save(function (err) {
+        // console.log(err);
+      });
+    });
+    agent.get('/api/orders')
+      // .set('authorization', 'Bearer ' + token)
+      .end(function (order2Err, order2Res) {
+        // Handle signin error
+        if (order2Err) {
+          return done(order2Err);
+        }
+        var ord2 = order2Res.body;
+        (ord2.length).should.match(2);
+        // (ord2[0].items.length).should.match(5);
+        // (ord2[0].items[0].status).should.match('confirm');
+        // (ord2[0].items[0].log.length).should.match(1);
+        // (ord2[0].items[0].log[0].status).should.match('confirm');
+        // (ord2[0].items[0].product.name).should.match('confirm');
+        agent.post('/api/auth/signin')
+          .send(credentials3)
+          .expect(200)
+          .end(function (signinErr, signinRes) {
+            // Handle signin error
+            if (signinErr) {
+              return done(signinErr);
+            }
+            var item = {
+              orderid: orderObj.id,
+              itemid: orderObj.itemsbid[0].id
+            };
+            agent.post('/api/refunditem')
+              .set('authorization', 'Bearer ' + signinRes.body.loginToken)
+              .send(item)
+              .end(function (customergetordersErr, customergetordersRes) {
+                // Handle signin error
+                if (customergetordersErr) {
+                  return done(customergetordersErr);
+                }
+                var cord = customergetordersRes.body;
+                // (cord).should.match(orderObj.id);
+                (cord._id).should.match(orderObj.id);
+                (cord.itemsbid[0]._id).should.match(orderObj.itemsbid[0].id);
+                (cord.itemsbid[0].status).should.match('admincancelrefund');
+                // (cord.qty).should.match(4);
+                // (cord.amount).should.match(800);
+                // (cord.totalamount).should.match(700);
+                agent.get('/api/notifications')
+                  // .set('authorization', 'Bearer ' + token)
+                  .end(function (notiErr, notiRes) {
+                    // Handle signin error
+                    if (notiErr) {
+                      return done(notiErr);
+                    }
+                    var noti = notiRes.body;
+                    (noti.length).should.match(1);
+                    // (noti).should.match(1);
+
+                    done();
+
+                  });
+
+              });
+          });
+      });
+  });
+
   afterEach(function (done) {
     User.remove().exec(function () {
       Product.remove().exec(function () {
-        Shop.remove().exec(function () {
-          Coupon.remove().exec(function () {
-            pushNotification.remove().exec(function () {
-              Order.remove().exec(done);
+        Bid.remove().exec(function () {
+          Shop.remove().exec(function () {
+            Coupon.remove().exec(function () {
+              pushNotification.remove().exec(function () {
+                Order.remove().exec(done);
+              });
             });
           });
         });

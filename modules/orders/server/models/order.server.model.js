@@ -14,10 +14,10 @@ var OrderSchema = new Schema({
     type: String,
     unique: true
   },
-  ordertype: {
+  channel: {
     type: String,
-    enum: ['product', 'bid'],
-    default: 'product'
+    enum: ['order', 'bid'],
+    default: 'order'
   },
   items: {
     type: [{
@@ -45,6 +45,55 @@ var OrderSchema = new Schema({
         type: String,
         enum: ['confirm', 'sent', 'completed', 'cancel', 'admincancel', 'reject', 'transferred', 'rejectrefund', 'cancelrefund', 'admincancelrefund'],
         default: 'confirm'
+      },
+      remark: {
+        type: String
+      },
+      qty: {
+        type: Number
+      },
+      amount: {
+        type: Number
+      },
+      log: {
+        type: [{
+          status: {
+            type: String
+          },
+          created: {
+            type: Date,
+            default: Date.now
+          }
+        }]
+      },
+      refid: {
+        type: String
+      }
+    }]
+  },
+  itemsbid: {
+    type: [{
+      bid: {
+        type: Schema.ObjectId,
+        ref: 'Bid'
+      },
+      unitprice: {
+        type: Number
+      },
+      shipping: {
+        ref: {
+          name: {
+            type: String
+          }
+        },
+        price: {
+          type: Number
+        }
+      },
+      status: {
+        type: String,
+        enum: ['topay', 'confirm', 'sent', 'completed', 'cancel', 'admincancel', 'reject', 'transferred', 'rejectrefund', 'cancelrefund', 'admincancelrefund'],
+        default: 'topay'
       },
       remark: {
         type: String

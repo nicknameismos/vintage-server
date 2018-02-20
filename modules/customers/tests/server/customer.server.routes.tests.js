@@ -576,17 +576,14 @@ describe('Customer Home Stories Test', function () {
         var gettoday2 = getRes2.body;
 
         // Set assertions
-        gettoday2.bid.length.should.be.equal(3);
+        gettoday2.bid.length.should.be.equal(2);
         gettoday2.bid[0].image.should.be.equal(bid3.image[0]);
         gettoday2.bid[0].isBid.should.be.equal(true);
         // gettoday2.bid[0].time.should.be.equal(true);
 
         gettoday2.bid[1].image.should.be.equal(bid.image[0]);
-        gettoday2.bid[1].isBid.should.be.equal(true);
+        gettoday2.bid[1].isBid.should.be.equal(false);
         // gettoday2.bid[1].time.should.be.equal(true);
-
-        gettoday2.bid[2].image.should.be.equal(bid2.image[0]);
-        gettoday2.bid[2].isBid.should.be.equal(false);
 
         gettoday2.items.length.should.be.equal(4);
         gettoday2.items[0]._id.should.be.equal(bidProduct.id);
