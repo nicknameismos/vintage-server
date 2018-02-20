@@ -294,9 +294,8 @@ exports.getBidDetail = function (req, res) {
 exports.scheduleBid = function (req, res) {
   var date = new Date(req.bid.endtime);
   var startTime = new Date(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours() - 7, date.getMinutes(), 0);
-  var j = schedule.scheduleJob(startTime, function () {
-    scheduleBidJob(req, res, req.bid);
-    // j.cancel();
+  var job = schedule.scheduleJob(startTime, function () {
+    scheduleBidJob(req, res, req.bid, job);
   });
 
   res.jsonp(req.bid);
@@ -304,7 +303,7 @@ exports.scheduleBid = function (req, res) {
 
 // 
 
-function scheduleBidJob(req, res, param) {
+function scheduleBidJob(req, res, param, job) {
   Bid.findById(param._id).populate('user', 'displayName profileImageURL').populate('userbid.user', 'displayName profileImageURL').exec(function (err, bid) {
     if (err) {
       return next(err);
@@ -321,9 +320,10 @@ function scheduleBidJob(req, res, param) {
     var date = new Date(req.bid.endtime);
     var startTime = new Date(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours() - 7, date.getMinutes(), 0);
     console.log(startTimeParam + "===" + startTime);
-    if (startTimeParam === startTime) {
+    if (startTimeParam.toString() === startTime.toString()) {
       console.log(req.bid);
     }
+    job.cancel();
   });
 }
 
