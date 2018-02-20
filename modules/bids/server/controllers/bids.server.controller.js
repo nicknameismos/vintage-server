@@ -305,7 +305,7 @@ exports.scheduleBid = function (req, res) {
 // 
 
 function scheduleBidJob(req, res, param) {
-  Bid.findById(bid._id).populate('user', 'displayName profileImageURL').populate('userbid.user', 'displayName profileImageURL').exec(function (err, bid) {
+  Bid.findById(param._id).populate('user', 'displayName profileImageURL').populate('userbid.user', 'displayName profileImageURL').exec(function (err, bid) {
     if (err) {
       return next(err);
     } else if (!bid) {
