@@ -303,6 +303,28 @@ exports.scheduleBid = function (req, res) {
   res.jsonp(req.bid);
 };
 
+exports.createBidsScheduleJob = function (req, res) {
+  Bid.find().sort('-created').populate('user', 'displayName').exec(function (err, bids) {
+    if (err) {
+      return res.status(400).send({
+        message: errorHandler.getErrorMessage(err)
+      });
+    } else {
+      bids.forEach(function (bid) {
+        var date = new Date(bid.endtime);
+        var startTime = new Date(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours() - 7, date.getMinutes(), 0);
+        schedule.cancelJob(bid._id.toString());
+        var job = schedule.scheduleJob(bid._id.toString(), startTime, function () {
+          scheduleBidJob(req, res, bid, job);
+        });
+      });
+      return res.status(200).send({
+        message: 'success'
+      });
+    }
+  });
+}
+
 // 
 
 function scheduleBidJob(req, res, param, job) {

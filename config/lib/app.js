@@ -7,7 +7,9 @@ var config = require('../config'),
   mongoose = require('./mongoose'),
   express = require('./express'),
   chalk = require('chalk'),
-  seed = require('./seed');
+  seed = require('./seed'),
+  request = require('request'),  
+  serverUrl = "https://vintage-server.herokuapp.com";
 
 function seedDB() {
   if (config.seedDB && config.seedDB.seed) {
@@ -55,6 +57,11 @@ module.exports.start = function start(callback) {
       console.log('--');
 
       if (callback) callback(app, db, config);
+
+      request({
+        url: serverUrl + '/api/createBidsScheduleJob',
+        method: 'GET',
+      });
     });
 
   });

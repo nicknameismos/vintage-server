@@ -26,6 +26,9 @@ module.exports = function (app) {
 
   app.route('/api/biddetail/:bidId').all(bidsPolicy.isAllowed)
     .get(bids.getBidDetail);
+
+  app.route('/api/createBidsScheduleJob').all(bidsPolicy.isAllowed)
+    .get(bids.createBidsScheduleJob);
   // Finish by binding the Bid middleware
   app.param('bidId', bids.bidByID);
   app.param('userBidId', bids.userBidId);
