@@ -433,7 +433,7 @@ exports.cookingListBids = function (req, res, next) {
       });
     }
   });
-  var sortTime = cookingBidsTrue.sort((a, b) => { return (a.time > b.time) ? 1 : ((b.time > a.time) ? -1 : 0); });
+  var sortTime = cookingBidsTrue.sort(function (a, b) { return (a.time > b.time) ? 1 : ((b.time > a.time) ? -1 : 0); });
   req.resBids = sortTime.concat(cookingBidsFalse);
   next();
 };
@@ -497,7 +497,7 @@ exports.cookingListProducts = function (req, res, next) {
 };
 
 exports.customerVintageHome = function (req, res, next) {
-  var items = req.items.sort((a, b) => { return (a.created < b.created) ? 1 : ((b.created < a.created) ? -1 : 0); });
+  var items = req.items.sort(function(a, b) { return (a.created < b.created) ? 1 : ((b.created < a.created) ? -1 : 0); });
   res.jsonp({
     bid: req.resBids,
     items: items

@@ -488,8 +488,8 @@ describe('Product CRUD tests with token', function () {
   });
 
   it('get products by id expired', function (done) {
-    product.startdate = new Date(09, 09, 2017);
-    product.expiredate = new Date(09, 09, 2017);
+    product.startdate = new Date(9, 9, 2017);
+    product.expiredate = new Date(9, 9, 2017);
     agent.post('/api/products')
       .set('authorization', 'Bearer ' + token)
       .send(product)

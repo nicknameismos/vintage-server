@@ -323,7 +323,7 @@ exports.createBidsScheduleJob = function (req, res) {
       });
     }
   });
-}
+};
 
 // 
 
