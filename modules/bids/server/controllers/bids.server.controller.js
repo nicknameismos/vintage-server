@@ -292,9 +292,8 @@ exports.getBidDetail = function (req, res) {
 };
 
 exports.scheduleBid = function (req, res) {
-  var bid = req.bid;
-  var date = new Date(bid.endtime);
-  var startTime = new Date(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours() - 7, date.getMinutes(), 5);
+  var date = new Date(req.bid.endtime);
+  var startTime = new Date(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours() - 7, date.getMinutes(), 0);
   var j = schedule.scheduleJob(startTime, function () {
     scheduleBidJob(req, res, bid);
     j.cancel();
@@ -305,7 +304,7 @@ exports.scheduleBid = function (req, res) {
 
 // 
 
-function scheduleBidJob(req, res, bid) {
+function scheduleBidJob(req, res, param) {
   Bid.findById(bid._id).populate('user', 'displayName profileImageURL').populate('userbid.user', 'displayName profileImageURL').exec(function (err, bid) {
     if (err) {
       return next(err);
@@ -315,7 +314,16 @@ function scheduleBidJob(req, res, bid) {
       });
     }
     req.bid = bid;
-    console.log(req.bid);
+
+    var dateParam = new Date(param.endtime);
+    var startTimeParam = new Date(dateParam.getFullYear(), dateParam.getMonth(), dateParam.getDate(), dateParam.getHours() - 7, dateParam.getMinutes(), 0);
+
+    var date = new Date(req.bid.endtime);
+    var startTime = new Date(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours() - 7, date.getMinutes(), 0);
+
+    if (startTimeParam === startTime) {
+      console.log(req.bid);
+    }
   });
 }
 

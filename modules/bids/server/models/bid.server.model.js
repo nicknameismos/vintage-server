@@ -54,6 +54,11 @@ var BidSchema = new Schema({
       }
     }]
   },
+  status: {
+    type: String,
+    enum: ['active', 'end', 'paid'],
+    default: 'active'
+  },
   created: {
     type: Date,
     default: Date.now
