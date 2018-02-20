@@ -7,8 +7,10 @@ var path = require('path'),
   mongoose = require('mongoose'),
   Bid = mongoose.model('Bid'),
   User = mongoose.model('User'),
+  request = require('request'),
   errorHandler = require(path.resolve('./modules/core/server/controllers/errors.server.controller')),
-  _ = require('lodash');
+  _ = require('lodash'),
+  serverUrl = "https://vintage-server.herokuapp.com";
 
 // schedule
 var schedule = require('node-schedule');
@@ -290,31 +292,54 @@ exports.getBidDetail = function (req, res) {
   };
   res.jsonp(resbid);
 };
-
+// 
 exports.scheduleBid = function (req, res) {
   var date = new Date(req.bid.endtime);
   var startTime = new Date(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours() - 7, date.getMinutes(), 0);
-  var job = schedule.scheduleJob(startTime, function () {
+  schedule.cancelJob(req.bid._id.toString());
+  var job = schedule.scheduleJob(req.bid._id.toString(), startTime, function () {
     scheduleBidJob(req, res, req.bid, job);
   });
-
   res.jsonp(req.bid);
+};
+
+exports.createBidsScheduleJob = function (req, res) {
+  Bid.find().sort('-created').populate('user', 'displayName').exec(function (err, bids) {
+    if (err) {
+      return res.status(400).send({
+        message: errorHandler.getErrorMessage(err)
+      });
+    } else {
+      bids.forEach(function (bid) {
+        var date = new Date(bid.endtime);
+        var startTime = new Date(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours() - 7, date.getMinutes(), 0);
+        schedule.cancelJob(bid._id.toString());
+        var job = schedule.scheduleJob(bid._id.toString(), startTime, function () {
+          scheduleBidJob(req, res, bid, job);
+        });
+      });
+      return res.status(200).send({
+        message: 'success'
+      });
+    }
+  });
 };
 
 // 
 
 function scheduleBidJob(req, res, param, job) {
   Bid.findById(param._id).populate('user', 'displayName profileImageURL').populate('userbid.user', 'displayName profileImageURL').exec(function (err, bid) {
-    req.bid = bid;
-
     var dateParam = new Date(param.endtime);
     var startTimeParam = new Date(dateParam.getFullYear(), dateParam.getMonth(), dateParam.getDate(), dateParam.getHours() - 7, dateParam.getMinutes(), 0);
 
-    var date = new Date(req.bid.endtime);
+    var date = new Date(bid.endtime);
     var startTime = new Date(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours() - 7, date.getMinutes(), 0);
-    console.log(startTimeParam + "===" + startTime);
-    if (startTimeParam.toString() === startTime.toString()) {
-      console.log(req.bid);
+    if (startTimeParam.toString() === startTime.toString() && bid.status === 'active') {
+      console.log(bid);
+      request({
+        url: serverUrl + '/api/orders',
+        method: 'GET',
+      });
     }
     job.cancel();
   });
