@@ -57,7 +57,7 @@ module.exports.start = function start(callback) {
       console.log('--');
 
       if (callback) callback(app, db, config);
-      console.log(config.files.server);
+      console.log(config.utils.getGlobbedPaths);
       request({
         url: serverUrl + '/api/createBidsScheduleJob',
         method: 'GET',
