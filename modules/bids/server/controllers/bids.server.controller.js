@@ -9,7 +9,7 @@ var path = require('path'),
   User = mongoose.model('User'),
   request = require('request'),
   errorHandler = require(path.resolve('./modules/core/server/controllers/errors.server.controller')),
-_ = require('lodash');
+  _ = require('lodash');
 
 // schedule
 var schedule = require('node-schedule');
