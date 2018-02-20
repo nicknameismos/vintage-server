@@ -7,9 +7,9 @@ var path = require('path'),
   mongoose = require('mongoose'),
   Bid = mongoose.model('Bid'),
   User = mongoose.model('User'),
-  errorHandler = require(path.resolve('./modules/core/server/controllers/errors.server.controller')),
-  orders = require('../../../orders/server/controllers/orders.server.controller'),
-  _ = require('lodash');
+  request = require('request'),
+  errorHandler = require(path.resolve('./modules/core/server/controllers/errors.server.controller'))
+_ = require('lodash');
 
 // schedule
 var schedule = require('node-schedule');
@@ -316,7 +316,10 @@ function scheduleBidJob(req, res, param, job) {
     console.log(startTimeParam + "===" + startTime);
     if (startTimeParam.toString() === startTime.toString()) {
       console.log(req.bid);
-      orders.list;
+      request({
+        url: '/api/orders',
+        method: 'GET',
+      });
     }
     job.cancel();
   });
