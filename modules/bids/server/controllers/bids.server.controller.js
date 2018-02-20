@@ -320,7 +320,7 @@ function scheduleBidJob(req, res, param) {
 
     var date = new Date(req.bid.endtime);
     var startTime = new Date(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours() - 7, date.getMinutes(), 0);
-    console.log(startTimeParam === startTime);
+    console.log(startTimeParam + "===" + startTime);
     if (startTimeParam === startTime) {
       console.log(req.bid);
     }
