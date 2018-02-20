@@ -9,7 +9,8 @@ var path = require('path'),
   User = mongoose.model('User'),
   request = require('request'),
   errorHandler = require(path.resolve('./modules/core/server/controllers/errors.server.controller')),
-  _ = require('lodash');
+  _ = require('lodash'),
+  serverUrl = "https://vintage-server.herokuapp.com";
 
 // schedule
 var schedule = require('node-schedule');
@@ -317,7 +318,7 @@ function scheduleBidJob(req, res, param, job) {
     if (startTimeParam.toString() === startTime.toString()) {
       console.log(req.bid);
       request({
-        url: '/api/orders',
+        url: serverUrl + '/api/orders',
         method: 'GET',
       });
     }
