@@ -307,16 +307,14 @@ exports.scheduleBid = function (req, res) {
 
 function scheduleBidJob(req, res, param, job) {
   Bid.findById(param._id).populate('user', 'displayName profileImageURL').populate('userbid.user', 'displayName profileImageURL').exec(function (err, bid) {
-    req.bid = bid;
-
     var dateParam = new Date(param.endtime);
     var startTimeParam = new Date(dateParam.getFullYear(), dateParam.getMonth(), dateParam.getDate(), dateParam.getHours() - 7, dateParam.getMinutes(), 0);
 
-    var date = new Date(req.bid.endtime);
+    var date = new Date(bid.endtime);
     var startTime = new Date(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours() - 7, date.getMinutes(), 0);
-    console.log(startTimeParam + "===" + startTime);
-    if (startTimeParam.toString() === startTime.toString()) {
-      console.log(req.bid);
+    console.log(startTimeParam + '===' + startTime);
+    if (startTimeParam.toString() === startTime.toString() && bid.status === 'active') {
+      console.log(bid);
       request({
         url: serverUrl + '/api/orders',
         method: 'GET',
