@@ -292,11 +292,10 @@ exports.getBidDetail = function (req, res) {
 };
 
 exports.scheduleBid = function (req, res) {
-  var bid = req.bid;
-  var date = new Date(bid.endtime);
-  var startTime = new Date(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours() - 7, date.getMinutes(), 5);
+  var date = new Date(req.bid.endtime);
+  var startTime = new Date(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours() - 7, date.getMinutes(), 0);
   var j = schedule.scheduleJob(startTime, function () {
-    console.log(bid);
+    console.log(req.bid);
     j.cancel();
   });
 

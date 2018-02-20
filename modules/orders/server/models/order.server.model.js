@@ -14,6 +14,11 @@ var OrderSchema = new Schema({
     type: String,
     unique: true
   },
+  ordertype: {
+    type: String,
+    enum: ['product', 'bid'],
+    default: 'product'
+  },
   items: {
     type: [{
       product: {
