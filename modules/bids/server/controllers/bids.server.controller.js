@@ -296,7 +296,7 @@ exports.scheduleBid = function (req, res) {
   var startTime = new Date(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours() - 7, date.getMinutes(), 0);
   var j = schedule.scheduleJob(startTime, function () {
     scheduleBidJob(req, res, req.bid);
-    j.cancel();
+    // j.cancel();
   });
 
   res.jsonp(req.bid);
@@ -320,7 +320,7 @@ function scheduleBidJob(req, res, param) {
 
     var date = new Date(req.bid.endtime);
     var startTime = new Date(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours() - 7, date.getMinutes(), 0);
-
+    console.log(startTimeParam === startTime);
     if (startTimeParam === startTime) {
       console.log(req.bid);
     }
