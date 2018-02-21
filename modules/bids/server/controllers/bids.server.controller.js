@@ -335,10 +335,13 @@ function scheduleBidJob(req, res, param, job) {
     var date = new Date(bid.endtime);
     var startTime = new Date(date.getFullYear(), date.getMonth(), date.getDate(), date.getHours() - 7, date.getMinutes(), 0);
     if (startTimeParam.toString() === startTime.toString() && bid.status === 'active') {
-      console.log(bid);
+      console.log('Bid create order ', bid);
       request({
-        url: serverUrl + '/api/orders',
-        method: 'GET',
+        url: serverUrl + '/api/orderbid',
+        method: 'POST',
+        json: {
+          bidid: bid._id
+        }
       });
     }
     job.cancel();
