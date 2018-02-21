@@ -90,7 +90,7 @@ exports.delete = function (req, res) {
  * List of Bids
  */
 exports.list = function (req, res) {
-  Bid.find().sort('-created').populate('user', 'displayName').exec(function (err, bids) {
+  Bid.find().sort('-created').populate('shippings.ref').populate('user', 'displayName').exec(function (err, bids) {
     if (err) {
       return res.status(400).send({
         message: errorHandler.getErrorMessage(err)
