@@ -392,7 +392,74 @@ describe('Order omise create tests', function () {
   });
 
   it('get list order by user', function (done) {
+    var bid = new Bid({
+      name: 'Bid name',
+      detail: 'bid detail',
+      price: 300,
+      startprice: 50,
+      bidprice: 100,
+      starttime: new Date(),
+      endtime: new Date(),
+      status: 'end',
+      image: ['https://www.felex-lederwaren.de/bilder/produkte/gross/Billy-the-Kid-by-Greenburry-Rebel-of-Vintage-Greenburry-Damenumhaengetasche-UEberschlagtasche-rot-braun.jpg'],
+      user: user,
+      userbid: [{
+        user: user,
+        created: new Date(),
+        bidprice: 300
+      }]
+    });
+    bid.save();
 
+    var orderObj = new Order({
+      channel: 'bid',
+      itemsbid: [{
+        bid: bid,
+        unitprice: 300,
+        status: 'topay',
+        remark: '',
+        log: [{ status: 'topay', created: new Date() }],
+        qty: 1,
+        amount: 300
+      }],
+      shippingAddress: {
+        name: 'Ass',
+        tel: '0999999999',
+        address: {
+          address: 'address',
+          district: 'districe',
+          subdistrict: 'subdistrict',
+          province: 'province',
+          postcode: '12150'
+        },
+        location: {
+          lat: 19999,
+          lng: 20000
+        }
+      },
+      coupon: {
+        code: 'AC-100',
+        discount: 100
+      },
+      payment: {
+        paymenttype: 'Internal Banking',
+        creditno: '',
+        creditname: '',
+        expdate: '',
+        creditcvc: ''
+      },
+      omiseToken: '',
+      qty: 1,
+      amount: 300,
+      shippingamount: 0,
+      discountamount: 0,
+      totalamount: 300,
+      omiseresponse: {},
+      user: user,
+      docno: +new Date()
+    });
+
+    orderObj.save();
     // Update Order name
     var cardDetails = {
       card: {
@@ -511,7 +578,7 @@ describe('Order omise create tests', function () {
                 return done(order2Err);
               }
               var ord2 = order2Res.body;
-              (ord2.length).should.match(1);
+              (ord2.length).should.match(2);
               (ord2[0].omiseresponse.capture).should.match(true);
               (ord2[0].omiseToken).should.match(token1.id);
               (ord2[0].items.length).should.match(5);
@@ -527,91 +594,108 @@ describe('Order omise create tests', function () {
                     return done(customergetordersErr);
                   }
                   var cord = customergetordersRes.body;
-                  (cord.length).should.match(4);
-                  (cord[0].status).should.match('confirm');
+                  (cord.length).should.match(5);
+                  (cord[0].status).should.match('topay');
                   (cord[0].items.length).should.match(1);
-                  // (cord[0].items[0].itemid).should.match(ord2.items[0]);
-                  // (cord[0].items[0].orderid).should.match(1234);
-                  (cord[0].items[0].name).should.match(product.name);
-                  (cord[0].items[0].image).should.match(product.images[0]);
-                  (cord[0].items[0].price).should.match(order.items[0].product.price);
-                  (cord[0].items[0].qty).should.match(order.items[0].qty);
-                  (cord[0].items[0].shippingtype).should.match(order.items[0].shipping.ref.name);
-                  (cord[0].items[0].shippingprice).should.match(order.items[0].shipping.price);
+                  (cord[0].items[0].name).should.match(bid.name);
+                  (cord[0].items[0].image).should.match(bid.image[0]);
+                  (cord[0].items[0].price).should.match(bid.price);
+                  (cord[0].items[0].qty).should.match(1);
+                  (cord[0].items[0].shippingtype).should.match('');
+                  (cord[0].items[0].shippingprice).should.match(0);
                   (cord[0].items[0].amount).should.match(order.items[0].amount);
                   (cord[0].items[0].sentdate).should.match('');
                   (cord[0].items[0].receivedate).should.match('');
                   (cord[0].items[0].canceldate).should.match('');
                   (cord[0].items[0].isrefund).should.match(false);
-                  (cord[0].items[0].status).should.match('confirm');
+                  (cord[0].items[0].status).should.match('topay');
                   (cord[0].items[0].rejectreason).should.match('');
                   (cord[0].items[0].refid).should.match('');
 
-                  (cord[1].status).should.match('sent');
+                  (cord[1].status).should.match('confirm');
                   (cord[1].items.length).should.match(1);
+                  // (cord[0].items[0].itemid).should.match(ord2.items[0]);
+                  // (cord[0].items[0].orderid).should.match(1234);
                   (cord[1].items[0].name).should.match(product.name);
                   (cord[1].items[0].image).should.match(product.images[0]);
-                  (cord[1].items[0].price).should.match(order.items[1].product.price);
-                  (cord[1].items[0].qty).should.match(order.items[1].qty);
-                  (cord[1].items[0].shippingtype).should.match(order.items[1].shipping.ref.name);
-                  (cord[1].items[0].shippingprice).should.match(order.items[1].shipping.price);
-                  (cord[1].items[0].amount).should.match(order.items[1].amount);
-                  (cord[1].items[0].sentdate).should.match(order.items[1].log[0].created);
+                  (cord[1].items[0].price).should.match(order.items[0].product.price);
+                  (cord[1].items[0].qty).should.match(order.items[0].qty);
+                  (cord[1].items[0].shippingtype).should.match(order.items[0].shipping.ref.name);
+                  (cord[1].items[0].shippingprice).should.match(order.items[0].shipping.price);
+                  (cord[1].items[0].amount).should.match(order.items[0].amount);
+                  (cord[1].items[0].sentdate).should.match('');
                   (cord[1].items[0].receivedate).should.match('');
                   (cord[1].items[0].canceldate).should.match('');
                   (cord[1].items[0].isrefund).should.match(false);
-                  (cord[1].items[0].status).should.match('sent');
+                  (cord[1].items[0].status).should.match('confirm');
                   (cord[1].items[0].rejectreason).should.match('');
                   (cord[1].items[0].refid).should.match('');
 
-                  (cord[2].status).should.match('completed');
+                  (cord[2].status).should.match('sent');
                   (cord[2].items.length).should.match(1);
                   (cord[2].items[0].name).should.match(product.name);
                   (cord[2].items[0].image).should.match(product.images[0]);
-                  (cord[2].items[0].price).should.match(order.items[2].product.price);
-                  (cord[2].items[0].qty).should.match(order.items[2].qty);
-                  (cord[2].items[0].shippingtype).should.match(order.items[2].shipping.ref.name);
-                  (cord[2].items[0].shippingprice).should.match(order.items[2].shipping.price);
-                  (cord[2].items[0].amount).should.match(order.items[2].amount);
-                  (cord[2].items[0].sentdate).should.match(order.items[2].log[0].created);
-                  (cord[2].items[0].receivedate).should.match(order.items[2].log[1].created);
+                  (cord[2].items[0].price).should.match(order.items[1].product.price);
+                  (cord[2].items[0].qty).should.match(order.items[1].qty);
+                  (cord[2].items[0].shippingtype).should.match(order.items[1].shipping.ref.name);
+                  (cord[2].items[0].shippingprice).should.match(order.items[1].shipping.price);
+                  (cord[2].items[0].amount).should.match(order.items[1].amount);
+                  (cord[2].items[0].sentdate).should.match(order.items[1].log[0].created);
+                  (cord[2].items[0].receivedate).should.match('');
                   (cord[2].items[0].canceldate).should.match('');
                   (cord[2].items[0].isrefund).should.match(false);
-                  (cord[2].items[0].status).should.match('completed');
+                  (cord[2].items[0].status).should.match('sent');
                   (cord[2].items[0].rejectreason).should.match('');
-                  (cord[2].items[0].refid).should.match('1234');
+                  (cord[2].items[0].refid).should.match('');
 
-                  (cord[3].status).should.match('cancel');
-                  (cord[3].items.length).should.match(2);
+                  (cord[3].status).should.match('completed');
+                  (cord[3].items.length).should.match(1);
                   (cord[3].items[0].name).should.match(product.name);
                   (cord[3].items[0].image).should.match(product.images[0]);
-                  (cord[3].items[0].price).should.match(order.items[3].product.price);
-                  (cord[3].items[0].qty).should.match(order.items[3].qty);
-                  (cord[3].items[0].shippingtype).should.match(order.items[3].shipping.ref.name);
-                  (cord[3].items[0].shippingprice).should.match(order.items[3].shipping.price);
-                  (cord[3].items[0].amount).should.match(order.items[3].amount);
-                  (cord[3].items[0].sentdate).should.match('');
-                  (cord[3].items[0].receivedate).should.match('');
-                  (cord[3].items[0].canceldate).should.match(order.items[3].log[0].created);
+                  (cord[3].items[0].price).should.match(order.items[2].product.price);
+                  (cord[3].items[0].qty).should.match(order.items[2].qty);
+                  (cord[3].items[0].shippingtype).should.match(order.items[2].shipping.ref.name);
+                  (cord[3].items[0].shippingprice).should.match(order.items[2].shipping.price);
+                  (cord[3].items[0].amount).should.match(order.items[2].amount);
+                  (cord[3].items[0].sentdate).should.match(order.items[2].log[0].created);
+                  (cord[3].items[0].receivedate).should.match(order.items[2].log[1].created);
+                  (cord[3].items[0].canceldate).should.match('');
                   (cord[3].items[0].isrefund).should.match(false);
-                  (cord[3].items[0].status).should.match('cancel');
+                  (cord[3].items[0].status).should.match('completed');
                   (cord[3].items[0].rejectreason).should.match('');
-                  (cord[3].items[0].refid).should.match('');
+                  (cord[3].items[0].refid).should.match('1234');
 
-                  (cord[3].items[1].name).should.match(product.name);
-                  (cord[3].items[1].image).should.match(product.images[0]);
-                  (cord[3].items[1].price).should.match(order.items[4].product.price);
-                  (cord[3].items[1].qty).should.match(order.items[4].qty);
-                  (cord[3].items[1].shippingtype).should.match(order.items[4].shipping.ref.name);
-                  (cord[3].items[1].shippingprice).should.match(order.items[4].shipping.price);
-                  (cord[3].items[1].amount).should.match(order.items[4].amount);
-                  (cord[3].items[1].sentdate).should.match('');
-                  (cord[3].items[1].receivedate).should.match('');
-                  (cord[3].items[1].canceldate).should.match(order.items[4].log[0].created);
-                  (cord[3].items[1].isrefund).should.match(false);
-                  (cord[3].items[1].status).should.match('reject');
-                  (cord[3].items[1].rejectreason).should.match(order.items[4].remark);
-                  (cord[3].items[1].refid).should.match('');
+                  (cord[4].status).should.match('cancel');
+                  (cord[4].items.length).should.match(2);
+                  (cord[4].items[0].name).should.match(product.name);
+                  (cord[4].items[0].image).should.match(product.images[0]);
+                  (cord[4].items[0].price).should.match(order.items[3].product.price);
+                  (cord[4].items[0].qty).should.match(order.items[3].qty);
+                  (cord[4].items[0].shippingtype).should.match(order.items[3].shipping.ref.name);
+                  (cord[4].items[0].shippingprice).should.match(order.items[3].shipping.price);
+                  (cord[4].items[0].amount).should.match(order.items[3].amount);
+                  (cord[4].items[0].sentdate).should.match('');
+                  (cord[4].items[0].receivedate).should.match('');
+                  (cord[4].items[0].canceldate).should.match(order.items[3].log[0].created);
+                  (cord[4].items[0].isrefund).should.match(false);
+                  (cord[4].items[0].status).should.match('cancel');
+                  (cord[4].items[0].rejectreason).should.match('');
+                  (cord[4].items[0].refid).should.match('');
+
+                  (cord[4].items[1].name).should.match(product.name);
+                  (cord[4].items[1].image).should.match(product.images[0]);
+                  (cord[4].items[1].price).should.match(order.items[4].product.price);
+                  (cord[4].items[1].qty).should.match(order.items[4].qty);
+                  (cord[4].items[1].shippingtype).should.match(order.items[4].shipping.ref.name);
+                  (cord[4].items[1].shippingprice).should.match(order.items[4].shipping.price);
+                  (cord[4].items[1].amount).should.match(order.items[4].amount);
+                  (cord[4].items[1].sentdate).should.match('');
+                  (cord[4].items[1].receivedate).should.match('');
+                  (cord[4].items[1].canceldate).should.match(order.items[4].log[0].created);
+                  (cord[4].items[1].isrefund).should.match(false);
+                  (cord[4].items[1].status).should.match('reject');
+                  (cord[4].items[1].rejectreason).should.match(order.items[4].remark);
+                  (cord[4].items[1].refid).should.match('');
 
                   done();
 

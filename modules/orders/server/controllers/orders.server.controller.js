@@ -220,6 +220,9 @@ exports.customerGetListOrder = function (req, res, next) {
 
 exports.customerCookingListOrder = function (req, res, next) {
   var resData = [{
+    status: 'topay',
+    items: []
+  }, {
     status: 'confirm',
     items: []
   }, {
@@ -233,130 +236,158 @@ exports.customerCookingListOrder = function (req, res, next) {
     items: []
   }];
   req.orders.forEach(function (order) {
-    order.items.forEach(function (itm) {
-      if (itm.status === 'confirm') {
-        resData[0].items.push({
-          itemid: itm._id,
-          orderid: order._id,
-          docno: order.docno ? order.docno : order._id,
-          name: itm.product && itm.product.name ? itm.product.name : '',
-          image: itm.product && itm.product.images ? itm.product.images[0] : '',
-          price: itm.unitprice,
-          qty: itm.qty,
-          shippingtype: itm.shipping.ref.name ? itm.shipping.ref.name : '',
-          shippingprice: itm.shipping.price,
-          amount: itm.amount,
-          sentdate: '',
-          receivedate: '',
-          canceldate: '',
-          isrefund: false,
-          status: 'confirm',
-          rejectreason: '',
-          refid: itm.refid ? itm.refid : ''
-        });
-      } else if (itm.status === 'sent') {
-        var sentdate = '';
-        if (itm.log && itm.log.length > 0) {
-          itm.log.forEach(function (it) {
-            if (it.status === 'sent') {
-              sentdate = it.created;
-            }
+    if (order.channel === 'bid') {
+      order.itemsbid.forEach(function (itm) {
+        if (itm.status === 'topay') {
+          resData[0].items.push({
+            itemid: itm._id,
+            orderid: order._id,
+            docno: order.docno ? order.docno : order._id,
+            name: itm.bid && itm.bid.name ? itm.bid.name : '',
+            image: itm.bid && itm.bid.image ? itm.bid.image[0] : '',
+            price: itm.unitprice,
+            qty: itm.qty,
+            shippingtype: itm.shipping.ref.name ? itm.shipping.ref.name : '',
+            shippingprice: itm.shipping.price || 0,
+            amount: itm.amount,
+            sentdate: '',
+            receivedate: '',
+            canceldate: '',
+            isrefund: false,
+            status: 'topay',
+            rejectreason: '',
+            refid: itm.refid ? itm.refid : ''
           });
         }
-        resData[1].items.push({
-          itemid: itm._id,
-          orderid: order._id,
-          docno: order.docno ? order.docno : order._id,
-          name: itm.product && itm.product.name ? itm.product.name : '',
-          image: itm.product && itm.product.images ? itm.product.images[0] : '',
-          price: itm.unitprice,
-          qty: itm.qty,
-          shippingtype: itm.shipping.ref.name ? itm.shipping.ref.name : '',
-          shippingprice: itm.shipping.price,
-          amount: itm.amount,
-          sentdate: sentdate,
-          receivedate: '',
-          canceldate: '',
-          isrefund: false,
-          status: 'sent',
-          rejectreason: '',
-          refid: itm.refid ? itm.refid : ''
-        });
-      } else if (itm.status === 'completed' || itm.status === 'transferred') {
-        var sentdate2 = '';
-        var completed2 = '';
-        if (itm.log && itm.log.length > 0) {
-          itm.log.forEach(function (it) {
-            if (it.status === 'sent') {
-              sentdate2 = it.created;
-            } else if (it.status === 'completed') {
-              completed2 = it.created;
-            }
+
+      });
+    } else {
+      order.items.forEach(function (itm) {
+        if (itm.status === 'confirm') {
+          resData[1].items.push({
+            itemid: itm._id,
+            orderid: order._id,
+            docno: order.docno ? order.docno : order._id,
+            name: itm.product && itm.product.name ? itm.product.name : '',
+            image: itm.product && itm.product.images ? itm.product.images[0] : '',
+            price: itm.unitprice,
+            qty: itm.qty,
+            shippingtype: itm.shipping.ref.name ? itm.shipping.ref.name : '',
+            shippingprice: itm.shipping.price,
+            amount: itm.amount,
+            sentdate: '',
+            receivedate: '',
+            canceldate: '',
+            isrefund: false,
+            status: 'confirm',
+            rejectreason: '',
+            refid: itm.refid ? itm.refid : ''
+          });
+        } else if (itm.status === 'sent') {
+          var sentdate = '';
+          if (itm.log && itm.log.length > 0) {
+            itm.log.forEach(function (it) {
+              if (it.status === 'sent') {
+                sentdate = it.created;
+              }
+            });
+          }
+          resData[2].items.push({
+            itemid: itm._id,
+            orderid: order._id,
+            docno: order.docno ? order.docno : order._id,
+            name: itm.product && itm.product.name ? itm.product.name : '',
+            image: itm.product && itm.product.images ? itm.product.images[0] : '',
+            price: itm.unitprice,
+            qty: itm.qty,
+            shippingtype: itm.shipping.ref.name ? itm.shipping.ref.name : '',
+            shippingprice: itm.shipping.price,
+            amount: itm.amount,
+            sentdate: sentdate,
+            receivedate: '',
+            canceldate: '',
+            isrefund: false,
+            status: 'sent',
+            rejectreason: '',
+            refid: itm.refid ? itm.refid : ''
+          });
+        } else if (itm.status === 'completed' || itm.status === 'transferred') {
+          var sentdate2 = '';
+          var completed2 = '';
+          if (itm.log && itm.log.length > 0) {
+            itm.log.forEach(function (it) {
+              if (it.status === 'sent') {
+                sentdate2 = it.created;
+              } else if (it.status === 'completed') {
+                completed2 = it.created;
+              }
+            });
+          }
+          resData[3].items.push({
+            itemid: itm._id,
+            orderid: order._id,
+            docno: order.docno ? order.docno : order._id,
+            name: itm.product && itm.product.name ? itm.product.name : '',
+            image: itm.product && itm.product.images ? itm.product.images[0] : '',
+            price: itm.unitprice,
+            qty: itm.qty,
+            shippingtype: itm.shipping.ref.name ? itm.shipping.ref.name : '',
+            shippingprice: itm.shipping.price,
+            amount: itm.amount,
+            sentdate: sentdate2,
+            receivedate: completed2,
+            canceldate: '',
+            isrefund: false,
+            status: itm.status,
+            rejectreason: '',
+            refid: itm.refid ? itm.refid : ''
+          });
+        } else if (itm.status === 'cancel' || itm.status === 'admincancel' || itm.status === 'reject' || itm.status === 'rejectrefund' || itm.status === 'cancelrefund' || itm.status === 'admincancelrefund') {
+          var canceldate = '';
+          var remark = '';
+          if (itm.log && itm.log.length > 0) {
+            itm.log.forEach(function (it) {
+              if (it.status === 'cancel') {
+                canceldate = it.created;
+              } else if (it.status === 'reject') {
+                canceldate = it.created;
+                remark = itm.remark;
+              } else if (it.status === 'rejectrefund') {
+                canceldate = it.created;
+                remark = itm.remark;
+              } else if (it.status === 'cancelrefund') {
+                canceldate = it.created;
+              } else if (it.status === 'admincancelrefund') {
+                canceldate = it.created;
+              } else if (it.status === 'admincancel') {
+                canceldate = it.created;
+              }
+            });
+          }
+          resData[4].items.push({
+            itemid: itm._id,
+            orderid: order._id,
+            docno: order.docno ? order.docno : order._id,
+            name: itm.product && itm.product.name ? itm.product.name : '',
+            image: itm.product && itm.product.images ? itm.product.images[0] : '',
+            price: itm.unitprice,
+            qty: itm.qty,
+            shippingtype: itm.shipping.ref.name ? itm.shipping.ref.name : '',
+            shippingprice: itm.shipping.price,
+            amount: itm.amount,
+            sentdate: '',
+            receivedate: '',
+            canceldate: canceldate,
+            isrefund: false,
+            status: itm.status,
+            rejectreason: remark,
+            refid: itm.refid ? itm.refid : ''
           });
         }
-        resData[2].items.push({
-          itemid: itm._id,
-          orderid: order._id,
-          docno: order.docno ? order.docno : order._id,
-          name: itm.product && itm.product.name ? itm.product.name : '',
-          image: itm.product && itm.product.images ? itm.product.images[0] : '',
-          price: itm.unitprice,
-          qty: itm.qty,
-          shippingtype: itm.shipping.ref.name ? itm.shipping.ref.name : '',
-          shippingprice: itm.shipping.price,
-          amount: itm.amount,
-          sentdate: sentdate2,
-          receivedate: completed2,
-          canceldate: '',
-          isrefund: false,
-          status: itm.status,
-          rejectreason: '',
-          refid: itm.refid ? itm.refid : ''
-        });
-      } else if (itm.status === 'cancel' || itm.status === 'admincancel' || itm.status === 'reject' || itm.status === 'rejectrefund' || itm.status === 'cancelrefund' || itm.status === 'admincancelrefund') {
-        var canceldate = '';
-        var remark = '';
-        if (itm.log && itm.log.length > 0) {
-          itm.log.forEach(function (it) {
-            if (it.status === 'cancel') {
-              canceldate = it.created;
-            } else if (it.status === 'reject') {
-              canceldate = it.created;
-              remark = itm.remark;
-            } else if (it.status === 'rejectrefund') {
-              canceldate = it.created;
-              remark = itm.remark;
-            } else if (it.status === 'cancelrefund') {
-              canceldate = it.created;
-            } else if (it.status === 'admincancelrefund') {
-              canceldate = it.created;
-            } else if (it.status === 'admincancel') {
-              canceldate = it.created;
-            }
-          });
-        }
-        resData[3].items.push({
-          itemid: itm._id,
-          orderid: order._id,
-          docno: order.docno ? order.docno : order._id,
-          name: itm.product && itm.product.name ? itm.product.name : '',
-          image: itm.product && itm.product.images ? itm.product.images[0] : '',
-          price: itm.unitprice,
-          qty: itm.qty,
-          shippingtype: itm.shipping.ref.name ? itm.shipping.ref.name : '',
-          shippingprice: itm.shipping.price,
-          amount: itm.amount,
-          sentdate: '',
-          receivedate: '',
-          canceldate: canceldate,
-          isrefund: false,
-          status: itm.status,
-          rejectreason: remark,
-          refid: itm.refid ? itm.refid : ''
-        });
-      }
-    });
+      });
+    }
   });
+
   req.resData = resData;
   next();
 };
@@ -1031,46 +1062,47 @@ exports.getOrderListAdmin = function (req, res, next) {
           var remark = '';
           if (order.channel === 'bid') {
             order.itemsbid.forEach(function (itm) {
-
-              if (itm.status === 'rejectrefund' || itm.status === 'cancelrefund' || itm.status === 'admincancelrefund') {
-                isrefund = true;
-              }
-              if (itm.status === 'reject' || itm.status === 'admincancel') {
-                remark = itm.remark;
-              }
-              if (itm.log && itm.log.length > 0) {
-                itm.log.forEach(function (it) {
-                  if (it.status === 'sent') {
-                    sentdate2 = it.created;
-                  } else if (it.status === 'completed') {
-                    completed2 = it.created;
-                  } else if (it.status === 'transferred') {
-                    completed2 = it.created;
-                  } else if (it.status === 'cancel' || it.status === 'reject') {
-                    canceldate = it.created;
-                  }
-                });
-              }
-              if (status.toString() === 'refund' ? itm.status.toString() === 'cancelrefund' || itm.status.toString() === 'rejectrefund' || itm.status.toString() === 'admincancelrefund' : status.toString() === 'admincancel' ? itm.status.toString() === 'admincancel' || itm.status.toString() === 'reject' : itm.status.toString() === status.toString()) {
-                dataOrders.push({
-                  itemid: itm._id,
-                  orderid: order._id,
-                  docno: order.docno ? order.docno : order._id,
-                  name: itm.bid && itm.bid.name ? itm.bid.name : '',
-                  image: itm.bid && itm.bid.images ? itm.bid.images[0] : '',
-                  price: itm.unitprice,
-                  qty: itm.qty,
-                  shippingtype: itm.shipping.ref.name,
-                  shippingprice: itm.shipping.price,
-                  amount: itm.amount,
-                  sentdate: sentdate2,
-                  receivedate: completed2,
-                  canceldate: canceldate,
-                  isrefund: isrefund,
-                  status: itm.status,
-                  rejectreason: remark,
-                  refid: itm.refid ? itm.refid : ''
-                });
+              if (itm.status === 'topay') {
+                if (itm.status === 'rejectrefund' || itm.status === 'cancelrefund' || itm.status === 'admincancelrefund') {
+                  isrefund = true;
+                }
+                if (itm.status === 'reject' || itm.status === 'admincancel') {
+                  remark = itm.remark;
+                }
+                if (itm.log && itm.log.length > 0) {
+                  itm.log.forEach(function (it) {
+                    if (it.status === 'sent') {
+                      sentdate2 = it.created;
+                    } else if (it.status === 'completed') {
+                      completed2 = it.created;
+                    } else if (it.status === 'transferred') {
+                      completed2 = it.created;
+                    } else if (it.status === 'cancel' || it.status === 'reject') {
+                      canceldate = it.created;
+                    }
+                  });
+                }
+                if (status.toString() === 'refund' ? itm.status.toString() === 'cancelrefund' || itm.status.toString() === 'rejectrefund' || itm.status.toString() === 'admincancelrefund' : status.toString() === 'admincancel' ? itm.status.toString() === 'admincancel' || itm.status.toString() === 'reject' : itm.status.toString() === status.toString()) {
+                  dataOrders.push({
+                    itemid: itm._id,
+                    orderid: order._id,
+                    docno: order.docno ? order.docno : order._id,
+                    name: itm.bid && itm.bid.name ? itm.bid.name : '',
+                    image: itm.bid && itm.bid.image ? itm.bid.image[0] : '',
+                    price: itm.unitprice,
+                    qty: itm.qty,
+                    shippingtype: itm.shipping.ref.name,
+                    shippingprice: itm.shipping.price,
+                    amount: itm.amount,
+                    sentdate: sentdate2,
+                    receivedate: completed2,
+                    canceldate: canceldate,
+                    isrefund: isrefund,
+                    status: itm.status,
+                    rejectreason: remark,
+                    refid: itm.refid ? itm.refid : ''
+                  });
+                }
               }
             });
           } else {
