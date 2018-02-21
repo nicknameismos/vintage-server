@@ -411,43 +411,6 @@ describe('Product CRUD tests with token', function () {
       });
   });
 
-
-  it('get product detail', function (done) {
-    agent.post('/api/products')
-      .set('authorization', 'Bearer ' + token)
-      .send(product)
-      .expect(200)
-      .end(function (productSaveErr, productSaveRes) {
-        // Handle Product save error
-        if (productSaveErr) {
-          return done(productSaveErr);
-        }
-
-        var productObj = productSaveRes.body;
-        agent.get('/api/customerproductdetail/' + productSaveRes.body._id)
-          .set('authorization', 'Bearer ' + token)
-          .end(function (productGetErr, productsGetRes) {
-            // Handle Product save error
-            if (productGetErr) {
-              return done(productGetErr);
-            }
-            // Get Products list
-            var product = productsGetRes.body;
-
-            // Set assertions
-            (product._id).should.match(productObj._id);
-            (product.name).should.match(productObj.name);
-            (product.images[0]).should.match(productObj.images[0]);
-            (product.images[1]).should.match(productObj.images[1]);
-            (product.price).should.match(productObj.price);
-            (product.detail).should.match(productObj.detail);
-
-            done();
-          });
-      });
-
-  });
-
   it('get products by id not expire', function (done) {
     agent.post('/api/products')
       .set('authorization', 'Bearer ' + token)

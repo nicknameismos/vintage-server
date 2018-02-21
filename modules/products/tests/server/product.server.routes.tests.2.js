@@ -290,7 +290,7 @@ describe('Product CRUD tests with token add shipping', function () {
             (product.name).should.match(productObj.name);
             (product.images[0]).should.match(productObj.images[0]);
             (product.images[1]).should.match(productObj.images[1]);
-            (product.price).should.match(productObj.price);
+            (product.price).should.match(productObj.ispromotionprice ? productObj.promotionprice : productObj.price);
             (product.detail).should.match(productObj.detail);
             (product.shippings.length).should.match(1);
             (product.shippings[0].ref.name).should.match(shippings.name);

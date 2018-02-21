@@ -298,7 +298,7 @@ exports.productDetail = function (req, res) {
     _id: productDB._id,
     name: productDB.name,
     images: productDB.images,
-    price: productDB.price,
+    price: productDB.ispromotionprice ? productDB.promotionprice : productDB.price,
     detail: productDB.detail,
     shippings: productDB.shippings,
     shopid: productDB.shop ? productDB.shop._id : '',
