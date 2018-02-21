@@ -256,6 +256,34 @@ exports.updateNotification = function (req, res) {
   }
 };
 
+exports.createBidNotification = function (req, res) {
+  var title = 'คุณชนะการประมูล';
+  var detail = req.bid.name + ' ประมูลสำเร็จแล้ว';
+  User.populate(req.notidata, {
+    path: 'user'
+  }, function (err, orderRes) {
+    var notiLog = {
+      title: title,
+      detail: detail,
+      userowner: orderRes.user,
+      user: orderRes.user
+    };
+    var userIds = orderRes.user && orderRes.user.notificationids ? orderRes.user.notificationids : [];
+    userNoti(title, detail, userIds);
+    // var userIds = req.user && req.user.notificationids ? req.user.notificationids : [];
+    var pushnoti = new pushNotification(notiLog);
+    pushnoti.save(function (err) {
+      if (err) {
+        return res.status(400).send({
+          message: errorHandler.getErrorMessage(err)
+        });
+      }
+      res.jsonp(orderRes);
+    });
+  });
+
+};
+
 function userNoti(title, message, ids) {
   request({
     url: pushNotiUrl,

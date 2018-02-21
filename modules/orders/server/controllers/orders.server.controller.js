@@ -1143,7 +1143,7 @@ exports.resOrderListAdmin = function (req, res) {
 };
 
 exports.getBidId = function (req, res, next) {
-  Bid.findById().exec(function (err, bid) {
+  Bid.findById(req.body.bidid).exec(function (err, bid) {
     if (err) {
       return next(err);
     } else if (!bid) {
@@ -1158,6 +1158,7 @@ exports.getBidId = function (req, res, next) {
 
 exports.updateBidId = function (req, res, next) {
   var bid = req.bid;
+  // console.log(bid);
   if (bid.userbid && bid.userbid.length > 0) {
     bid.status = 'topay';
   } else {
@@ -1179,12 +1180,13 @@ exports.bidCreate = function (req, res, next) {
   if (req.bid.status === 'end') {
     res.jsonp('no user bid');
   } else {
-    var userbid = '';
+    var userbid;
     req.bid.userbid.forEach(function (ubid) {
-      if (req.bid.price === ubid.price) {
+      if (req.bid.price === ubid.bidprice) {
         userbid = ubid.user;
       }
     });
+    // console.log(req.bid);
     var bidOrder = {
       docno: +new Date(),
       channel: 'bid',
@@ -1209,13 +1211,14 @@ exports.bidCreate = function (req, res, next) {
     var order = new Order(bidOrder);
     order.save(function (err) {
       if (err) {
+        console.log(err);
         return res.status(400).send({
           message: errorHandler.getErrorMessage(err)
         });
       } else {
-        // req.notidata = order;
-        // next();
-        res.jsonp(order);
+        req.notidata = order;
+        next();
+        // res.jsonp(order);
       }
     });
   }
