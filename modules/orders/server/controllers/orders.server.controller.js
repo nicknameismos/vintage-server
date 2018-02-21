@@ -98,7 +98,7 @@ exports.create = function (req, res, next) {
     element.product = _order.items[i].product._id;
     element.shopid = _order.items[i].product.shopid;
     element.unitprice = _order.items[i].product.price;
-    element.status = 'confirm';
+    element.status = _order.items[i].status ? _order.items[i].status : 'confirm';
     element.log.push({
       status: 'confirm'
     });
