@@ -56,7 +56,7 @@ var BidSchema = new Schema({
   },
   status: {
     type: String,
-    enum: ['active', 'end', 'paid'],
+    enum: ['active', 'end', 'topay', 'paid'],
     default: 'active'
   },
   shippings: {

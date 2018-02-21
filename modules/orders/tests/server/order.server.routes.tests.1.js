@@ -7538,6 +7538,93 @@ describe('Order omise create tests', function () {
       });
   });
 
+  // it('create order bid success', function (done) {
+  //   // Save a new Order
+  //   var bid = new Bid({
+  //     name: 'Bid name',
+  //     detail: 'bid detail',
+  //     price: 300,
+  //     startprice: 50,
+  //     bidprice: 100,
+  //     starttime: new Date(),
+  //     endtime: new Date(),
+  //     status: 'active',
+  //     image: ['https://www.felex-lederwaren.de/bilder/produkte/gross/Billy-the-Kid-by-Greenburry-Rebel-of-Vintage-Greenburry-Damenumhaengetasche-UEberschlagtasche-rot-braun.jpg'],
+  //     user: user,
+  //     userbid: [{
+  //       user: user,
+  //       created: new Date(),
+  //       bidprice: 300
+  //     }]
+  //   });
+  //   bid.save();
+
+  //   // agent.post('/api/auth/signin')
+  //   //   .send(credentials3)
+  //   //   .expect(200)
+  //   //   .end(function (signinErr, signinRes) {
+  //   //     // Handle signin error
+  //   //     if (signinErr) {
+  //   //       return done(signinErr);
+  //   //     }
+  //   var item = {
+  //     bidid: bid.id
+  //   };
+
+
+  //   agent.post('/api/orderbid')
+  //     .send(item)
+  //     .end(function (customergetordersErr, customergetordersRes) {
+  //       // Handle signin error
+  //       if (customergetordersErr) {
+  //         return done(customergetordersErr);
+  //       }
+  //       var cord = customergetordersRes.body;
+  //       (cord.itemsbid.length).should.match(1);
+  //       (cord.totalamount).should.match('admincancelrefund');
+
+  //       agent.get('/api/orders')
+  //         // .set('authorization', 'Bearer ' + token)
+  //         .end(function (order2Err, order2Res) {
+  //           // Handle signin error
+  //           if (order2Err) {
+  //             return done(order2Err);
+  //           }
+  //           var ord2 = order2Res.body;
+  //           (ord2.length).should.match(1);
+
+  //           agent.get('/api/bids/' + bid.id)
+  //             // .set('authorization', 'Bearer ' + token)
+  //             .end(function (bidErr, bidRes) {
+  //               // Handle signin error
+  //               if (bidErr) {
+  //                 return done(bidErr);
+  //               }
+  //               var bid = bidRes.body;
+  //               (bid.status).should.match('topay');
+  //               // (cord.qty).should.match(4);
+  //               // (cord.amount).should.match(800);
+  //               // (cord.totalamount).should.match(700);
+  //               agent.get('/api/notifications')
+  //                 // .set('authorization', 'Bearer ' + token)
+  //                 .end(function (notiErr, notiRes) {
+  //                   // Handle signin error
+  //                   if (notiErr) {
+  //                     return done(notiErr);
+  //                   }
+  //                   var noti = notiRes.body;
+  //                   (noti.length).should.match(1);
+  //                   // (noti).should.match(1);
+
+  //                   done();
+
+  //                 });
+  //             });
+  //         });
+  //     });
+  // });
+  // });
+
   afterEach(function (done) {
     User.remove().exec(function () {
       Product.remove().exec(function () {

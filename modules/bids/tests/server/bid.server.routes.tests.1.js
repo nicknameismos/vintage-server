@@ -138,9 +138,9 @@ describe('Bid CRUD tests with token', function () {
         // Set assertions
         (bids.items.length).should.match(3);
         (bids.items[0].type).should.match('NOW');
-        (bids.items[0].items.length).should.match(3);
+        (bids.items[0].items.length).should.match(1);
         (bids.items[1].type).should.match('COMING_SOON');
-        (bids.items[1].items.length).should.match(0);
+        (bids.items[1].items.length).should.match(2);
         (bids.items[2].type).should.match('ME');
         (bids.items[2].items.length).should.match(2);
 
@@ -183,7 +183,7 @@ describe('Bid CRUD tests with token', function () {
         (bids.price).should.match(400);
         (bids.pricestart).should.match(bidObj.startprice);
         (bids.pricebid).should.match(bidObj.bidprice);
-        (bids.isBid).should.match(false);
+        (bids.isBid).should.match(true);
         (bids.currentuser._id).should.match(user.id);
         (bids.currentuser.name).should.match(user.displayName);
         (bids.currentuser.profileImageURL).should.match(user.profileImageURL);

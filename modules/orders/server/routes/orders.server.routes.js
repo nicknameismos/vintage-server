@@ -56,6 +56,9 @@ module.exports = function (app) {
 
   app.route('/api/admincancelitem').all(core.jwtCheck, ordersPolicy.isAllowed)
     .post(orders.getOrderId, orders.admincancel, core.updateNotification);
+
+  // app.route('/api/orderbid')
+  //   .post(orders.getBidId, orders.updateBidId, orders.bidCreate); //, core.createBidNotification
   // Finish by binding the Order middleware
   app.param('orderId', orders.orderByID);
   app.param('orderShopId', orders.orderShopId);

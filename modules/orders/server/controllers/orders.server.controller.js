@@ -10,6 +10,7 @@ var path = require('path'),
   User = mongoose.model('User'),
   Shop = mongoose.model('Shop'),
   Coupon = mongoose.model('Coupon'),
+  Bid = mongoose.model('Bid'),
   errorHandler = require(path.resolve('./modules/core/server/controllers/errors.server.controller')),
   _ = require('lodash'),
   omise = require('omise')({
@@ -97,6 +98,7 @@ exports.create = function (req, res, next) {
     element.product = _order.items[i].product._id;
     element.shopid = _order.items[i].product.shopid;
     element.unitprice = _order.items[i].product.price;
+    element.status = 'confirm';
     element.log.push({
       status: 'confirm'
     });
@@ -1138,6 +1140,86 @@ exports.cookingOrderListAdmin = function (req, res, next) {
 
 exports.resOrderListAdmin = function (req, res) {
   res.jsonp(req.data);
+};
+
+exports.getBidId = function (req, res, next) {
+  Bid.findById().exec(function (err, bid) {
+    if (err) {
+      return next(err);
+    } else if (!bid) {
+      return res.status(404).send({
+        message: 'No Bid with that identifier has been found'
+      });
+    }
+    req.bid = bid;
+    next();
+  });
+};
+
+exports.updateBidId = function (req, res, next) {
+  var bid = req.bid;
+  if (bid.userbid && bid.userbid.length > 0) {
+    bid.status = 'topay';
+  } else {
+    bid.status = 'end';
+  }
+  bid.save(function (err) {
+    if (err) {
+      return res.status(400).send({
+        message: errorHandler.getErrorMessage(err)
+      });
+    } else {
+      req.bid = bid;
+      next();
+    }
+  });
+};
+
+exports.bidCreate = function (req, res, next) {
+  if (req.bid.status === 'end') {
+    res.jsonp('no user bid');
+  } else {
+    var userbid = '';
+    req.bid.userbid.forEach(function (ubid) {
+      if (req.bid.price === ubid.price) {
+        userbid = ubid.user;
+      }
+    });
+    var bidOrder = {
+      docno: +new Date(),
+      channel: 'bid',
+      itemsbid: [{
+        bid: req.bid,
+        unitprice: req.bid.price,
+        qty: 1,
+        amount: req.bid.price,
+        log: [{
+          status: 'topay',
+          created: new Date()
+        }]
+      }],
+      qty: 1,
+      amount: req.bid.price,
+      shippingamount: 0,
+      discountamount: 0,
+      totalamount: req.bid.price,
+      created: new Date(),
+      user: userbid
+    };
+    var order = new Order(bidOrder);
+    order.save(function (err) {
+      if (err) {
+        return res.status(400).send({
+          message: errorHandler.getErrorMessage(err)
+        });
+      } else {
+        // req.notidata = order;
+        // next();
+        res.jsonp(order);
+      }
+    });
+  }
+
 };
 
 function countPage(orders) {
