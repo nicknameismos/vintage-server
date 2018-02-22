@@ -218,7 +218,7 @@ exports.orderByID = function (req, res, next, id) {
     }, function (err, orderPop) {
       req.order = orderPop;
       next();
-    })
+    });
 
   });
 };

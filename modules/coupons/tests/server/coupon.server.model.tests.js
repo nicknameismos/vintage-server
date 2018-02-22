@@ -33,6 +33,7 @@ describe('Coupon Model Unit Tests:', function () {
         code: 'AAAA',
         price: 20,
         type: 'single',
+        message: 'message',
         owner: [],
         startdate: new Date(),
         enddate: new Date(),
@@ -64,6 +65,15 @@ describe('Coupon Model Unit Tests:', function () {
 
     it('should be able to show an error when try to save without price', function (done) {
       coupon.price = null;
+
+      return coupon.save(function (err) {
+        should.exist(err);
+        done();
+      });
+    });
+    
+    it('should be able to show an error when try to save without message', function (done) {
+      coupon.message = null;
 
       return coupon.save(function (err) {
         should.exist(err);

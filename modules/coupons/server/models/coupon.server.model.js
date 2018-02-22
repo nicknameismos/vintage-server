@@ -20,6 +20,10 @@ var CouponSchema = new Schema({
     type: Number,
     required: 'Please fill Coupon Price'
   },
+  message: {
+    type: String,
+    required: 'Please fill Coupon message'
+  },
   type: {
     type: String,
     enum: ['single', 'multi'],

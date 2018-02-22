@@ -55,6 +55,7 @@ describe('Coupon CRUD tests', function () {
         code: 'AAAA',
         price: 20,
         type: 'single',
+        message: 'message',
         owner: [],
         startdate: new Date(),
         enddate: new Date(),
