@@ -77,6 +77,9 @@ var BidSchema = new Schema({
   user: {
     type: Schema.ObjectId,
     ref: 'User'
+  },
+  docno: {
+    type: String
   }
 });
 

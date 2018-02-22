@@ -491,10 +491,10 @@ describe('Customer Home Stories Test', function () {
       bidprice: 100,
       price: 200,
       starttime: new Date(),
-      endtime: new Date(enddate.getFullYear(), enddate.getMonth(), enddate.getDate() + 1),
+      endtime: new Date(enddate.getFullYear(), enddate.getMonth(), enddate.getDate() + 2),
       image: ['https://www.felex-lederwaren.de/bilder/produkte/gross/Billy-the-Kid-by-Greenburry-Rebel-of-Vintage-Greenburry-Damenumhaengetasche-UEberschlagtasche-rot-braun.jpg'],
       user: user,
-      created: new Date(enddate.getFullYear(), enddate.getMonth(), enddate.getDate() + 1)
+      created: new Date(enddate.getFullYear(), enddate.getMonth(), enddate.getDate() + 2)
     });
     var bid2 = new Bid({
       name: 'Bid name2',
@@ -502,11 +502,11 @@ describe('Customer Home Stories Test', function () {
       startprice: 502,
       bidprice: 1002,
       price: 2002,
-      starttime: new Date(enddate.getFullYear(), enddate.getMonth(), enddate.getDate() + 2),
-      endtime: new Date(enddate.getFullYear(), enddate.getMonth(), enddate.getDate() + 3),
+      starttime: new Date(enddate.getFullYear(), enddate.getMonth(), enddate.getDate() + 3),
+      endtime: new Date(enddate.getFullYear(), enddate.getMonth(), enddate.getDate() + 4),
       image: ['https://www.felex-lederwaren.de/bilder/produkte/gross/Billy-the-Kid-by-Greenburry-Rebel-of-Vintage-Greenburry-Damenumhaengetasche-UEberschlagtasche-rot-braun.jpg'],
       user: user,
-      created: new Date(enddate.getFullYear(), enddate.getMonth(), enddate.getDate() + 4)
+      created: new Date(enddate.getFullYear(), enddate.getMonth(), enddate.getDate() + 5)
     });
 
     var bid4 = new Bid({
@@ -515,15 +515,15 @@ describe('Customer Home Stories Test', function () {
       startprice: 502,
       bidprice: 1002,
       price: 2002,
-      starttime: new Date(enddate.getFullYear(), enddate.getMonth(), enddate.getDate() - 1),
-      endtime: new Date(enddate.getFullYear(), enddate.getMonth(), enddate.getDate() - 1),
+      starttime: new Date(enddate.getFullYear(), enddate.getMonth(), enddate.getDate() - 2),
+      endtime: new Date(enddate.getFullYear(), enddate.getMonth(), enddate.getDate() - 2),
       image: ['https://www.felex-lederwaren.de/bilder/produkte/gross/Billy-the-Kid-by-Greenburry-Rebel-of-Vintage-Greenburry-Damenumhaengetasche-UEberschlagtasche-rot-braun.jpg'],
       user: user,
       created: new Date(enddate.getFullYear(), enddate.getMonth(), enddate.getDate() + 4)
     });
     var startdate = new Date();
     startdate.setHours(0, 0, 0);
-    var bid3endtime = new Date(enddate.getFullYear(), enddate.getMonth(), enddate.getDate() + 1);
+    var bid3endtime = new Date(enddate.getFullYear(), enddate.getMonth(), enddate.getDate() + 2);
     bid3endtime.setHours(12, 0, 0);
     var bid3 = new Bid({
       name: 'Bid name2',

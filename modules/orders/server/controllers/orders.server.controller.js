@@ -784,8 +784,8 @@ exports.cancel = function (req, res, next) {
   // console.log(order);
   if (order.channel === 'bid') {
     if (order.itemsbid && order.itemsbid[order.itemsbid.map(function (e) {
-        return e._id.toString();
-      }).indexOf(req.body.itemid.toString())].status === 'admincancel') {
+      return e._id.toString();
+    }).indexOf(req.body.itemid.toString())].status === 'admincancel') {
       return res.status(400).send({
         message: 'this item cancel by admin!'
       });
@@ -802,8 +802,8 @@ exports.cancel = function (req, res, next) {
     }
   } else if (order.channel === 'order') {
     if (order.items && order.items[order.items.map(function (e) {
-        return e._id.toString();
-      }).indexOf(req.body.itemid.toString())].status === 'confirm') {
+      return e._id.toString();
+    }).indexOf(req.body.itemid.toString())].status === 'confirm') {
       order.items[order.items.map(function (e) {
         return e._id.toString();
       }).indexOf(req.body.itemid.toString())].status = 'cancel';
@@ -815,8 +815,8 @@ exports.cancel = function (req, res, next) {
       });
     } else {
       if (order.items[order.items.map(function (e) {
-          return e._id.toString();
-        }).indexOf(req.body.itemid.toString())].status === 'reject') {
+        return e._id.toString();
+      }).indexOf(req.body.itemid.toString())].status === 'reject') {
         return res.status(400).send({
           message: 'this item reject by shop!'
         });
@@ -847,8 +847,8 @@ exports.confirm = function (req, res, next) {
   // console.log(order);
   if (order.channel === 'bid') {
     if (order.itemsbid && order.itemsbid[order.itemsbid.map(function (e) {
-        return e._id.toString();
-      }).indexOf(req.body.itemid.toString())].status === 'admincancel') {
+      return e._id.toString();
+    }).indexOf(req.body.itemid.toString())].status === 'admincancel') {
       return res.status(400).send({
         message: 'this item cancel by admin!'
       });
@@ -924,8 +924,8 @@ exports.sent = function (req, res, next) {
   var order = req.order;
   if (order.channel === 'bid') {
     if (order.itemsbid[order.itemsbid.map(function (e) {
-        return e._id.toString();
-      }).indexOf(req.body.itemid.toString())].status === 'admincancel') {
+      return e._id.toString();
+    }).indexOf(req.body.itemid.toString())].status === 'admincancel') {
       return res.status(400).send({
         message: 'this item cancel by admin!'
       });
@@ -945,8 +945,8 @@ exports.sent = function (req, res, next) {
     }
   } else {
     if (order.items[order.items.map(function (e) {
-        return e._id.toString();
-      }).indexOf(req.body.itemid.toString())].status === 'confirm') {
+      return e._id.toString();
+    }).indexOf(req.body.itemid.toString())].status === 'confirm') {
       order.items[order.items.map(function (e) {
         return e._id.toString();
       }).indexOf(req.body.itemid.toString())].status = 'sent';
@@ -961,8 +961,8 @@ exports.sent = function (req, res, next) {
       });
     } else {
       if (order.items[order.items.map(function (e) {
-          return e._id.toString();
-        }).indexOf(req.body.itemid.toString())].status === 'cancel') {
+        return e._id.toString();
+      }).indexOf(req.body.itemid.toString())].status === 'cancel') {
         return res.status(400).send({
           message: 'this item cancel by user!'
         });
@@ -990,8 +990,8 @@ exports.sent = function (req, res, next) {
 exports.reject = function (req, res, next) {
   var order = req.order;
   if (order.items[order.items.map(function (e) {
-      return e._id.toString();
-    }).indexOf(req.body.itemid.toString())].status === 'confirm') {
+    return e._id.toString();
+  }).indexOf(req.body.itemid.toString())].status === 'confirm') {
     order.items[order.items.map(function (e) {
       return e._id.toString();
     }).indexOf(req.body.itemid.toString())].status = 'reject';
@@ -1006,8 +1006,8 @@ exports.reject = function (req, res, next) {
     });
   } else {
     if (order.items[order.items.map(function (e) {
-        return e._id.toString();
-      }).indexOf(req.body.itemid.toString())].status === 'cancel') {
+      return e._id.toString();
+    }).indexOf(req.body.itemid.toString())].status === 'cancel') {
       return res.status(400).send({
         message: 'this item cancel by user!'
       });
@@ -1309,6 +1309,7 @@ exports.updateBidId = function (req, res, next) {
   // console.log(bid);
   if (bid.userbid && bid.userbid.length > 0) {
     bid.status = 'topay';
+    bid.docno = req.notidata.docno;
   } else {
     bid.status = 'end';
   }
@@ -1325,7 +1326,7 @@ exports.updateBidId = function (req, res, next) {
 };
 
 exports.bidCreate = function (req, res, next) {
-  if (req.bid.status === 'end') {
+  if (req.bid.userbid && req.bid.userbid.length === 0) {
     res.jsonp('no user bid');
   } else {
     var userbid;
