@@ -236,6 +236,9 @@ exports.cookingBid = function (req, res, next) {
       cookingData[0].items = cookingData[0].items.sort(function (a, b) {
         return (a.time > b.time) ? 1 : ((b.time > a.time) ? -1 : 0);
       });
+      cookingData[1].items = cookingData[1].items.sort(function (a, b) {
+        return (a.datestart > b.datestart) ? 1 : ((b.datestart > a.datestart) ? -1 : 0);
+      });
       req.bids = cookingData;
       next();
     }
