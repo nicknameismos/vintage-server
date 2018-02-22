@@ -24,7 +24,9 @@ var path = require('path'),
 exports.updateCoupon = function (req, res, next) {
   var order = req.body;
   if (order.coupon && order.coupon.code) {
-    Coupon.find({ code: order.coupon.code }).exec(function (err, coupons) {
+    Coupon.find({
+      code: order.coupon.code
+    }).exec(function (err, coupons) {
       if (err) {
         return res.status(400).send({
           message: errorHandler.getErrorMessage(err)
@@ -200,13 +202,21 @@ exports.orderByID = function (req, res, next, id) {
         message: 'No Order with that identifier has been found'
       });
     }
-    req.order = order;
-    next();
+    Shippingmaster.populate(order, {
+      path: "itemsbid.bid.shippings.ref"
+    }, function (orderPop) {
+      req.order = orderPop;
+      next();
+    })
   });
 };
 
 exports.customerGetListOrder = function (req, res, next) {
-  Order.find({ user: { _id: req.user._id } }).sort('-created').populate('user', 'displayName').populate('items.product').populate('itemsbid.bid').exec(function (err, orders) {
+  Order.find({
+    user: {
+      _id: req.user._id
+    }
+  }).sort('-created').populate('user', 'displayName').populate('items.product').populate('itemsbid.bid').exec(function (err, orders) {
     if (err) {
       return res.status(400).send({
         message: errorHandler.getErrorMessage(err)
@@ -403,7 +413,13 @@ exports.orderShopId = function (req, res, next, shopid) {
 };
 exports.shopGetListOrder = function (req, res, next) {
   // console.log(req.user);
-  Order.find({ items: { $elemMatch: { shopid: req.shopid } } }).sort('-created').populate('user', 'displayName').populate('items.product').exec(function (err, orders) {
+  Order.find({
+    items: {
+      $elemMatch: {
+        shopid: req.shopid
+      }
+    }
+  }).sort('-created').populate('user', 'displayName').populate('items.product').exec(function (err, orders) {
     if (err) {
       return res.status(400).send({
         message: errorHandler.getErrorMessage(err)
@@ -755,26 +771,40 @@ exports.cancel = function (req, res, next) {
   var order = req.order;
   // console.log(order);
   if (order.channel === 'bid') {
-    if (order.itemsbid && order.itemsbid[order.itemsbid.map(function (e) { return e._id.toString(); }).indexOf(req.body.itemid.toString())].status === 'admincancel') {
+    if (order.itemsbid && order.itemsbid[order.itemsbid.map(function (e) {
+        return e._id.toString();
+      }).indexOf(req.body.itemid.toString())].status === 'admincancel') {
       return res.status(400).send({
         message: 'this item cancel by admin!'
       });
     } else {
-      order.itemsbid[order.itemsbid.map(function (e) { return e._id.toString(); }).indexOf(req.body.itemid.toString())].status = 'cancel';
-      order.itemsbid[order.itemsbid.map(function (e) { return e._id.toString(); }).indexOf(req.body.itemid.toString())].log.push({
+      order.itemsbid[order.itemsbid.map(function (e) {
+        return e._id.toString();
+      }).indexOf(req.body.itemid.toString())].status = 'cancel';
+      order.itemsbid[order.itemsbid.map(function (e) {
+        return e._id.toString();
+      }).indexOf(req.body.itemid.toString())].log.push({
         status: 'cancel',
         created: new Date()
       });
     }
   } else if (order.channel === 'order') {
-    if (order.items && order.items[order.items.map(function (e) { return e._id.toString(); }).indexOf(req.body.itemid.toString())].status === 'confirm') {
-      order.items[order.items.map(function (e) { return e._id.toString(); }).indexOf(req.body.itemid.toString())].status = 'cancel';
-      order.items[order.items.map(function (e) { return e._id.toString(); }).indexOf(req.body.itemid.toString())].log.push({
+    if (order.items && order.items[order.items.map(function (e) {
+        return e._id.toString();
+      }).indexOf(req.body.itemid.toString())].status === 'confirm') {
+      order.items[order.items.map(function (e) {
+        return e._id.toString();
+      }).indexOf(req.body.itemid.toString())].status = 'cancel';
+      order.items[order.items.map(function (e) {
+        return e._id.toString();
+      }).indexOf(req.body.itemid.toString())].log.push({
         status: 'cancel',
         created: new Date()
       });
     } else {
-      if (order.items[order.items.map(function (e) { return e._id.toString(); }).indexOf(req.body.itemid.toString())].status === 'reject') {
+      if (order.items[order.items.map(function (e) {
+          return e._id.toString();
+        }).indexOf(req.body.itemid.toString())].status === 'reject') {
         return res.status(400).send({
           message: 'this item reject by shop!'
         });
@@ -804,13 +834,19 @@ exports.confirm = function (req, res, next) {
   var order = req.order;
   // console.log(order);
   if (order.channel === 'bid') {
-    if (order.itemsbid && order.itemsbid[order.itemsbid.map(function (e) { return e._id.toString(); }).indexOf(req.body.itemid.toString())].status === 'admincancel') {
+    if (order.itemsbid && order.itemsbid[order.itemsbid.map(function (e) {
+        return e._id.toString();
+      }).indexOf(req.body.itemid.toString())].status === 'admincancel') {
       return res.status(400).send({
         message: 'this item cancel by admin!'
       });
     } else {
-      order.itemsbid[order.itemsbid.map(function (e) { return e._id.toString(); }).indexOf(req.body.itemid.toString())].status = 'confirm';
-      order.itemsbid[order.itemsbid.map(function (e) { return e._id.toString(); }).indexOf(req.body.itemid.toString())].log.push({
+      order.itemsbid[order.itemsbid.map(function (e) {
+        return e._id.toString();
+      }).indexOf(req.body.itemid.toString())].status = 'confirm';
+      order.itemsbid[order.itemsbid.map(function (e) {
+        return e._id.toString();
+      }).indexOf(req.body.itemid.toString())].log.push({
         status: 'confirm',
         created: new Date()
       });
@@ -838,14 +874,22 @@ exports.confirm = function (req, res, next) {
 exports.complete = function (req, res, next) {
   var order = req.order;
   if (order.channel === 'bid') {
-    order.itemsbid[order.itemsbid.map(function (e) { return e._id.toString(); }).indexOf(req.body.itemid.toString())].status = 'completed';
-    order.itemsbid[order.itemsbid.map(function (e) { return e._id.toString(); }).indexOf(req.body.itemid.toString())].log.push({
+    order.itemsbid[order.itemsbid.map(function (e) {
+      return e._id.toString();
+    }).indexOf(req.body.itemid.toString())].status = 'completed';
+    order.itemsbid[order.itemsbid.map(function (e) {
+      return e._id.toString();
+    }).indexOf(req.body.itemid.toString())].log.push({
       status: 'completed',
       created: new Date()
     });
   } else {
-    order.items[order.items.map(function (e) { return e._id.toString(); }).indexOf(req.body.itemid.toString())].status = 'completed';
-    order.items[order.items.map(function (e) { return e._id.toString(); }).indexOf(req.body.itemid.toString())].log.push({
+    order.items[order.items.map(function (e) {
+      return e._id.toString();
+    }).indexOf(req.body.itemid.toString())].status = 'completed';
+    order.items[order.items.map(function (e) {
+      return e._id.toString();
+    }).indexOf(req.body.itemid.toString())].log.push({
       status: 'completed',
       created: new Date()
     });
@@ -867,28 +911,46 @@ exports.complete = function (req, res, next) {
 exports.sent = function (req, res, next) {
   var order = req.order;
   if (order.channel === 'bid') {
-    if (order.itemsbid[order.itemsbid.map(function (e) { return e._id.toString(); }).indexOf(req.body.itemid.toString())].status === 'admincancel') {
+    if (order.itemsbid[order.itemsbid.map(function (e) {
+        return e._id.toString();
+      }).indexOf(req.body.itemid.toString())].status === 'admincancel') {
       return res.status(400).send({
         message: 'this item cancel by admin!'
       });
     } else {
-      order.itemsbid[order.itemsbid.map(function (e) { return e._id.toString(); }).indexOf(req.body.itemid.toString())].status = 'sent';
-      order.itemsbid[order.itemsbid.map(function (e) { return e._id.toString(); }).indexOf(req.body.itemid.toString())].refid = req.body.refid;
-      order.itemsbid[order.itemsbid.map(function (e) { return e._id.toString(); }).indexOf(req.body.itemid.toString())].log.push({
+      order.itemsbid[order.itemsbid.map(function (e) {
+        return e._id.toString();
+      }).indexOf(req.body.itemid.toString())].status = 'sent';
+      order.itemsbid[order.itemsbid.map(function (e) {
+        return e._id.toString();
+      }).indexOf(req.body.itemid.toString())].refid = req.body.refid;
+      order.itemsbid[order.itemsbid.map(function (e) {
+        return e._id.toString();
+      }).indexOf(req.body.itemid.toString())].log.push({
         status: 'sent',
         created: new Date()
       });
     }
   } else {
-    if (order.items[order.items.map(function (e) { return e._id.toString(); }).indexOf(req.body.itemid.toString())].status === 'confirm') {
-      order.items[order.items.map(function (e) { return e._id.toString(); }).indexOf(req.body.itemid.toString())].status = 'sent';
-      order.items[order.items.map(function (e) { return e._id.toString(); }).indexOf(req.body.itemid.toString())].refid = req.body.refid;
-      order.items[order.items.map(function (e) { return e._id.toString(); }).indexOf(req.body.itemid.toString())].log.push({
+    if (order.items[order.items.map(function (e) {
+        return e._id.toString();
+      }).indexOf(req.body.itemid.toString())].status === 'confirm') {
+      order.items[order.items.map(function (e) {
+        return e._id.toString();
+      }).indexOf(req.body.itemid.toString())].status = 'sent';
+      order.items[order.items.map(function (e) {
+        return e._id.toString();
+      }).indexOf(req.body.itemid.toString())].refid = req.body.refid;
+      order.items[order.items.map(function (e) {
+        return e._id.toString();
+      }).indexOf(req.body.itemid.toString())].log.push({
         status: 'sent',
         created: new Date()
       });
     } else {
-      if (order.items[order.items.map(function (e) { return e._id.toString(); }).indexOf(req.body.itemid.toString())].status === 'cancel') {
+      if (order.items[order.items.map(function (e) {
+          return e._id.toString();
+        }).indexOf(req.body.itemid.toString())].status === 'cancel') {
         return res.status(400).send({
           message: 'this item cancel by user!'
         });
@@ -915,15 +977,25 @@ exports.sent = function (req, res, next) {
 
 exports.reject = function (req, res, next) {
   var order = req.order;
-  if (order.items[order.items.map(function (e) { return e._id.toString(); }).indexOf(req.body.itemid.toString())].status === 'confirm') {
-    order.items[order.items.map(function (e) { return e._id.toString(); }).indexOf(req.body.itemid.toString())].status = 'reject';
-    order.items[order.items.map(function (e) { return e._id.toString(); }).indexOf(req.body.itemid.toString())].remark = req.body.remark;
-    order.items[order.items.map(function (e) { return e._id.toString(); }).indexOf(req.body.itemid.toString())].log.push({
+  if (order.items[order.items.map(function (e) {
+      return e._id.toString();
+    }).indexOf(req.body.itemid.toString())].status === 'confirm') {
+    order.items[order.items.map(function (e) {
+      return e._id.toString();
+    }).indexOf(req.body.itemid.toString())].status = 'reject';
+    order.items[order.items.map(function (e) {
+      return e._id.toString();
+    }).indexOf(req.body.itemid.toString())].remark = req.body.remark;
+    order.items[order.items.map(function (e) {
+      return e._id.toString();
+    }).indexOf(req.body.itemid.toString())].log.push({
       status: 'reject',
       created: new Date()
     });
   } else {
-    if (order.items[order.items.map(function (e) { return e._id.toString(); }).indexOf(req.body.itemid.toString())].status === 'cancel') {
+    if (order.items[order.items.map(function (e) {
+        return e._id.toString();
+      }).indexOf(req.body.itemid.toString())].status === 'cancel') {
       return res.status(400).send({
         message: 'this item cancel by user!'
       });
@@ -948,8 +1020,12 @@ exports.reject = function (req, res, next) {
 
 exports.transfer = function (req, res, next) {
   var order = req.order;
-  order.items[order.items.map(function (e) { return e._id.toString(); }).indexOf(req.body.itemid.toString())].status = 'transferred';
-  order.items[order.items.map(function (e) { return e._id.toString(); }).indexOf(req.body.itemid.toString())].log.push({
+  order.items[order.items.map(function (e) {
+    return e._id.toString();
+  }).indexOf(req.body.itemid.toString())].status = 'transferred';
+  order.items[order.items.map(function (e) {
+    return e._id.toString();
+  }).indexOf(req.body.itemid.toString())].log.push({
     status: 'transferred',
     created: new Date()
   });
@@ -970,15 +1046,31 @@ exports.transfer = function (req, res, next) {
 exports.refund = function (req, res, next) {
   var order = req.order;
   if (order.channel === 'bid') {
-    order.itemsbid[order.itemsbid.map(function (e) { return e._id.toString(); }).indexOf(req.body.itemid.toString())].status = order.itemsbid[order.itemsbid.map(function (e) { return e._id.toString(); }).indexOf(req.body.itemid.toString())].status + 'refund';
-    order.itemsbid[order.itemsbid.map(function (e) { return e._id.toString(); }).indexOf(req.body.itemid.toString())].log.push({
-      status: order.itemsbid[order.itemsbid.map(function (e) { return e._id.toString(); }).indexOf(req.body.itemid.toString())].status,
+    order.itemsbid[order.itemsbid.map(function (e) {
+      return e._id.toString();
+    }).indexOf(req.body.itemid.toString())].status = order.itemsbid[order.itemsbid.map(function (e) {
+      return e._id.toString();
+    }).indexOf(req.body.itemid.toString())].status + 'refund';
+    order.itemsbid[order.itemsbid.map(function (e) {
+      return e._id.toString();
+    }).indexOf(req.body.itemid.toString())].log.push({
+      status: order.itemsbid[order.itemsbid.map(function (e) {
+        return e._id.toString();
+      }).indexOf(req.body.itemid.toString())].status,
       created: new Date()
     });
   } else {
-    order.items[order.items.map(function (e) { return e._id.toString(); }).indexOf(req.body.itemid.toString())].status = order.items[order.items.map(function (e) { return e._id.toString(); }).indexOf(req.body.itemid.toString())].status + 'refund';
-    order.items[order.items.map(function (e) { return e._id.toString(); }).indexOf(req.body.itemid.toString())].log.push({
-      status: order.items[order.items.map(function (e) { return e._id.toString(); }).indexOf(req.body.itemid.toString())].status,
+    order.items[order.items.map(function (e) {
+      return e._id.toString();
+    }).indexOf(req.body.itemid.toString())].status = order.items[order.items.map(function (e) {
+      return e._id.toString();
+    }).indexOf(req.body.itemid.toString())].status + 'refund';
+    order.items[order.items.map(function (e) {
+      return e._id.toString();
+    }).indexOf(req.body.itemid.toString())].log.push({
+      status: order.items[order.items.map(function (e) {
+        return e._id.toString();
+      }).indexOf(req.body.itemid.toString())].status,
       created: new Date()
     });
   }
@@ -1000,16 +1092,28 @@ exports.refund = function (req, res, next) {
 exports.admincancel = function (req, res, next) {
   var order = req.order;
   if (order.channel === 'bid') {
-    order.itemsbid[order.itemsbid.map(function (e) { return e._id.toString(); }).indexOf(req.body.itemid.toString())].status = 'admincancel';
-    order.itemsbid[order.itemsbid.map(function (e) { return e._id.toString(); }).indexOf(req.body.itemid.toString())].remark = req.body.remark;
-    order.itemsbid[order.itemsbid.map(function (e) { return e._id.toString(); }).indexOf(req.body.itemid.toString())].log.push({
+    order.itemsbid[order.itemsbid.map(function (e) {
+      return e._id.toString();
+    }).indexOf(req.body.itemid.toString())].status = 'admincancel';
+    order.itemsbid[order.itemsbid.map(function (e) {
+      return e._id.toString();
+    }).indexOf(req.body.itemid.toString())].remark = req.body.remark;
+    order.itemsbid[order.itemsbid.map(function (e) {
+      return e._id.toString();
+    }).indexOf(req.body.itemid.toString())].log.push({
       status: 'admincancel',
       created: new Date()
     });
   } else {
-    order.items[order.items.map(function (e) { return e._id.toString(); }).indexOf(req.body.itemid.toString())].status = 'admincancel';
-    order.items[order.items.map(function (e) { return e._id.toString(); }).indexOf(req.body.itemid.toString())].remark = req.body.remark;
-    order.items[order.items.map(function (e) { return e._id.toString(); }).indexOf(req.body.itemid.toString())].log.push({
+    order.items[order.items.map(function (e) {
+      return e._id.toString();
+    }).indexOf(req.body.itemid.toString())].status = 'admincancel';
+    order.items[order.items.map(function (e) {
+      return e._id.toString();
+    }).indexOf(req.body.itemid.toString())].remark = req.body.remark;
+    order.items[order.items.map(function (e) {
+      return e._id.toString();
+    }).indexOf(req.body.itemid.toString())].log.push({
       status: 'admincancel',
       created: new Date()
     });
