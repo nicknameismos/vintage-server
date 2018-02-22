@@ -227,19 +227,24 @@ exports.resCouponCode = function (req, res) {
 
 exports.notification = function (req, res) {
   var coupon = req.coupon;
+  var datestart = new Date(coupon.startdate);
+  var dateend = new Date(coupon.enddate);
+  var datestartText = datestart.getDate() + "/" + (datestart.getMonth() + 1) + "/" + datestart.getFullYear();
+  var dateendText = dateend.getDate() + "/" + (dateend.getMonth() + 1) + "/" + dateend.getFullYear();
+  var message = coupon.message + " \r\n\r\n" + "ตั้งแต่วันที่ " + datestartText + " ถึงวันที่ " + dateendText;
   var notifications = [];
   var ids = [];
   if (coupon.type === 'single') {
     coupon.owner.forEach(function (user) {
       notifications.push({
         title: 'คูปองส่วนลดสำหรับคุณ',
-        detail: coupon.message,
+        detail: message,
         userowner: user,
         user: user
       });
       ids = ids.concat(user.notificationids);
     });
-    sendNotification('คูปองส่วนลดสำหรับคุณ', coupon.message, ids);
+    sendNotification('คูปองส่วนลดสำหรับคุณ', message, ids);
     pushNotification.create(notifications, function (err) {
       if (err) {
         return res.status(400).send({
@@ -259,12 +264,12 @@ exports.notification = function (req, res) {
         users.forEach(function (user) {
           notifications.push({
             title: 'คูปองส่วนลดสำหรับคุณ',
-            detail: coupon.message,
+            detail: message,
             userowner: user,
             user: user
           });
         });
-        sendNotification('คูปองส่วนลดสำหรับคุณ', coupon.message, ids);
+        sendNotification('คูปองส่วนลดสำหรับคุณ', message, ids);
         pushNotification.create(notifications, function (err) {
           if (err) {
             return res.status(400).send({

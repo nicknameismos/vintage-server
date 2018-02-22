@@ -302,6 +302,7 @@ exports.productDetail = function (req, res) {
     detail: productDB.detail,
     shippings: productDB.shippings,
     shopid: productDB.shop ? productDB.shop._id : '',
+    shop: productDB.shop,
     ispromotion: productDB.ispromotionprice || false,
     isrecommend: productDB.isrecommend || false,
     ispopular: false
