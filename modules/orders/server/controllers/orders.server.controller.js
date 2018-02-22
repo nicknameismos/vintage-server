@@ -202,12 +202,24 @@ exports.orderByID = function (req, res, next, id) {
         message: 'No Order with that identifier has been found'
       });
     }
-    Shippingmaster.populate(order, {
-      path: "itemsbid.bid.shippings.ref"
-    }, function (orderPop) {
+
+    order.populate({
+      path: 'itemsbid',
+      populate: {
+        path: 'bid',
+        populate: {
+          path: 'shippings',
+          populate: {
+            path: 'ref',
+            model: 'Shippingmaster'
+          }
+        }
+      }
+    }, function (err, orderPop) {
       req.order = orderPop;
       next();
     })
+
   });
 };
 
