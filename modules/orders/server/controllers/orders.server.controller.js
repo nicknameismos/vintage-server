@@ -858,7 +858,9 @@ exports.cookingOrderDetail = function (req, res, next) {
       refunddate: refunddate,
       isrefund: req.order.items[req.itemIndex].status === 'rejectrefund' || req.order.items[req.itemIndex].status === 'cancelrefund' ? true : false,
       status: req.order.items[req.itemIndex].status,
-      rejectreason: req.order.items[req.itemIndex].remark ? req.order.items[req.itemIndex].remark : ''
+      rejectreason: req.order.items[req.itemIndex].remark ? req.order.items[req.itemIndex].remark : '',
+      channel: req.order.channel,
+      user: req.order.user
     };
   } else {
     req.order.itemsbid[req.itemIndex].log.forEach(function (l) {
@@ -912,7 +914,9 @@ exports.cookingOrderDetail = function (req, res, next) {
       refunddate: refunddate,
       isrefund: req.order.itemsbid[req.itemIndex].status === 'rejectrefund' || req.order.itemsbid[req.itemIndex].status === 'cancelrefund' ? true : false,
       status: req.order.itemsbid[req.itemIndex].status,
-      rejectreason: req.order.itemsbid[req.itemIndex].remark ? req.order.itemsbid[req.itemIndex].remark : ''
+      rejectreason: req.order.itemsbid[req.itemIndex].remark ? req.order.itemsbid[req.itemIndex].remark : '',
+      channel: req.order.channel,
+      user: req.order.user
     };
   }
 
