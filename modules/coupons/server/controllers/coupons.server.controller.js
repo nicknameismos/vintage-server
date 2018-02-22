@@ -229,9 +229,9 @@ exports.notification = function (req, res) {
   var coupon = req.coupon;
   var datestart = new Date(coupon.startdate);
   var dateend = new Date(coupon.enddate);
-  var datestartText = datestart.getDate() + "/" + datestart.getMonth() + "/" + datestart.getFullYear();
-  var dateendText = dateend.getDate() + "/" + dateend.getMonth() + "/" + dateend.getFullYear();
-  var message = coupon.message + " \r\n " + "ตั้งแต่วันที่ " + datestartText + " ถึงวันที่ " + dateendText;
+  var datestartText = datestart.getDate() + "/" + (datestart.getMonth() + 1) + "/" + datestart.getFullYear();
+  var dateendText = dateend.getDate() + "/" + (dateend.getMonth() + 1) + "/" + dateend.getFullYear();
+  var message = coupon.message + " \r\n\r\n" + "ตั้งแต่วันที่ " + datestartText + " ถึงวันที่ " + dateendText;
   var notifications = [];
   var ids = [];
   if (coupon.type === 'single') {
