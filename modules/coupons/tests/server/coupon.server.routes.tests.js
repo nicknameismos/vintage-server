@@ -66,56 +66,56 @@ describe('Coupon CRUD tests', function () {
     });
   });
 
-  it('should be able to save a Coupon if logged in', function (done) {
-    var couponMulti = {
-      code: 'WELCOME2018',
-      price: 100,
-      type: 'multi',
-      message: 'คูปองส่วนลดพิเศษ 100 บาท เพียงใช้ รหัส WELCOME2018 ในการสั่งซื้อสินค้า',
-    };
-    agent.post('/api/auth/signin')
-      .send(credentials)
-      .expect(200)
-      .end(function (signinErr, signinRes) {
-        // Handle signin error
-        if (signinErr) {
-          return done(signinErr);
-        }
+  // it('should be able to save a Coupon if logged in', function (done) {
+  //   var couponMulti = {
+  //     code: 'WELCOME2018',
+  //     price: 100,
+  //     type: 'multi',
+  //     message: 'คูปองส่วนลดพิเศษ 100 บาท เพียงใช้ รหัส WELCOME2018 ในการสั่งซื้อสินค้า',
+  //   };
+  //   agent.post('/api/auth/signin')
+  //     .send(credentials)
+  //     .expect(200)
+  //     .end(function (signinErr, signinRes) {
+  //       // Handle signin error
+  //       if (signinErr) {
+  //         return done(signinErr);
+  //       }
 
-        // Get the userId
-        var userId = user.id;
+  //       // Get the userId
+  //       var userId = user.id;
 
-        // Save a new Coupon
-        agent.post('/api/coupons')
-          .send(couponMulti)
-          .expect(200)
-          .end(function (couponSaveErr, couponSaveRes) {
-            // Handle Coupon save error
-            if (couponSaveErr) {
-              return done(couponSaveErr);
-            }
+  //       // Save a new Coupon
+  //       agent.post('/api/coupons')
+  //         .send(couponMulti)
+  //         .expect(200)
+  //         .end(function (couponSaveErr, couponSaveRes) {
+  //           // Handle Coupon save error
+  //           if (couponSaveErr) {
+  //             return done(couponSaveErr);
+  //           }
 
-            // Get a list of Coupons
-            agent.get('/api/coupons')
-              .end(function (couponsGetErr, couponsGetRes) {
-                // Handle Coupons save error
-                if (couponsGetErr) {
-                  return done(couponsGetErr);
-                }
+  //           // Get a list of Coupons
+  //           agent.get('/api/coupons')
+  //             .end(function (couponsGetErr, couponsGetRes) {
+  //               // Handle Coupons save error
+  //               if (couponsGetErr) {
+  //                 return done(couponsGetErr);
+  //               }
 
-                // Get Coupons list
-                var coupons = couponsGetRes.body;
+  //               // Get Coupons list
+  //               var coupons = couponsGetRes.body;
 
-                // Set assertions
-                (coupons[0].code).should.match(couponMulti.code);
-                (coupons[0].message).should.match(couponMulti.message);
+  //               // Set assertions
+  //               (coupons[0].code).should.match(couponMulti.code);
+  //               (coupons[0].message).should.match(couponMulti.message);
 
-                // Call the assertion callback
-                done();
-              });
-          });
-      });
-  });
+  //               // Call the assertion callback
+  //               done();
+  //             });
+  //         });
+  //     });
+  // });
 
   it('should be able to save a Coupon if logged in', function (done) {
     agent.post('/api/auth/signin')

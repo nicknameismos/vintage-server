@@ -58,7 +58,7 @@ module.exports = function (app) {
     .post(orders.getOrderId, orders.admincancel, core.updateNotification);
 
   app.route('/api/orderbid')
-    .post(orders.getBidId, orders.updateBidId, orders.bidCreate, core.createBidNotification); //, core.createBidNotification
+    .post(orders.getBidId, orders.bidCreate, orders.updateBidId, core.createBidNotification); //, core.createBidNotification
   // Finish by binding the Order middleware
   app.param('orderId', orders.orderByID);
   app.param('orderShopId', orders.orderShopId);

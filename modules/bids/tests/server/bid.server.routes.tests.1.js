@@ -105,18 +105,18 @@ describe('Bid CRUD tests with token', function () {
     }];
 
     bidObj.starttime = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 1);
-    bidObj.endtime = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
+    bidObj.endtime = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 2);
     bidObj.endtime = bidObj.endtime.setHours(23);
     bidObj.userbid = [{
       user: user,
       bidprice: 160
     }];
 
-    bidObj1.starttime = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
-    bidObj1.endtime = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 2);
+    bidObj1.starttime = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 2);
+    bidObj1.endtime = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 3);
 
-    bidObj2.starttime = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
-    bidObj2.endtime = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 2);
+    bidObj2.starttime = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 2);
+    bidObj2.endtime = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 3);
 
     bidObj.save();
     bidObj1.save();
@@ -154,7 +154,7 @@ describe('Bid CRUD tests with token', function () {
     var today = new Date();
 
     bidObj.starttime = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 1);
-    bidObj.endtime = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
+    bidObj.endtime = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 2);
     bidObj.userbid = [{
       user: user,
       bidprice: 400

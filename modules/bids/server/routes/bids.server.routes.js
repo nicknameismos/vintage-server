@@ -21,14 +21,14 @@ module.exports = function (app) {
   app.route('/api/getbidlist/:userBidId').all(bidsPolicy.isAllowed)
     .get(bids.cookingBid, bids.resBids);
 
-  app.route('/api/bidlist') //.all(core.jwtCheck, bidsPolicy.isAllowed)
-    .get(bids.cookingBid, bids.resBids);
-
   app.route('/api/biddetail/:bidId').all(bidsPolicy.isAllowed)
     .get(bids.getBidDetail);
 
   app.route('/api/createBidsScheduleJob')
     .get(bids.createBidsScheduleJob);
+
+  // app.route('/api/bidlist').all(core.jwtCheck, bidsPolicy.isAllowed)
+  //   .post(bids.bidStatusActive, bids.bidToday, bids.bidWaiting, bids.bidEnd, bids.bidPaid, bids.bidList)
   // Finish by binding the Bid middleware
   app.param('bidId', bids.bidByID);
   app.param('userBidId', bids.userBidId);
