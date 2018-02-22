@@ -196,7 +196,7 @@ exports.cookingBid = function (req, res, next) {
             isBid: false,
             pricestart: element.startprice,
             pricebid: element.bidprice,
-            datestart: new Date(startdate),
+            datestart: +new Date(startdate),
             dateend: endShow
           });
         }
