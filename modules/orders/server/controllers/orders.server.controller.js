@@ -96,7 +96,7 @@ exports.create = function (req, res, next) {
   order.omiseresponse = order.payment.paymenttype === 'Credit Card' ? req.omiseresponse : order.omiseresponse;
   order.user = req.user;
   order.docno = +new Date();
-  order.items.forEach((element, i) => {
+  order.items.forEach(function (element, i) {
     element.product = _order.items[i].product._id;
     element.shopid = _order.items[i].product.shopid;
     element.unitprice = _order.items[i].product.price;

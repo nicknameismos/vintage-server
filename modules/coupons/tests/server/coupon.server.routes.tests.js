@@ -52,11 +52,11 @@ describe('Coupon CRUD tests', function () {
     // Save a user to the test db and create new Coupon
     user.save(function () {
       coupon = {
-        code: 'AAAA',
+        code: 'WELCOME2018',
         price: 20,
         type: 'single',
-        message: 'message',
-        owner: [],
+        message: 'คูปองส่วนลดพิเศษ 100 บาท เพียงใช้ รหัส WELCOME2018 ในการสั่งซื้อสินค้า',
+        owner: [user],
         startdate: new Date(),
         enddate: new Date(),
         useruse: [user],
@@ -64,6 +64,57 @@ describe('Coupon CRUD tests', function () {
 
       done();
     });
+  });
+
+  it('should be able to save a Coupon if logged in', function (done) {
+    var couponMulti = {
+      code: 'WELCOME2018',
+      price: 100,
+      type: 'multi',
+      message: 'คูปองส่วนลดพิเศษ 100 บาท เพียงใช้ รหัส WELCOME2018 ในการสั่งซื้อสินค้า',
+    };
+    agent.post('/api/auth/signin')
+      .send(credentials)
+      .expect(200)
+      .end(function (signinErr, signinRes) {
+        // Handle signin error
+        if (signinErr) {
+          return done(signinErr);
+        }
+
+        // Get the userId
+        var userId = user.id;
+
+        // Save a new Coupon
+        agent.post('/api/coupons')
+          .send(couponMulti)
+          .expect(200)
+          .end(function (couponSaveErr, couponSaveRes) {
+            // Handle Coupon save error
+            if (couponSaveErr) {
+              return done(couponSaveErr);
+            }
+
+            // Get a list of Coupons
+            agent.get('/api/coupons')
+              .end(function (couponsGetErr, couponsGetRes) {
+                // Handle Coupons save error
+                if (couponsGetErr) {
+                  return done(couponsGetErr);
+                }
+
+                // Get Coupons list
+                var coupons = couponsGetRes.body;
+
+                // Set assertions
+                (coupons[0].code).should.match(couponMulti.code);
+                (coupons[0].message).should.match(couponMulti.message);
+
+                // Call the assertion callback
+                done();
+              });
+          });
+      });
   });
 
   it('should be able to save a Coupon if logged in', function (done) {
@@ -102,7 +153,7 @@ describe('Coupon CRUD tests', function () {
 
                 // Set assertions
                 (coupons[0].user._id).should.equal(userId);
-                (coupons[0].code).should.match('AAAA');
+                (coupons[0].code).should.match('WELCOME2018');
 
                 // Call the assertion callback
                 done();

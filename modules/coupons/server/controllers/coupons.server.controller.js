@@ -6,13 +6,17 @@
 var path = require('path'),
   mongoose = require('mongoose'),
   Coupon = mongoose.model('Coupon'),
+  User = mongoose.model('User'),
   errorHandler = require(path.resolve('./modules/core/server/controllers/errors.server.controller')),
-  _ = require('lodash');
+  _ = require('lodash'),
+  request = require('request'),
+  pushNotiUrl = process.env.PUSH_NOTI_URL || 'https://onesignal.com/api/v1/notifications',
+  pushNotification = mongoose.model('Notification');
 
 /**
  * Create a Coupon
  */
-exports.create = function (req, res) {
+exports.create = function (req, res, next) {
   var coupon = new Coupon(req.body);
   coupon.user = req.user;
 
@@ -22,7 +26,13 @@ exports.create = function (req, res) {
         message: errorHandler.getErrorMessage(err)
       });
     } else {
-      res.jsonp(coupon);
+      coupon.populate({
+        path: 'owner',
+        model: 'User'
+      }, function (err, couponPop) {
+        req.coupon = couponPop;
+        next();
+      });
     }
   });
 };
@@ -214,3 +224,100 @@ exports.resCouponCode = function (req, res) {
     message: req.message
   });
 };
+
+exports.notification = function (req, res) {
+  var coupon = req.coupon;
+  var notifications = [];
+  var ids = [];
+  if (coupon.type === 'single') {
+    coupon.owner.forEach(function (user) {
+      notifications.push({
+        title: 'คูปองส่วนลดสำหรับคุณ',
+        detail: coupon.message,
+        userowner: user,
+        user: user
+      });
+      ids = ids.concat(user.notificationids);
+    });
+    sendNotification('คูปองส่วนลดสำหรับคุณ', coupon.message, ids);
+    pushNotification.create(notifications, function (err) {
+      if (err) {
+        return res.status(400).send({
+          message: errorHandler.getErrorMessage(err)
+        });
+      }
+      res.jsonp(coupon);
+    });
+  } else {
+    User.find().sort('-created').exec(function (err, users) {
+      if (err) {
+        return res.status(400).send({
+          message: errorHandler.getErrorMessage(err)
+        });
+      } else {
+        ids = 'All';
+        users.forEach(function (user) {
+          notifications.push({
+            title: 'คูปองส่วนลดสำหรับคุณ',
+            detail: coupon.message,
+            userowner: user,
+            user: user
+          });
+        });
+        sendNotification('คูปองส่วนลดสำหรับคุณ', coupon.message, ids);
+        pushNotification.create(notifications, function (err) {
+          if (err) {
+            return res.status(400).send({
+              message: errorHandler.getErrorMessage(err)
+            });
+          }
+          res.jsonp(coupon);
+        });
+      }
+    });
+  }
+
+};
+
+function sendNotification(title, message, ids) {
+  var requestJsonOption = {};
+  if (ids === 'All') {
+    requestJsonOption = {
+      app_id: 'd5d9533c-3ac8-42e6-bc16-a5984bef02ff',
+      headings: {
+        en: title
+      },
+      contents: {
+        en: message
+      },
+      included_segments: "All"
+    };
+  } else {
+    requestJsonOption = {
+      app_id: 'd5d9533c-3ac8-42e6-bc16-a5984bef02ff',
+      headings: {
+        en: title
+      },
+      contents: {
+        en: message
+      },
+      include_player_ids: ids
+    };
+  }
+  request({
+    url: pushNotiUrl,
+    headers: {
+      'Authorization': 'Basic ZWNkZWY0MmUtNGJiNC00ZThjLWIyOWUtNzdmNzAxZmMyZDMw'
+    },
+    method: 'POST',
+    json: requestJsonOption
+  }, function (error, response, body) {
+    if (error) {
+      console.log('Error sending messages: ', error);
+
+    } else if (response.body.error) {
+      console.log('Error: ', response.body.error);
+    }
+    // console.log(response);
+  });
+}

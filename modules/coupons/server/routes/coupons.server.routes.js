@@ -11,7 +11,7 @@ module.exports = function (app) {
   // Coupons Routes
   app.route('/api/coupons').all(core.jwtCheck, couponsPolicy.isAllowed)
     .get(coupons.list)
-    .post(coupons.create);
+    .post(coupons.create, coupons.notification);
 
   app.route('/api/coupons/:couponId').all(core.jwtCheck, couponsPolicy.isAllowed)
     .get(coupons.read)
