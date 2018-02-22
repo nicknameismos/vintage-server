@@ -53,6 +53,9 @@ exports.invokeRolesPolicies = function () {
     }, {
       resources: '/api/confirmitem',
       permissions: ['post']
+    }, {
+      resources: '/api/updateorderbid/:orderId',
+      permissions: '*'
     }]
   }, {
     roles: ['shop'],
@@ -104,6 +107,9 @@ exports.invokeRolesPolicies = function () {
     }, {
       resources: '/api/confirmitem',
       permissions: ['post']
+    }, {
+      resources: '/api/updateorderbid/:orderId',
+      permissions: '*'
     }]
   }, {
     roles: ['guest'],

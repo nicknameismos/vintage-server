@@ -502,21 +502,21 @@ describe('Order omise create tests', function () {
         qty: 1,
         amount: 300
       }, {
-        product: {
-          _id: product.id,
-          name: 'completed',
-          price: 200,
-          images: ['img1', 'img2'],
-          shopid: shop.id
-        },
-        shipping: {
-          ref: {
-            name: 'EMS'
+          product: {
+            _id: product.id,
+            name: 'completed',
+            price: 200,
+            images: ['img1', 'img2'],
+            shopid: shop.id
           },
-          price: 100
-        },
-        status: 'completed',
-        log: [{
+          shipping: {
+            ref: {
+              name: 'EMS'
+            },
+            price: 100
+          },
+          status: 'completed',
+          log: [{
             status: 'sent',
             created: new Date()
           },
@@ -524,56 +524,56 @@ describe('Order omise create tests', function () {
             status: 'completed',
             created: new Date()
           }
-        ],
-        remark: '',
-        qty: 1,
-        amount: 300,
-        refid: '1234'
-      }, {
-        product: {
-          _id: product.id,
-          name: 'cancel',
-          price: 200,
-          images: ['img1', 'img2'],
-          shopid: shop.id
-        },
-        shipping: {
-          ref: {
-            name: 'EMS'
+          ],
+          remark: '',
+          qty: 1,
+          amount: 300,
+          refid: '1234'
+        }, {
+          product: {
+            _id: product.id,
+            name: 'cancel',
+            price: 200,
+            images: ['img1', 'img2'],
+            shopid: shop.id
           },
-          price: 100
-        },
-        log: [{
+          shipping: {
+            ref: {
+              name: 'EMS'
+            },
+            price: 100
+          },
+          log: [{
+            status: 'cancel',
+            created: new Date()
+          }],
           status: 'cancel',
-          created: new Date()
-        }],
-        status: 'cancel',
-        remark: '',
-        qty: 1,
-        amount: 300
-      }, {
-        product: {
-          _id: product.id,
-          name: 'reject',
-          price: 200,
-          images: ['img1', 'img2'],
-          shopid: shop.id
-        },
-        shipping: {
-          ref: {
-            name: 'EMS'
+          remark: '',
+          qty: 1,
+          amount: 300
+        }, {
+          product: {
+            _id: product.id,
+            name: 'reject',
+            price: 200,
+            images: ['img1', 'img2'],
+            shopid: shop.id
           },
-          price: 100
-        },
-        log: [{
+          shipping: {
+            ref: {
+              name: 'EMS'
+            },
+            price: 100
+          },
+          log: [{
+            status: 'reject',
+            created: new Date()
+          }],
           status: 'reject',
-          created: new Date()
-        }],
-        status: 'reject',
-        remark: 'out of stock',
-        qty: 1,
-        amount: 300
-      });
+          remark: 'out of stock',
+          qty: 1,
+          amount: 300
+        });
       agent.post('/api/orders')
         .set('authorization', 'Bearer ' + token)
         .send(order)
@@ -773,13 +773,13 @@ describe('Order omise create tests', function () {
         },
         status: 'completed',
         log: [{
-            status: 'sent',
-            created: new Date()
-          },
-          {
-            status: 'completed',
-            created: new Date()
-          }
+          status: 'sent',
+          created: new Date()
+        },
+        {
+          status: 'completed',
+          created: new Date()
+        }
         ],
         remark: '',
         qty: 1,
@@ -873,13 +873,13 @@ describe('Order omise create tests', function () {
         status: 'transferred',
         remark: '',
         log: [{
-            status: 'sent',
-            created: new Date()
-          },
-          {
-            status: 'transferred',
-            created: new Date()
-          }
+          status: 'sent',
+          created: new Date()
+        },
+        {
+          status: 'transferred',
+          created: new Date()
+        }
         ],
         qty: 1,
         amount: 300,
@@ -1115,13 +1115,13 @@ describe('Order omise create tests', function () {
         },
         status: 'completed',
         log: [{
-            status: 'sent',
-            created: new Date()
-          },
-          {
-            status: 'completed',
-            created: new Date()
-          }
+          status: 'sent',
+          created: new Date()
+        },
+        {
+          status: 'completed',
+          created: new Date()
+        }
         ],
         remark: '',
         qty: 1,
@@ -1216,13 +1216,13 @@ describe('Order omise create tests', function () {
         status: 'transferred',
         remark: '',
         log: [{
-            status: 'sent',
-            created: new Date()
-          },
-          {
-            status: 'transferred',
-            created: new Date()
-          }
+          status: 'sent',
+          created: new Date()
+        },
+        {
+          status: 'transferred',
+          created: new Date()
+        }
         ],
         qty: 1,
         amount: 300,
@@ -1394,13 +1394,13 @@ describe('Order omise create tests', function () {
         },
         status: 'completed',
         log: [{
-            status: 'sent',
-            created: new Date()
-          },
-          {
-            status: 'completed',
-            created: new Date()
-          }
+          status: 'sent',
+          created: new Date()
+        },
+        {
+          status: 'completed',
+          created: new Date()
+        }
         ],
         remark: '',
         qty: 1,
@@ -1495,13 +1495,13 @@ describe('Order omise create tests', function () {
         status: 'transferred',
         remark: '',
         log: [{
-            status: 'sent',
-            created: new Date()
-          },
-          {
-            status: 'transferred',
-            created: new Date()
-          }
+          status: 'sent',
+          created: new Date()
+        },
+        {
+          status: 'transferred',
+          created: new Date()
+        }
         ],
         qty: 1,
         amount: 300,
@@ -1663,13 +1663,13 @@ describe('Order omise create tests', function () {
         },
         status: 'completed',
         log: [{
-            status: 'sent',
-            created: new Date()
-          },
-          {
-            status: 'completed',
-            created: new Date()
-          }
+          status: 'sent',
+          created: new Date()
+        },
+        {
+          status: 'completed',
+          created: new Date()
+        }
         ],
         remark: '',
         qty: 1,
@@ -1763,13 +1763,13 @@ describe('Order omise create tests', function () {
         status: 'transferred',
         remark: '',
         log: [{
-            status: 'sent',
-            created: new Date()
-          },
-          {
-            status: 'transferred',
-            created: new Date()
-          }
+          status: 'sent',
+          created: new Date()
+        },
+        {
+          status: 'transferred',
+          created: new Date()
+        }
         ],
         qty: 1,
         amount: 300,
@@ -1916,13 +1916,13 @@ describe('Order omise create tests', function () {
         },
         status: 'completed',
         log: [{
-            status: 'sent',
-            created: new Date()
-          },
-          {
-            status: 'completed',
-            created: new Date()
-          }
+          status: 'sent',
+          created: new Date()
+        },
+        {
+          status: 'completed',
+          created: new Date()
+        }
         ],
         remark: '',
         qty: 1,
@@ -2016,13 +2016,13 @@ describe('Order omise create tests', function () {
         status: 'transferred',
         remark: '',
         log: [{
-            status: 'sent',
-            created: new Date()
-          },
-          {
-            status: 'transferred',
-            created: new Date()
-          }
+          status: 'sent',
+          created: new Date()
+        },
+        {
+          status: 'transferred',
+          created: new Date()
+        }
         ],
         qty: 1,
         amount: 300,
@@ -2171,13 +2171,13 @@ describe('Order omise create tests', function () {
         },
         status: 'completed',
         log: [{
-            status: 'sent',
-            created: new Date()
-          },
-          {
-            status: 'completed',
-            created: new Date()
-          }
+          status: 'sent',
+          created: new Date()
+        },
+        {
+          status: 'completed',
+          created: new Date()
+        }
         ],
         remark: '',
         qty: 1,
@@ -2272,13 +2272,13 @@ describe('Order omise create tests', function () {
         status: 'transferred',
         remark: '',
         log: [{
-            status: 'sent',
-            created: new Date()
-          },
-          {
-            status: 'transferred',
-            created: new Date()
-          }
+          status: 'sent',
+          created: new Date()
+        },
+        {
+          status: 'transferred',
+          created: new Date()
+        }
         ],
         qty: 1,
         amount: 300,
@@ -2429,13 +2429,13 @@ describe('Order omise create tests', function () {
         },
         status: 'completed',
         log: [{
-            status: 'sent',
-            created: new Date()
-          },
-          {
-            status: 'completed',
-            created: new Date()
-          }
+          status: 'sent',
+          created: new Date()
+        },
+        {
+          status: 'completed',
+          created: new Date()
+        }
         ],
         remark: '',
         qty: 1,
@@ -2530,13 +2530,13 @@ describe('Order omise create tests', function () {
         status: 'transferred',
         remark: '',
         log: [{
-            status: 'sent',
-            created: new Date()
-          },
-          {
-            status: 'transferred',
-            created: new Date()
-          }
+          status: 'sent',
+          created: new Date()
+        },
+        {
+          status: 'transferred',
+          created: new Date()
+        }
         ],
         qty: 1,
         amount: 300,
@@ -2683,13 +2683,13 @@ describe('Order omise create tests', function () {
         },
         status: 'completed',
         log: [{
-            status: 'sent',
-            created: new Date()
-          },
-          {
-            status: 'completed',
-            created: new Date()
-          }
+          status: 'sent',
+          created: new Date()
+        },
+        {
+          status: 'completed',
+          created: new Date()
+        }
         ],
         remark: '',
         qty: 1,
@@ -2783,13 +2783,13 @@ describe('Order omise create tests', function () {
         status: 'transferred',
         remark: '',
         log: [{
-            status: 'sent',
-            created: new Date()
-          },
-          {
-            status: 'transferred',
-            created: new Date()
-          }
+          status: 'sent',
+          created: new Date()
+        },
+        {
+          status: 'transferred',
+          created: new Date()
+        }
         ],
         qty: 1,
         amount: 300,
@@ -2941,13 +2941,13 @@ describe('Order omise create tests', function () {
         },
         status: 'completed',
         log: [{
-            status: 'sent',
-            created: new Date()
-          },
-          {
-            status: 'completed',
-            created: new Date()
-          }
+          status: 'sent',
+          created: new Date()
+        },
+        {
+          status: 'completed',
+          created: new Date()
+        }
         ],
         remark: '',
         qty: 1,
@@ -3042,13 +3042,13 @@ describe('Order omise create tests', function () {
         status: 'transferred',
         remark: '',
         log: [{
-            status: 'sent',
-            created: new Date()
-          },
-          {
-            status: 'transferred',
-            created: new Date()
-          }
+          status: 'sent',
+          created: new Date()
+        },
+        {
+          status: 'transferred',
+          created: new Date()
+        }
         ],
         qty: 1,
         amount: 300,
@@ -3195,13 +3195,13 @@ describe('Order omise create tests', function () {
         },
         status: 'completed',
         log: [{
-            status: 'sent',
-            created: new Date()
-          },
-          {
-            status: 'completed',
-            created: new Date()
-          }
+          status: 'sent',
+          created: new Date()
+        },
+        {
+          status: 'completed',
+          created: new Date()
+        }
         ],
         remark: '',
         qty: 1,
@@ -3295,13 +3295,13 @@ describe('Order omise create tests', function () {
         status: 'transferred',
         remark: '',
         log: [{
-            status: 'sent',
-            created: new Date()
-          },
-          {
-            status: 'transferred',
-            created: new Date()
-          }
+          status: 'sent',
+          created: new Date()
+        },
+        {
+          status: 'transferred',
+          created: new Date()
+        }
         ],
         qty: 1,
         amount: 300,
@@ -3450,13 +3450,13 @@ describe('Order omise create tests', function () {
         },
         status: 'completed',
         log: [{
-            status: 'sent',
-            created: new Date()
-          },
-          {
-            status: 'completed',
-            created: new Date()
-          }
+          status: 'sent',
+          created: new Date()
+        },
+        {
+          status: 'completed',
+          created: new Date()
+        }
         ],
         remark: '',
         qty: 1,
@@ -3551,13 +3551,13 @@ describe('Order omise create tests', function () {
         status: 'transferred',
         remark: '',
         log: [{
-            status: 'sent',
-            created: new Date()
-          },
-          {
-            status: 'transferred',
-            created: new Date()
-          }
+          status: 'sent',
+          created: new Date()
+        },
+        {
+          status: 'transferred',
+          created: new Date()
+        }
         ],
         qty: 1,
         amount: 300,
@@ -3705,13 +3705,13 @@ describe('Order omise create tests', function () {
         },
         status: 'completed',
         log: [{
-            status: 'sent',
-            created: new Date()
-          },
-          {
-            status: 'completed',
-            created: new Date()
-          }
+          status: 'sent',
+          created: new Date()
+        },
+        {
+          status: 'completed',
+          created: new Date()
+        }
         ],
         remark: '',
         qty: 1,
@@ -3805,13 +3805,13 @@ describe('Order omise create tests', function () {
         status: 'transferred',
         remark: '',
         log: [{
-            status: 'sent',
-            created: new Date()
-          },
-          {
-            status: 'transferred',
-            created: new Date()
-          }
+          status: 'sent',
+          created: new Date()
+        },
+        {
+          status: 'transferred',
+          created: new Date()
+        }
         ],
         qty: 1,
         amount: 300,
@@ -3959,13 +3959,13 @@ describe('Order omise create tests', function () {
         },
         status: 'completed',
         log: [{
-            status: 'sent',
-            created: new Date()
-          },
-          {
-            status: 'completed',
-            created: new Date()
-          }
+          status: 'sent',
+          created: new Date()
+        },
+        {
+          status: 'completed',
+          created: new Date()
+        }
         ],
         remark: '',
         qty: 1,
@@ -4059,13 +4059,13 @@ describe('Order omise create tests', function () {
         status: 'transferred',
         remark: '',
         log: [{
-            status: 'sent',
-            created: new Date()
-          },
-          {
-            status: 'transferred',
-            created: new Date()
-          }
+          status: 'sent',
+          created: new Date()
+        },
+        {
+          status: 'transferred',
+          created: new Date()
+        }
         ],
         qty: 1,
         amount: 300,
@@ -4083,13 +4083,13 @@ describe('Order omise create tests', function () {
         status: 'rejectrefund',
         remark: '',
         log: [{
-            status: 'sent',
-            created: new Date()
-          },
-          {
-            status: 'rejectrefund',
-            created: new Date()
-          }
+          status: 'sent',
+          created: new Date()
+        },
+        {
+          status: 'rejectrefund',
+          created: new Date()
+        }
         ],
         qty: 1,
         amount: 300,
@@ -4107,13 +4107,13 @@ describe('Order omise create tests', function () {
         status: 'cancelrefund',
         remark: '',
         log: [{
-            status: 'sent',
-            created: new Date()
-          },
-          {
-            status: 'cancelrefund',
-            created: new Date()
-          }
+          status: 'sent',
+          created: new Date()
+        },
+        {
+          status: 'cancelrefund',
+          created: new Date()
+        }
         ],
         qty: 1,
         amount: 300,
@@ -4275,13 +4275,13 @@ describe('Order omise create tests', function () {
         },
         status: 'completed',
         log: [{
-            status: 'sent',
-            created: new Date()
-          },
-          {
-            status: 'completed',
-            created: new Date()
-          }
+          status: 'sent',
+          created: new Date()
+        },
+        {
+          status: 'completed',
+          created: new Date()
+        }
         ],
         remark: '',
         qty: 1,
@@ -4375,13 +4375,13 @@ describe('Order omise create tests', function () {
         status: 'transferred',
         remark: '',
         log: [{
-            status: 'sent',
-            created: new Date()
-          },
-          {
-            status: 'transferred',
-            created: new Date()
-          }
+          status: 'sent',
+          created: new Date()
+        },
+        {
+          status: 'transferred',
+          created: new Date()
+        }
         ],
         qty: 1,
         amount: 300,
@@ -4399,13 +4399,13 @@ describe('Order omise create tests', function () {
         status: 'rejectrefund',
         remark: '',
         log: [{
-            status: 'sent',
-            created: new Date()
-          },
-          {
-            status: 'rejectrefund',
-            created: new Date()
-          }
+          status: 'sent',
+          created: new Date()
+        },
+        {
+          status: 'rejectrefund',
+          created: new Date()
+        }
         ],
         qty: 1,
         amount: 300,
@@ -4423,13 +4423,13 @@ describe('Order omise create tests', function () {
         status: 'cancelrefund',
         remark: '',
         log: [{
-            status: 'sent',
-            created: new Date()
-          },
-          {
-            status: 'cancelrefund',
-            created: new Date()
-          }
+          status: 'sent',
+          created: new Date()
+        },
+        {
+          status: 'cancelrefund',
+          created: new Date()
+        }
         ],
         qty: 1,
         amount: 300,
@@ -4592,13 +4592,13 @@ describe('Order omise create tests', function () {
         },
         status: 'completed',
         log: [{
-            status: 'sent',
-            created: new Date()
-          },
-          {
-            status: 'completed',
-            created: new Date()
-          }
+          status: 'sent',
+          created: new Date()
+        },
+        {
+          status: 'completed',
+          created: new Date()
+        }
         ],
         remark: '',
         qty: 1,
@@ -4693,13 +4693,13 @@ describe('Order omise create tests', function () {
         status: 'transferred',
         remark: '',
         log: [{
-            status: 'sent',
-            created: new Date()
-          },
-          {
-            status: 'transferred',
-            created: new Date()
-          }
+          status: 'sent',
+          created: new Date()
+        },
+        {
+          status: 'transferred',
+          created: new Date()
+        }
         ],
         qty: 1,
         amount: 300,
@@ -4717,13 +4717,13 @@ describe('Order omise create tests', function () {
         status: 'rejectrefund',
         remark: '',
         log: [{
-            status: 'sent',
-            created: new Date()
-          },
-          {
-            status: 'rejectrefund',
-            created: new Date()
-          }
+          status: 'sent',
+          created: new Date()
+        },
+        {
+          status: 'rejectrefund',
+          created: new Date()
+        }
         ],
         qty: 1,
         amount: 300,
@@ -4741,13 +4741,13 @@ describe('Order omise create tests', function () {
         status: 'cancelrefund',
         remark: '',
         log: [{
-            status: 'sent',
-            created: new Date()
-          },
-          {
-            status: 'cancelrefund',
-            created: new Date()
-          }
+          status: 'sent',
+          created: new Date()
+        },
+        {
+          status: 'cancelrefund',
+          created: new Date()
+        }
         ],
         qty: 1,
         amount: 300,
@@ -4910,13 +4910,13 @@ describe('Order omise create tests', function () {
         },
         status: 'completed',
         log: [{
-            status: 'sent',
-            created: new Date()
-          },
-          {
-            status: 'completed',
-            created: new Date()
-          }
+          status: 'sent',
+          created: new Date()
+        },
+        {
+          status: 'completed',
+          created: new Date()
+        }
         ],
         remark: '',
         qty: 1,
@@ -5011,13 +5011,13 @@ describe('Order omise create tests', function () {
         status: 'transferred',
         remark: '',
         log: [{
-            status: 'sent',
-            created: new Date()
-          },
-          {
-            status: 'transferred',
-            created: new Date()
-          }
+          status: 'sent',
+          created: new Date()
+        },
+        {
+          status: 'transferred',
+          created: new Date()
+        }
         ],
         qty: 1,
         amount: 300,
@@ -5035,13 +5035,13 @@ describe('Order omise create tests', function () {
         status: 'rejectrefund',
         remark: '',
         log: [{
-            status: 'sent',
-            created: new Date()
-          },
-          {
-            status: 'rejectrefund',
-            created: new Date()
-          }
+          status: 'sent',
+          created: new Date()
+        },
+        {
+          status: 'rejectrefund',
+          created: new Date()
+        }
         ],
         qty: 1,
         amount: 300,
@@ -5059,13 +5059,13 @@ describe('Order omise create tests', function () {
         status: 'cancelrefund',
         remark: '',
         log: [{
-            status: 'sent',
-            created: new Date()
-          },
-          {
-            status: 'cancelrefund',
-            created: new Date()
-          }
+          status: 'sent',
+          created: new Date()
+        },
+        {
+          status: 'cancelrefund',
+          created: new Date()
+        }
         ],
         qty: 1,
         amount: 300,
@@ -5228,13 +5228,13 @@ describe('Order omise create tests', function () {
         },
         status: 'completed',
         log: [{
-            status: 'sent',
-            created: new Date()
-          },
-          {
-            status: 'completed',
-            created: new Date()
-          }
+          status: 'sent',
+          created: new Date()
+        },
+        {
+          status: 'completed',
+          created: new Date()
+        }
         ],
         remark: '',
         qty: 1,
@@ -5329,13 +5329,13 @@ describe('Order omise create tests', function () {
         status: 'transferred',
         remark: '',
         log: [{
-            status: 'sent',
-            created: new Date()
-          },
-          {
-            status: 'transferred',
-            created: new Date()
-          }
+          status: 'sent',
+          created: new Date()
+        },
+        {
+          status: 'transferred',
+          created: new Date()
+        }
         ],
         qty: 1,
         amount: 300,
@@ -5353,13 +5353,13 @@ describe('Order omise create tests', function () {
         status: 'rejectrefund',
         remark: '',
         log: [{
-            status: 'sent',
-            created: new Date()
-          },
-          {
-            status: 'rejectrefund',
-            created: new Date()
-          }
+          status: 'sent',
+          created: new Date()
+        },
+        {
+          status: 'rejectrefund',
+          created: new Date()
+        }
         ],
         qty: 1,
         amount: 300,
@@ -5377,13 +5377,13 @@ describe('Order omise create tests', function () {
         status: 'cancelrefund',
         remark: '',
         log: [{
-            status: 'sent',
-            created: new Date()
-          },
-          {
-            status: 'cancelrefund',
-            created: new Date()
-          }
+          status: 'sent',
+          created: new Date()
+        },
+        {
+          status: 'cancelrefund',
+          created: new Date()
+        }
         ],
         qty: 1,
         amount: 300,
@@ -5546,13 +5546,13 @@ describe('Order omise create tests', function () {
         },
         status: 'completed',
         log: [{
-            status: 'sent',
-            created: new Date()
-          },
-          {
-            status: 'completed',
-            created: new Date()
-          }
+          status: 'sent',
+          created: new Date()
+        },
+        {
+          status: 'completed',
+          created: new Date()
+        }
         ],
         remark: '',
         qty: 1,
@@ -5647,13 +5647,13 @@ describe('Order omise create tests', function () {
         status: 'transferred',
         remark: '',
         log: [{
-            status: 'sent',
-            created: new Date()
-          },
-          {
-            status: 'transferred',
-            created: new Date()
-          }
+          status: 'sent',
+          created: new Date()
+        },
+        {
+          status: 'transferred',
+          created: new Date()
+        }
         ],
         qty: 1,
         amount: 300,
@@ -5671,13 +5671,13 @@ describe('Order omise create tests', function () {
         status: 'rejectrefund',
         remark: '',
         log: [{
-            status: 'sent',
-            created: new Date()
-          },
-          {
-            status: 'rejectrefund',
-            created: new Date()
-          }
+          status: 'sent',
+          created: new Date()
+        },
+        {
+          status: 'rejectrefund',
+          created: new Date()
+        }
         ],
         qty: 1,
         amount: 300,
@@ -5695,13 +5695,13 @@ describe('Order omise create tests', function () {
         status: 'cancelrefund',
         remark: '',
         log: [{
-            status: 'sent',
-            created: new Date()
-          },
-          {
-            status: 'cancelrefund',
-            created: new Date()
-          }
+          status: 'sent',
+          created: new Date()
+        },
+        {
+          status: 'cancelrefund',
+          created: new Date()
+        }
         ],
         qty: 1,
         amount: 300,
@@ -5863,13 +5863,13 @@ describe('Order omise create tests', function () {
         },
         status: 'completed',
         log: [{
-            status: 'sent',
-            created: new Date()
-          },
-          {
-            status: 'completed',
-            created: new Date()
-          }
+          status: 'sent',
+          created: new Date()
+        },
+        {
+          status: 'completed',
+          created: new Date()
+        }
         ],
         remark: '',
         qty: 1,
@@ -5964,13 +5964,13 @@ describe('Order omise create tests', function () {
         status: 'transferred',
         remark: '',
         log: [{
-            status: 'sent',
-            created: new Date()
-          },
-          {
-            status: 'transferred',
-            created: new Date()
-          }
+          status: 'sent',
+          created: new Date()
+        },
+        {
+          status: 'transferred',
+          created: new Date()
+        }
         ],
         qty: 1,
         amount: 300,
@@ -6121,13 +6121,13 @@ describe('Order omise create tests', function () {
         },
         status: 'completed',
         log: [{
-            status: 'sent',
-            created: new Date()
-          },
-          {
-            status: 'completed',
-            created: new Date()
-          }
+          status: 'sent',
+          created: new Date()
+        },
+        {
+          status: 'completed',
+          created: new Date()
+        }
         ],
         remark: '',
         qty: 1,
@@ -6221,13 +6221,13 @@ describe('Order omise create tests', function () {
         status: 'transferred',
         remark: '',
         log: [{
-            status: 'sent',
-            created: new Date()
-          },
-          {
-            status: 'transferred',
-            created: new Date()
-          }
+          status: 'sent',
+          created: new Date()
+        },
+        {
+          status: 'transferred',
+          created: new Date()
+        }
         ],
         qty: 1,
         amount: 300,
@@ -6416,13 +6416,13 @@ describe('Order omise create tests', function () {
         status: 'transferred',
         remark: '',
         log: [{
-            status: 'sent',
-            created: new Date()
-          },
-          {
-            status: 'transferred',
-            created: new Date()
-          }
+          status: 'sent',
+          created: new Date()
+        },
+        {
+          status: 'transferred',
+          created: new Date()
+        }
         ],
         qty: 1,
         amount: 300,
@@ -6440,13 +6440,13 @@ describe('Order omise create tests', function () {
         status: 'rejectrefund',
         remark: '',
         log: [{
-            status: 'sent',
-            created: new Date()
-          },
-          {
-            status: 'rejectrefund',
-            created: new Date()
-          }
+          status: 'sent',
+          created: new Date()
+        },
+        {
+          status: 'rejectrefund',
+          created: new Date()
+        }
         ],
         qty: 1,
         amount: 300,
@@ -6464,13 +6464,13 @@ describe('Order omise create tests', function () {
         status: 'cancelrefund',
         remark: '',
         log: [{
-            status: 'sent',
-            created: new Date()
-          },
-          {
-            status: 'cancelrefund',
-            created: new Date()
-          }
+          status: 'sent',
+          created: new Date()
+        },
+        {
+          status: 'cancelrefund',
+          created: new Date()
+        }
         ],
         qty: 1,
         amount: 300,
@@ -6673,13 +6673,13 @@ describe('Order omise create tests', function () {
         status: 'transferred',
         remark: '',
         log: [{
-            status: 'sent',
-            created: new Date()
-          },
-          {
-            status: 'transferred',
-            created: new Date()
-          }
+          status: 'sent',
+          created: new Date()
+        },
+        {
+          status: 'transferred',
+          created: new Date()
+        }
         ],
         qty: 1,
         amount: 300,
@@ -6697,13 +6697,13 @@ describe('Order omise create tests', function () {
         status: 'rejectrefund',
         remark: '',
         log: [{
-            status: 'sent',
-            created: new Date()
-          },
-          {
-            status: 'rejectrefund',
-            created: new Date()
-          }
+          status: 'sent',
+          created: new Date()
+        },
+        {
+          status: 'rejectrefund',
+          created: new Date()
+        }
         ],
         qty: 1,
         amount: 300,
@@ -6721,13 +6721,13 @@ describe('Order omise create tests', function () {
         status: 'cancelrefund',
         remark: '',
         log: [{
-            status: 'sent',
-            created: new Date()
-          },
-          {
-            status: 'cancelrefund',
-            created: new Date()
-          }
+          status: 'sent',
+          created: new Date()
+        },
+        {
+          status: 'cancelrefund',
+          created: new Date()
+        }
         ],
         qty: 1,
         amount: 300,
@@ -6917,13 +6917,13 @@ describe('Order omise create tests', function () {
         status: 'transferred',
         remark: '',
         log: [{
-            status: 'sent',
-            created: new Date()
-          },
-          {
-            status: 'transferred',
-            created: new Date()
-          }
+          status: 'sent',
+          created: new Date()
+        },
+        {
+          status: 'transferred',
+          created: new Date()
+        }
         ],
         qty: 1,
         amount: 300,
@@ -6941,13 +6941,13 @@ describe('Order omise create tests', function () {
         status: 'rejectrefund',
         remark: '',
         log: [{
-            status: 'sent',
-            created: new Date()
-          },
-          {
-            status: 'rejectrefund',
-            created: new Date()
-          }
+          status: 'sent',
+          created: new Date()
+        },
+        {
+          status: 'rejectrefund',
+          created: new Date()
+        }
         ],
         qty: 1,
         amount: 300,
@@ -6965,13 +6965,13 @@ describe('Order omise create tests', function () {
         status: 'cancelrefund',
         remark: '',
         log: [{
-            status: 'sent',
-            created: new Date()
-          },
-          {
-            status: 'cancelrefund',
-            created: new Date()
-          }
+          status: 'sent',
+          created: new Date()
+        },
+        {
+          status: 'cancelrefund',
+          created: new Date()
+        }
         ],
         qty: 1,
         amount: 300,
@@ -7217,13 +7217,13 @@ describe('Order omise create tests', function () {
         status: 'transferred',
         remark: '',
         log: [{
-            status: 'sent',
-            created: new Date()
-          },
-          {
-            status: 'transferred',
-            created: new Date()
-          }
+          status: 'sent',
+          created: new Date()
+        },
+        {
+          status: 'transferred',
+          created: new Date()
+        }
         ],
         qty: 1,
         amount: 300,
@@ -7426,13 +7426,13 @@ describe('Order omise create tests', function () {
         status: 'transferred',
         remark: '',
         log: [{
-            status: 'sent',
-            created: new Date()
-          },
-          {
-            status: 'transferred',
-            created: new Date()
-          }
+          status: 'sent',
+          created: new Date()
+        },
+        {
+          status: 'transferred',
+          created: new Date()
+        }
         ],
         qty: 1,
         amount: 300,
@@ -7635,13 +7635,13 @@ describe('Order omise create tests', function () {
         status: 'transferred',
         remark: '',
         log: [{
-            status: 'sent',
-            created: new Date()
-          },
-          {
-            status: 'transferred',
-            created: new Date()
-          }
+          status: 'sent',
+          created: new Date()
+        },
+        {
+          status: 'transferred',
+          created: new Date()
+        }
         ],
         qty: 1,
         amount: 300,
@@ -7845,13 +7845,13 @@ describe('Order omise create tests', function () {
         status: 'transferred',
         remark: '',
         log: [{
-            status: 'sent',
-            created: new Date()
-          },
-          {
-            status: 'transferred',
-            created: new Date()
-          }
+          status: 'sent',
+          created: new Date()
+        },
+        {
+          status: 'transferred',
+          created: new Date()
+        }
         ],
         qty: 1,
         amount: 300,
@@ -8055,13 +8055,13 @@ describe('Order omise create tests', function () {
         status: 'transferred',
         remark: '',
         log: [{
-            status: 'sent',
-            created: new Date()
-          },
-          {
-            status: 'transferred',
-            created: new Date()
-          }
+          status: 'sent',
+          created: new Date()
+        },
+        {
+          status: 'transferred',
+          created: new Date()
+        }
         ],
         qty: 1,
         amount: 300,
@@ -8256,6 +8256,139 @@ describe('Order omise create tests', function () {
                   });
               });
           });
+      });
+  });
+
+  it('payment order bid', function (done) {
+    var bid = new Bid({
+      name: 'Bid name',
+      detail: 'bid detail',
+      price: 300,
+      startprice: 50,
+      bidprice: 100,
+      starttime: new Date(),
+      endtime: new Date(),
+      status: 'end',
+      image: ['https://www.felex-lederwaren.de/bilder/produkte/gross/Billy-the-Kid-by-Greenburry-Rebel-of-Vintage-Greenburry-Damenumhaengetasche-UEberschlagtasche-rot-braun.jpg'],
+      user: user,
+      userbid: [{
+        user: user,
+        created: new Date(),
+        bidprice: 300
+      }]
+    });
+    bid.save();
+
+    var orderObj = new Order({
+      channel: 'bid',
+      itemsbid: [{
+        bid: bid,
+        unitprice: 300,
+        shipping: {
+        },
+        status: 'topay',
+        remark: '',
+        log: [{
+          status: 'topay',
+          created: new Date()
+        }],
+        qty: 1,
+        amount: 300
+      }],
+      omiseToken: '',
+      qty: 1,
+      amount: 300,
+      shippingamount: 0,
+      discountamount: 0,
+      totalamount: 300,
+      omiseresponse: {},
+      user: user,
+      docno: +new Date()
+    });
+
+    orderObj.save();
+
+    agent.post('/api/auth/signin')
+      .send(credentials)
+      .expect(200)
+      .end(function (signinErr, signinRes) {
+        // Handle signin error
+        if (signinErr) {
+          return done(signinErr);
+        }
+
+        // Get the userId
+        var userId = user.id;
+
+
+
+        // Update Order name
+        var cardDetails = {
+          card: {
+            'name': 'JOHN DOE',
+            'city': 'Bangkok',
+            'postal_code': 10320,
+            'number': '4242424242424242',
+            'expiration_month': 2,
+            'expiration_year': 2020
+          }
+        };
+        var orderBid = orderObj;
+        orderBid.shippingAddress =
+          {
+            "name": "สรายุทธ กังสรานุวัตถ์",
+            "tel": "0876789896",
+            "address": {
+              "address": "81/69",
+              "district": "ลำลูกกา",
+              "subdistrict": "บึงคำพร้อย",
+              "province": "ปทุมธานี",
+              "postcode": "12150"
+            }
+          };
+        orderBid.coupon = {};
+        orderBid.payment = {
+          "paymenttype": "Credit card",
+          "creditno": "4242424242424242",
+          "creditname": "test",
+          "expdate": "12/18",
+          "creditcvc": "111"
+        };
+        omise.tokens.create(cardDetails).then(function (token1) {
+          orderBid.omiseToken = token1.id;
+          orderBid.payment.paymenttype = 'Credit Card';
+          // Save a new Order
+          // console.log(orderBid);
+          agent.put('/api/updateorderbid/' + orderObj.id)
+            .set('authorization', 'Bearer ' + signinRes.body.loginToken)
+            .send(orderBid)
+            .expect(200)
+            .end(function (orderSaveErr, orderSaveRes) {
+              // Handle Order save error
+              if (orderSaveErr) {
+                return done(orderSaveErr);
+              }
+              //     // Set assertions
+              agent.get('/api/orders')
+                // .set('authorization', 'Bearer ' + token)
+                .end(function (order2Err, order2Res) {
+                  // Handle signin error
+                  if (order2Err) {
+                    return done(order2Err);
+                  }
+                  var ord23 = order2Res.body;
+                  (ord23.length).should.match(1);
+                  (ord23[0].omiseresponse.capture).should.match(true);
+                  (ord23[0].omiseToken).should.match(token1.id);
+                  (ord23[0].itemsbid[0].status).should.match('confirm');
+                  (ord23[0].itemsbid[0].log.length).should.match(2);
+                  (ord23[0].itemsbid[0].log[0].status).should.match('topay');
+                  (ord23[0].itemsbid[0].log[1].status).should.match('confirm');
+
+                  done();
+                });
+            });
+        });
       });
   });
 });
