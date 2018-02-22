@@ -133,18 +133,12 @@ exports.bidCreateOrder = function (req, res) {
   order.shippingAddress = _order.shippingAddress;
   order.coupon = _order.coupon;
   order.payment = _order.payment;
-  var shipping = 0;
-  order.discountamount = order.coupon && order.coupon.discount ? order.coupon.discount : 0;
+  order.discountamount = _order.discountamount || 0;
   order.itemsbid.forEach(function (ibid) {
     shipping += ibid.shipping.price || 0;
   });
-  order.shippingamount = shipping;
-  var totalamount = (order.amount + order.shippingamount) - order.discountamount;
-  if (totalamount >= 0) {
-    order.totalamount = totalamount;
-  } else {
-    order.totalamount = 0;
-  }
+  order.shippingamount = _order.shippingamount || 0;
+  order.totalamount = _order.totalamount || 0;
   order.save(function (err) {
     if (err) {
       return res.status(400).send({
