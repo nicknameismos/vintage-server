@@ -23,6 +23,9 @@ exports.invokeRolesPolicies = function () {
     }, {
       resources: '/api/getbidlist/:userBidId',
       permissions: '*'
+    }, {
+      resources: '/api/bidlist',
+      permissions: '*'
     }]
   }, {
     roles: ['shop'],

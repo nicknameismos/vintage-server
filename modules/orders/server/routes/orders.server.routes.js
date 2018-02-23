@@ -13,6 +13,10 @@ module.exports = function (app) {
     .get(orders.list)
     .post(orders.updateCoupon, orders.omiseCard, orders.create, core.createNotification);
 
+  app.route('/api/updateorderbid/:orderId').all(core.jwtCheck, ordersPolicy.isAllowed)
+    // .put(orders.bidCreate);
+    .put(orders.updateCoupon, orders.omiseCard, orders.bidCreateOrder);
+
   app.route('/api/orders/:orderId').all(core.jwtCheck, ordersPolicy.isAllowed)
     .get(orders.read)
     .put(orders.update)

@@ -196,7 +196,7 @@ exports.updateNotification = function (req, res) {
     });
   } else {
     Bid.populate(req.notidata, {
-      path: 'items.bid'
+      path: 'itemsbid.bid'
     }, function (err, orderRes2) {
       User.populate(orderRes2, {
         path: 'user'

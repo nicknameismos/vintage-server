@@ -202,8 +202,8 @@ exports.cookingBid = function (req, res, next) {
         }
         if (req.user && element.userbid && element.userbid.length > 0) {
           if (element.userbid.map(function (e) {
-              return e.user.toString();
-            }).indexOf(req.user._id.toString()) !== -1) {
+            return e.user.toString();
+          }).indexOf(req.user._id.toString()) !== -1) {
             // console.log(element.userbid.map(function (e) { return e.user.toString(); }).indexOf(req.user._id.toString()));
             var reverseUserBid = element.userbid.reverse();
             var selectedDate = reverseUserBid[reverseUserBid.map(function (e) {
@@ -337,6 +337,165 @@ exports.createBidsScheduleJob = function (req, res) {
 
 // 
 
+exports.bidStatusActive = function (req, res, next) {
+  var firstIndex = 0;
+  var lastIndex = 10;
+  if (req.body.currentpage > 1) {
+    firstIndex = ((req.body.currentpage - 1) * 10);
+    lastIndex = (req.body.currentpage * 10);
+  }
+  req.firstIndex = firstIndex;
+  req.lastIndex = lastIndex;
+  var filter = {};
+  if (!req.body.title) {
+    req.body.title = 'กำลังประมูล';
+  }
+  // console.log(status);
+  if (req.body.keyword && req.body.keyword !== '') {
+    filter = searchName(req.body.keyword);
+  }
+  if (req.body.title === 'กำลังประมูล' || req.body.title === 'รอการประมูล') {
+    Bid.find(filter).sort('-created').where('status').equals('active').populate('shippings.ref').populate('user', 'displayName').exec(function (err, bids) {
+      if (err) {
+        return res.status(400).send({
+          message: errorHandler.getErrorMessage(err)
+        });
+      } else {
+        req.bidactive = bids;
+        next();
+      }
+    });
+  } else {
+    next();
+  }
+};
+
+exports.bidToday = function (req, res, next) {
+  if (req.bidactive && req.body.title === 'กำลังประมูล') {
+    var resbid = [];
+    var today = new Date();
+    var bids = req.bidactive;
+    bids.forEach(function (element) {
+
+      var startdate = new Date(element.starttime);
+      startdate = startdate.setHours(startdate.getHours() - 7);
+      var expiredate = new Date(element.endtime);
+      expiredate = expiredate.setHours(expiredate.getHours() - 7);
+      // var endShow = expiredate.setHours(expiredate.getHours() - 7);
+      // console.log(req.body.title);
+
+      if (today >= startdate && today <= expiredate) {
+        // console.log(element);
+        resbid.push(element);
+      }
+
+    });
+    req.pagings = countPage(resbid);
+    req.resbids = resbid.slice(req.firstIndex, req.lastIndex);
+    next();
+  } else {
+    next();
+  }
+};
+
+exports.bidWaiting = function (req, res, next) {
+  if (req.bidactive && req.body.title === 'รอการประมูล') {
+    var resbid = [];
+    var today = new Date();
+    var bids = req.bidactive;
+    bids.forEach(function (element) {
+
+      var startdate = new Date(element.starttime);
+      startdate = startdate.setHours(startdate.getHours() - 7);
+
+      if (startdate >= today) {
+        resbid.push(element);
+      }
+    });
+    req.pagings = countPage(resbid);
+    req.resbids = resbid.slice(req.firstIndex, req.lastIndex);
+    next();
+  } else {
+    next();
+  }
+};
+
+exports.bidTopay = function (req, res, next) {
+  var filter = {};
+  if (req.body.keyword && req.body.keyword !== '') {
+    filter = searchName(req.body.keyword);
+  }
+  if (req.body.title === 'ประมูลแล้ว') {
+    Bid.find(filter).sort('-created').select({ status: 'topay' }).populate('shippings.ref').populate('user', 'displayName').exec(function (err, bids) {
+      if (err) {
+        return res.status(400).send({
+          message: errorHandler.getErrorMessage(err)
+        });
+      } else {
+        // req.bidactive = bids;
+        req.pagings = countPage(bids);
+        req.resbids = bids.slice(req.firstIndex, req.lastIndex);
+        next();
+      }
+    });
+  } else {
+    next();
+  }
+
+};
+
+exports.bidEnd = function (req, res, next) {
+  var filter = {};
+  if (req.body.keyword && req.body.keyword !== '') {
+    filter = searchName(req.body.keyword);
+  }
+  if (req.body.title === 'สิ้นสุดการประมูล') {
+    Bid.find(filter).sort('-created').select({ status: 'end' }).populate('shippings.ref').populate('user', 'displayName').exec(function (err, bids) {
+      if (err) {
+        return res.status(400).send({
+          message: errorHandler.getErrorMessage(err)
+        });
+      } else {
+        req.pagings = countPage(bids);
+        req.resbids = bids.slice(req.firstIndex, req.lastIndex);
+        next();
+      }
+    });
+  } else {
+    next();
+  }
+};
+
+exports.bidPaid = function (req, res, next) {
+  var filter = {};
+  if (req.body.keyword && req.body.keyword !== '') {
+    filter = searchName(req.body.keyword);
+  }
+  if (req.body.title === 'จ่ายเงินแล้ว') {
+    Bid.find(filter).sort('-created').select({ status: 'paid' }).populate('shippings.ref').populate('user', 'displayName').exec(function (err, bids) {
+      if (err) {
+        return res.status(400).send({
+          message: errorHandler.getErrorMessage(err)
+        });
+      } else {
+        req.pagings = countPage(bids);
+        req.resbids = bids.slice(req.firstIndex, req.lastIndex);
+        next();
+      }
+    });
+  } else {
+    next();
+  }
+};
+
+exports.bidList = function (req, res) {
+  res.jsonp({
+    titles: ['กำลังประมูล', 'รอการประมูล', 'ประมูลแล้ว', 'จ่ายเงินแล้ว', 'สิ้นสุดการประมูล'],
+    items: req.resbids || [],
+    paging: req.pagings || []
+  });
+};
+
 function scheduleBidJob(req, res, param, job) {
   Bid.findById(param._id).populate('user', 'displayName profileImageURL').populate('userbid.user', 'displayName profileImageURL').exec(function (err, bid) {
     var dateParam = new Date(param.endtime);
@@ -380,4 +539,35 @@ function counttime(expire) {
   }
 
   return time;
+}
+
+function searchName(keyWordName) {
+  var keywordname = {
+    $or: [{
+      'name': {
+        '$regex': keyWordName,
+        '$options': 'i'
+      }
+    }, {
+      'detail': {
+        '$regex': keyWordName,
+        '$options': 'i'
+      }
+    }],
+
+  };
+  return keywordname;
+}
+
+function countPage(items) {
+  var numpage = [];
+  if (items && items.length > 0) {
+    var pages = items.length / 10;
+    var pagings = Math.ceil(pages);
+    for (var i = 0; i < pagings; i++) {
+      numpage.push(i + 1);
+    }
+
+  }
+  return numpage;
 }
