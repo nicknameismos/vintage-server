@@ -129,7 +129,7 @@ exports.bidCreateOrder = function (req, res) {
   order.itemsbid[0].log.push({
     status: 'confirm'
   });
-  order.omiseToken = _order.omiseToken || {};
+  order.omiseToken = _order.omiseToken || '';
   order.shippingAddress = _order.shippingAddress;
   order.coupon = _order.coupon || {};
   order.payment = _order.payment || {};
