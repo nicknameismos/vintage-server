@@ -225,7 +225,7 @@ exports.cookingBid = function (req, res, next) {
               });
 
               // cookingData[2].items = _.chain(cookingData[2].items).sortBy('dateend').sortBy('isBid').value();
-              cookingData[2].items = _.chain(cookingData[2].items).firstBy('isBid').thenBy('dateend');
+              cookingData[2].items = cookingData[2].items.firstBy('isBid').thenBy('dateend');
 
             }
 
