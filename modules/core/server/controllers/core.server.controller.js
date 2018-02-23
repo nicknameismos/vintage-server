@@ -91,7 +91,7 @@ exports.createNotification = function (req, res) {
           shopNoti(title, detail, shopIds);
         });
         var title2 = 'สั่งซื้อสินค้าสำเร็จ';
-        var detail2 = 'ยืนยันคำสั่งซื้อ ' + orderRes4.docno + ' สำเร็จ เราได้แจ้งผู้ขายให้เตรียมการจัดส่งสินค้า';
+        var detail2 = 'ยืนยันคำสั่งซื้อ ' + orderRes4.docno + ' สำเร็จ เราได้แจ้งผู้ขายให้เตรียมการจัดส่งสินค้าแล้ว';
         notiLogs.push({
           title: title2,
           detail: detail2,
@@ -114,6 +114,7 @@ exports.createNotification = function (req, res) {
 };
 
 exports.updateNotification = function (req, res) {
+  var notifications = [];
   var notiLog = {};
   if (req.notidata.channel === 'order') {
     Product.populate(req.notidata, {
@@ -132,8 +133,10 @@ exports.updateNotification = function (req, res) {
               return e._id.toString();
             }).indexOf(req.body.itemid.toString())];
             var userIds = [];
-            var title = '';
-            var detail = '';
+            var titleShop = '';
+            var detailShop = '';
+            var titleUser = '';
+            var detailUser = '';
             var isShop = false;
             var orderid = orderRes4.docno ? orderRes4.docno : orderRes4._id;
             if (item.status === 'cancel') {
@@ -141,12 +144,35 @@ exports.updateNotification = function (req, res) {
               item.log.forEach(function (log) {
                 if (log.status === 'cancel') {
                   var date = new Date(log.created);
-                  dateStatus = date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear() + ' ' + date.getHours() + ':' + date.getMinutes();
+                  dateStatus = date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear() + ' ' + (date.getHours() + 7) + ':' + date.getMinutes();
                 }
               });
-              title = 'รายการสั่งซื้อถูกยกเลิก';
-              detail = 'รายการสั่งซื้อ ' + orderRes4._id + ' สินค้า ' + item.product.name + ' จำนวน ' + item.qty + ' ชิ้น ถูกยกเลิกเรียบร้อยแล้ว เมื่อ ' + dateStatus + ' กรุณารอการคืนเงินจากระบบ';
-              isShop = true;
+
+              titleShop = 'รายการสั่งซื้อถูกยกเลิก';
+              detailShop = 'รายการสั่งซื้อ ' + orderRes4._id + ' สินค้า ' + item.product.name + ' จำนวน ' + item.qty + ' ชิ้น ถูกผู้ซื้อยกเลิก เมื่อ ' + dateStatus + '';
+              notiLog = {
+                title: titleShop,
+                detail: detailShop,
+                userowner: item.product.shop.shopowner,
+                user: req.user
+              };
+              notifications.push(notiLog);
+              userIds = item.product && item.product.shop && item.product.shop.shopowner && item.product.shop.shopowner.notificationids ? item.product.shop.shopowner.notificationids : [];
+              shopNoti(title, detail, userIds);
+
+              titleUser = 'รายการสั่งซื้อถูกยกเลิก';
+              detailUser = 'รายการสั่งซื้อ ' + orderRes4._id + ' สินค้า ' + item.product.name + ' จำนวน ' + item.qty + ' ชิ้น ถูกยกเลิกเรียบร้อยแล้ว เมื่อ ' + dateStatus + ' กรุณารอการคืนเงินจากระบบ';
+
+              notiLog = {
+                title: titleUser,
+                detail: detailUser,
+                userowner: orderRes4.user,
+                user: req.user
+              };
+              notifications.push(notiLog);
+              userIds = orderRes4.user && orderRes4.user.notificationids ? orderRes4.user.notificationids : [];
+              userNoti(title, detail, userIds);
+
             } else if (item.status === 'completed') {
               title = 'รายการสินค้าสำเร็จ';
               detail = item.product.name + ' หมายเลขการสั่งซื้อ ' + orderid + ' สำเร็จแล้ว';
@@ -168,28 +194,8 @@ exports.updateNotification = function (req, res) {
               title = 'ระบบชำระเงินคืน';
               detail = item.product.name + ' หมายเลขการสั่งซื้อ ' + orderid + ' ชำระเงินคืนจากระบบ';
             }
-            if (isShop) {
-              notiLog = {
-                title: title,
-                detail: detail,
-                userowner: item.product.shop.shopowner,
-                user: req.user
-              };
-              userIds = item.product && item.product.shop && item.product.shop.shopowner && item.product.shop.shopowner.notificationids ? item.product.shop.shopowner.notificationids : [];
-              shopNoti(title, detail, userIds);
-            } else {
-              notiLog = {
-                title: title,
-                detail: detail,
-                userowner: orderRes4.user,
-                user: req.user
-              };
-              userIds = orderRes4.user && orderRes4.user.notificationids ? orderRes4.user.notificationids : [];
-              userNoti(title, detail, userIds);
-            }
             // var userIds = req.user && req.user.notificationids ? req.user.notificationids : [];
-            var pushnoti = new pushNotification(notiLog);
-            pushnoti.save(function (err) {
+            pushNotification.create(notifications, function (err) {
               if (err) {
                 return res.status(400).send({
                   message: errorHandler.getErrorMessage(err)
