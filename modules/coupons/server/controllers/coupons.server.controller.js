@@ -251,6 +251,7 @@ exports.getCouponsAdmin = function (req, res, next) {
         var enddate = new Date(coup.enddate);
         var today = new Date();
         if (today > enddate) {
+          coup.countuser = coup.useruse.length;
           resCoupons.push(coup);
         }
       });
@@ -260,6 +261,7 @@ exports.getCouponsAdmin = function (req, res, next) {
         var enddate = new Date(coup.enddate);
         var today = new Date();
         if (today >= startdate && today <= enddate) {
+          coup.countuser = coup.useruse.length;
           resCoupons.push(coup);
         }
       });
