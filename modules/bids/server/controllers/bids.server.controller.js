@@ -236,7 +236,7 @@ exports.cookingBid = function (req, res, next) {
                 var aDateend = a.dateend;
                 var bDateend = b.dateend;
                 if (aIsBid === bIsBid) {
-                  return (aDateend < bDateend) ? -1 : (aDateend > bDateend) ? 1 : 0;
+                  return (aDateend > bDateend) ? -1 : (aDateend < bDateend) ? 1 : 0;
                 } else {
                   return (aIsBid < bIsBid) ? -1 : 1;
                 }
