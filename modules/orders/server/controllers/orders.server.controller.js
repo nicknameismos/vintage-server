@@ -129,13 +129,13 @@ exports.bidCreateOrder = function (req, res) {
   order.itemsbid[0].log.push({
     status: 'confirm'
   });
-  order.omiseToken = _order.omiseToken;
+  order.omiseToken = _order.omiseToken || {};
   order.shippingAddress = _order.shippingAddress;
-  order.coupon = _order.coupon;
-  order.payment = _order.payment;
+  order.coupon = _order.coupon || {};
+  order.payment = _order.payment || {};
   order.discountamount = _order.discountamount || 0;
   order.shippingamount = _order.shippingamount || 0;
-  order.totalamount = _order.totalamount || 0;
+  order.totalamount = _order.totalamount ? _order.totalamount : order.totalamount;
   order.save(function (err) {
     if (err) {
       return res.status(400).send({
