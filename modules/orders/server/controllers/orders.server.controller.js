@@ -123,7 +123,7 @@ exports.create = function (req, res, next) {
 exports.bidCreateOrder = function (req, res) {
   var order = req.order;
   var _order = req.body;
-  order.omiseresponse = _order.payment.paymenttype === 'Credit Card' ? req.omiseresponse : order.omiseresponse;
+  order.omiseresponse = _order.payment && _order.payment.paymenttype === 'Credit Card' ? req.omiseresponse : {};
   order.itemsbid = _order.itemsbid ? _order.itemsbid : order.itemsbid;
   order.itemsbid[0].status = 'confirm';
   order.itemsbid[0].log.push({
