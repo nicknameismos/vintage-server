@@ -139,6 +139,7 @@ exports.updateNotification = function (req, res) {
             var detailUser = '';
             var isShop = false;
             var orderid = orderRes4.docno ? orderRes4.docno : orderRes4._id;
+
             if (item.status === 'cancel') {
               var dateStatus = '';
               item.log.forEach(function (log) {
@@ -158,7 +159,7 @@ exports.updateNotification = function (req, res) {
               };
               notifications.push(notiLog);
               userIds = item.product && item.product.shop && item.product.shop.shopowner && item.product.shop.shopowner.notificationids ? item.product.shop.shopowner.notificationids : [];
-              shopNoti(title, detail, userIds);
+              shopNoti(titleShop, detailShop, userIds);
 
               titleUser = 'รายการสั่งซื้อถูกยกเลิก';
               detailUser = 'รายการสั่งซื้อ ' + orderRes4._id + ' สินค้า ' + item.product.name + ' จำนวน ' + item.qty + ' ชิ้น ถูกยกเลิกเรียบร้อยแล้ว เมื่อ ' + dateStatus + ' กรุณารอการคืนเงินจากระบบ';
@@ -171,7 +172,7 @@ exports.updateNotification = function (req, res) {
               };
               notifications.push(notiLog);
               userIds = orderRes4.user && orderRes4.user.notificationids ? orderRes4.user.notificationids : [];
-              userNoti(title, detail, userIds);
+              userNoti(titleUser, detailUser, userIds);
 
             } else if (item.status === 'completed') {
               title = 'รายการสินค้าสำเร็จ';
