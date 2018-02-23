@@ -47,7 +47,8 @@ describe('Bid CRUD tests with token', function () {
       username: credentials.username,
       password: credentials.password,
       provider: 'local',
-      profileImageURL: 'profileImageURL'
+      profileImageURL: 'profileImageURL',
+      roles: ['user', 'admin']
     });
     token = '';
     // Save a user to the test db and create new Bid
@@ -192,82 +193,245 @@ describe('Bid CRUD tests with token', function () {
       });
   });
 
-  // it('get bid list', function (done) {
-  //   var bidObj = new Bid(bid);
-  //   var bidObj1 = new Bid(bid);
-  //   var bidObj2 = new Bid(bid);
-  //   var bidObj3 = new Bid(bid);
-  //   var bidObj4 = new Bid(bid);
-  //   var today = new Date();
+  it('get bid list', function (done) {
+    var bidObj = new Bid(bid);
+    var bidObj1 = new Bid(bid);
+    var bidObj2 = new Bid(bid);
+    var bidObj3 = new Bid(bid);
+    var bidObj4 = new Bid(bid);
+    var today = new Date();
 
-  //   bidObj3.starttime = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 10);
-  //   bidObj3.endtime = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 8);
-  //   bidObj3.status = 'end';
-  //   bidObj3.userbid = [{
-  //     user: user,
-  //     bidprice: 160,
-  //     created: new Date(today.getFullYear(), today.getMonth(), today.getDate() - 10)
-  //   }];
-  //   var selectedTime = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 1);
-  //   selectedTime.setHours(0, 0, 0);
-  //   bidObj4.starttime = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 10);
-  //   bidObj4.endtime = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 8);
-  //   bidObj4.status = 'end';
-  //   bidObj4.userbid = [{
-  //     user: user,
-  //     bidprice: 160,
-  //     created: selectedTime
-  //   }];
+    bidObj3.starttime = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 10);
+    bidObj3.endtime = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 8);
+    bidObj3.status = 'end';
+    bidObj3.userbid = [{
+      user: user,
+      bidprice: 160,
+      created: new Date(today.getFullYear(), today.getMonth(), today.getDate() - 10)
+    }];
+    var selectedTime = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 1);
+    selectedTime.setHours(0, 0, 0);
+    bidObj4.starttime = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 10);
+    bidObj4.endtime = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 8);
+    bidObj4.status = 'end';
+    bidObj4.userbid = [{
+      user: user,
+      bidprice: 160,
+      created: selectedTime
+    }];
 
-  //   bidObj.starttime = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 1);
-  //   bidObj.endtime = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 2);
-  //   bidObj.endtime = bidObj.endtime.setHours(23);
-  //   bidObj.userbid = [{
-  //     user: user,
-  //     bidprice: 160
-  //   }];
+    bidObj.starttime = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 2);
+    bidObj.endtime = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 4);
+    bidObj.endtime = bidObj.endtime.setHours(23);
+    bidObj.userbid = [{
+      user: user,
+      bidprice: 160
+    }];
 
-  //   bidObj1.starttime = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 2);
-  //   bidObj1.endtime = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 3);
+    bidObj1.starttime = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 3);
+    bidObj1.endtime = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 4);
 
-  //   bidObj2.starttime = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 2);
-  //   bidObj2.endtime = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 3);
+    bidObj2.starttime = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 3);
+    bidObj2.endtime = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 4);
 
-  //   bidObj.save();
-  //   bidObj1.save();
-  //   bidObj2.save();
-  //   bidObj3.save();
-  //   bidObj4.save();
+    bidObj.save();
+    bidObj1.save();
+    bidObj2.save();
+    bidObj3.save();
+    bidObj4.save();
 
-  //   var item = {
-  //     title: 'รอจัดส่ง',
-  //     currentpage: null,
-  //     keyword: 'xxxxx'
-  //   };
+    var item = {
+      title: 'กำลังประมูล',
+      currentpage: null,
+      keyword: ''
+    };
 
-  //   agent.post('/api/bidlist/')
-  //     .set('authorization', 'Bearer ' + token)
-  //     .end(function (bidsGetErr, bidsGetRes) {
-  //       // Handle bids save error
-  //       if (bidsGetErr) {
-  //         return done(bidsGetErr);
-  //       }
+    agent.post('/api/bidlist/')
+      .set('authorization', 'Bearer ' + token)
+      .send(item)
+      .expect(200)
+      .end(function (bidsGetErr, bidsGetRes) {
+        // Handle bids save error
+        if (bidsGetErr) {
+          return done(bidsGetErr);
+        }
 
-  //       // Get bids list
-  //       var bids = bidsGetRes.body;
+        // Get bids list
+        var bids = bidsGetRes.body;
 
-  //       // Set assertions
-  //       (bids.items.length).should.match(3);
-  //       (bids.items[0].type).should.match('NOW');
-  //       (bids.items[0].items.length).should.match(1);
-  //       (bids.items[1].type).should.match('COMING_SOON');
-  //       (bids.items[1].items.length).should.match(2);
-  //       (bids.items[2].type).should.match('ME');
-  //       (bids.items[2].items.length).should.match(2);
+        // Set assertions
+        (bids.titles.length).should.match(5);
+        (bids.titles[0]).should.match('กำลังประมูล');
+        (bids.titles[1]).should.match('รอการประมูล');
+        (bids.titles[2]).should.match('ประมูลแล้ว');
+        (bids.titles[3]).should.match('จ่ายเงินแล้ว');
+        (bids.titles[4]).should.match('สิ้นสุดการประมูล');
+        (bids.items.length).should.match(1);
+        (bids.paging.length).should.match(1);
 
-  //       done();
-  //     });
-  // });
+        done();
+      });
+  });
+
+  it('get bid list and search no data', function (done) {
+    var bidObj = new Bid(bid);
+    var bidObj1 = new Bid(bid);
+    var bidObj2 = new Bid(bid);
+    var bidObj3 = new Bid(bid);
+    var bidObj4 = new Bid(bid);
+    var today = new Date();
+
+    bidObj3.starttime = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 10);
+    bidObj3.endtime = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 8);
+    bidObj3.status = 'end';
+    bidObj3.userbid = [{
+      user: user,
+      bidprice: 160,
+      created: new Date(today.getFullYear(), today.getMonth(), today.getDate() - 10)
+    }];
+    var selectedTime = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 1);
+    selectedTime.setHours(0, 0, 0);
+    bidObj4.starttime = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 10);
+    bidObj4.endtime = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 8);
+    bidObj4.status = 'end';
+    bidObj4.userbid = [{
+      user: user,
+      bidprice: 160,
+      created: selectedTime
+    }];
+
+    bidObj.starttime = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 2);
+    bidObj.endtime = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 4);
+    bidObj.endtime = bidObj.endtime.setHours(23);
+    bidObj.userbid = [{
+      user: user,
+      bidprice: 160
+    }];
+
+    bidObj1.starttime = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 3);
+    bidObj1.endtime = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 4);
+
+    bidObj2.starttime = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 3);
+    bidObj2.endtime = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 4);
+
+    bidObj.save();
+    bidObj1.save();
+    bidObj2.save();
+    bidObj3.save();
+    bidObj4.save();
+
+    var item = {
+      title: 'กำลังประมูล',
+      currentpage: null,
+      keyword: 'xxx'
+    };
+
+    agent.post('/api/bidlist/')
+      .set('authorization', 'Bearer ' + token)
+      .send(item)
+      .expect(200)
+      .end(function (bidsGetErr, bidsGetRes) {
+        // Handle bids save error
+        if (bidsGetErr) {
+          return done(bidsGetErr);
+        }
+
+        // Get bids list
+        var bids = bidsGetRes.body;
+
+        // Set assertions
+        (bids.titles.length).should.match(5);
+        (bids.titles[0]).should.match('กำลังประมูล');
+        (bids.titles[1]).should.match('รอการประมูล');
+        (bids.titles[2]).should.match('ประมูลแล้ว');
+        (bids.titles[3]).should.match('จ่ายเงินแล้ว');
+        (bids.titles[4]).should.match('สิ้นสุดการประมูล');
+        (bids.items.length).should.match(0);
+        (bids.paging.length).should.match(0);
+
+        done();
+      });
+  });
+
+  it('get bid list and search have data', function (done) {
+    var bidObj = new Bid(bid);
+    var bidObj1 = new Bid(bid);
+    var bidObj2 = new Bid(bid);
+    var bidObj3 = new Bid(bid);
+    var bidObj4 = new Bid(bid);
+    var today = new Date();
+
+    bidObj3.starttime = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 10);
+    bidObj3.endtime = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 8);
+    bidObj3.status = 'end';
+    bidObj3.userbid = [{
+      user: user,
+      bidprice: 160,
+      created: new Date(today.getFullYear(), today.getMonth(), today.getDate() - 10)
+    }];
+    var selectedTime = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 1);
+    selectedTime.setHours(0, 0, 0);
+    bidObj4.starttime = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 10);
+    bidObj4.endtime = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 8);
+    bidObj4.status = 'end';
+    bidObj4.userbid = [{
+      user: user,
+      bidprice: 160,
+      created: selectedTime
+    }];
+
+    bidObj.starttime = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 2);
+    bidObj.endtime = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 4);
+    bidObj.endtime = bidObj.endtime.setHours(23);
+    bidObj.userbid = [{
+      user: user,
+      bidprice: 160
+    }];
+
+    bidObj1.starttime = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 3);
+    bidObj1.endtime = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 4);
+
+    bidObj2.starttime = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 3);
+    bidObj2.endtime = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 4);
+
+    bidObj.save();
+    bidObj1.save();
+    bidObj2.save();
+    bidObj3.save();
+    bidObj4.save();
+
+    var item = {
+      title: 'กำลังประมูล',
+      currentpage: null,
+      keyword: 'bid'
+    };
+
+    agent.post('/api/bidlist/')
+      .set('authorization', 'Bearer ' + token)
+      .send(item)
+      .expect(200)
+      .end(function (bidsGetErr, bidsGetRes) {
+        // Handle bids save error
+        if (bidsGetErr) {
+          return done(bidsGetErr);
+        }
+
+        // Get bids list
+        var bids = bidsGetRes.body;
+
+        // Set assertions
+        (bids.titles.length).should.match(5);
+        (bids.titles[0]).should.match('กำลังประมูล');
+        (bids.titles[1]).should.match('รอการประมูล');
+        (bids.titles[2]).should.match('ประมูลแล้ว');
+        (bids.titles[3]).should.match('จ่ายเงินแล้ว');
+        (bids.titles[4]).should.match('สิ้นสุดการประมูล');
+        (bids.items.length).should.match(1);
+        (bids.paging.length).should.match(1);
+
+        done();
+      });
+  });
 
   afterEach(function (done) {
     User.remove().exec(function () {
