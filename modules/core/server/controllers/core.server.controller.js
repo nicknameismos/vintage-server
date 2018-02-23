@@ -79,7 +79,7 @@ exports.createNotification = function (req, res) {
       }, function (err, orderRes4) {
         orderRes4.items.forEach(function (itm) {
           var title = 'คุณมีรายการสั่งซื้อใหม่';
-          var detail = itm.product.name + ' จำนวน ' + itm.qty + ' ชิ้น';
+          var detail = 'รายการสั่งซื้อ ' + orderRes4.docno + ' สินค้า ' + itm.product.name + ' จำนวน ' + itm.qty + ' ชิ้น กรุณาเตรียมสินค้าเพื่อดำเนินการจัดส่ง';
           notiLogs.push({
             title: title,
             detail: detail,
@@ -90,8 +90,8 @@ exports.createNotification = function (req, res) {
           var shopIds = itm.product && itm.product.shop && itm.product.shop.shopowner && itm.product.shop.shopowner.notificationids ? itm.product.shop.shopowner.notificationids : [];
           shopNoti(title, detail, shopIds);
         });
-        var title2 = 'ขอบคุณที่ใช้บริการ';
-        var detail2 = 'หมายเลขการสั่งซื้อ ' + orderRes4._id;
+        var title2 = 'สั่งซื้อสินค้าสำเร็จ';
+        var detail2 = 'ยืนยันคำสั่งซื้อ ' + orderRes4.docno + ' สำเร็จ เราได้แจ้งผู้ขายให้เตรียมการจัดส่งสินค้า ' + itm.product.name + ' จำนวน ' + itm.qty + ' ชิ้น';
         notiLogs.push({
           title: title2,
           detail: detail2,
@@ -137,8 +137,15 @@ exports.updateNotification = function (req, res) {
             var isShop = false;
             var orderid = orderRes4.docno ? orderRes4.docno : orderRes4._id;
             if (item.status === 'cancel') {
-              title = 'สินค้าถูกยกเลิก';
-              detail = item.product.name + ' หมายเลขการสั่งซื้อ ' + orderid + ' ถูกยกเลิก';
+              var dateStatus = '';
+              item.log.forEach(function (log) {
+                if (log.status === 'cancel') {
+                  var date = new Date(log.created);
+                  dateStatus = date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear() + ' ' + date.getHours() + ':' + date.getMinutes();
+                }
+              });
+              title = 'รายการสั่งซื้อถูกยกเลิก';
+              detail = 'รายการสั่งซื้อ ' + orderRes4._id + ' สินค้า ' + item.product.name + ' จำนวน ' + item.qty + ' ชิ้น ถูกยกเลิกเรียบร้อยแล้ว เมื่อ ' + dateStatus + ' กรุณารอการคืนเงินจากระบบ';
               isShop = true;
             } else if (item.status === 'completed') {
               title = 'รายการสินค้าสำเร็จ';
