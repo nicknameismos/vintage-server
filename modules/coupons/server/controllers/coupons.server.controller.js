@@ -237,7 +237,7 @@ exports.getCouponsAdmin = function (req, res, next) {
   if (req.body.keyword && req.body.keyword !== '') {
     filter = searchName(req.body.keyword);
   }
-  Coupon.find(filter, 'code startdate enddate price type').sort('-created').populate('user', 'displayName').exec(function (err, coupons) {
+  Coupon.find(filter, 'code startdate enddate price type useruse').sort('-created').populate('user', 'displayName').exec(function (err, coupons) {
     if (err) {
       return next(err);
     } else if (!coupons) {
@@ -251,7 +251,6 @@ exports.getCouponsAdmin = function (req, res, next) {
         var enddate = new Date(coup.enddate);
         var today = new Date();
         if (today > enddate) {
-          coup.countuser = coup.useruse.length;
           resCoupons.push(coup);
         }
       });
@@ -261,7 +260,6 @@ exports.getCouponsAdmin = function (req, res, next) {
         var enddate = new Date(coup.enddate);
         var today = new Date();
         if (today >= startdate && today <= enddate) {
-          coup.countuser = coup.useruse.length;
           resCoupons.push(coup);
         }
       });
