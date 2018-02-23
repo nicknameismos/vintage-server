@@ -304,12 +304,62 @@ exports.updateNotification = function (req, res) {
               userNoti(titleUser, detailUser, userIds);
 
             } else if (item.status === 'transferred') {
-              title = 'ระบบชำระเงิน';
-              detail = item.product.name + ' หมายเลขการสั่งซื้อ ' + orderid + ' ชำระเงินจากระบบ';
-              isShop = true;
+
+              var dateStatus = '';
+              item.log.forEach(function (log) {
+                if (log.status === 'transferred') {
+                  var date = new Date(log.created);
+                  dateStatus = date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear() + ' ' + (date.getHours() + 7) + ':' + date.getMinutes();
+                }
+              });
+
+              titleShop = 'ได้รับการชำระเงินจากตลาด';
+              detailShop = 'รายการสั่งซื้อ ' + orderRes4.docno + ' สินค้า' + item.product.name + ' จำนวน ' + item.qty + ' ชิ้น ได้รับการชำระเงินจากตลาด จำนวน ' + item.amount + ' บาท เมื่อ ' + dateStatus;
+              notiLog = {
+                title: titleShop,
+                detail: detailShop,
+                userowner: item.product.shop.shopowner,
+                user: req.user
+              };
+              notifications.push(notiLog);
+              userIds = item.product && item.product.shop && item.product.shop.shopowner && item.product.shop.shopowner.notificationids ? item.product.shop.shopowner.notificationids : [];
+              shopNoti(titleShop, detailShop, userIds);
+
             } else if (item.status === 'rejectrefund' || item.status === 'cancelrefund' || item.status === 'admincancelrefund') {
-              title = 'ระบบชำระเงินคืน';
-              detail = item.product.name + ' หมายเลขการสั่งซื้อ ' + orderid + ' ชำระเงินคืนจากระบบ';
+
+              var dateStatus = '';
+              item.log.forEach(function (log) {
+                if (log.status === item.status) {
+                  var date = new Date(log.created);
+                  dateStatus = date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear() + ' ' + (date.getHours() + 7) + ':' + date.getMinutes();
+                }
+              });
+
+              titleShop = 'ได้รับการคืนเงินจากระบบ';
+              detailShop = 'รายการสั่งซื้อ ' + orderRes4.docno + ' สินค้า' + item.product.name + ' จำนวน ' + item.qty + ' ชิ้น ได้รับการคืนเงินจากระบบ จำนวน ' + item.amount + ' บาท เมื่อ ' + dateStatus;
+              notiLog = {
+                title: titleShop,
+                detail: detailShop,
+                userowner: item.product.shop.shopowner,
+                user: req.user
+              };
+              notifications.push(notiLog);
+              userIds = item.product && item.product.shop && item.product.shop.shopowner && item.product.shop.shopowner.notificationids ? item.product.shop.shopowner.notificationids : [];
+              shopNoti(titleShop, detailShop, userIds);
+
+              titleUser = 'ได้รับการคืนเงินจากระบบ';
+              detailUser = 'รายการสั่งซื้อ ' + orderRes4.docno + ' สินค้า' + item.product.name + ' จำนวน ' + item.qty + ' ชิ้น ได้รับการคืนเงินจากระบบ จำนวน ' + item.amount + ' บาท เมื่อ ' + dateStatus;
+
+              notiLog = {
+                title: titleUser,
+                detail: detailUser,
+                userowner: orderRes4.user,
+                user: req.user
+              };
+              notifications.push(notiLog);
+              userIds = orderRes4.user && orderRes4.user.notificationids ? orderRes4.user.notificationids : [];
+              userNoti(titleUser, detailUser, userIds);
+
             }
             // var userIds = req.user && req.user.notificationids ? req.user.notificationids : [];
             pushNotification.create(notifications, function (err) {
@@ -388,7 +438,7 @@ exports.updateNotification = function (req, res) {
 
 exports.createBidNotification = function (req, res) {
   var title = 'คุณชนะการประมูล';
-  var detail = req.bid.name + ' ประมูลสำเร็จแล้ว';
+  var detail = 'การประมูล ' + req.bid.name + ' สำเร็จ คุณชนะการประมูล สามารถชำระเงินได้ที่ "การสั่งซื้อของฉัน"';
   User.populate(req.notidata, {
     path: 'user'
   }, function (err, orderRes) {
