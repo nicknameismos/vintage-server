@@ -123,19 +123,19 @@ exports.create = function (req, res, next) {
 exports.bidCreateOrder = function (req, res) {
   var order = req.order;
   var _order = req.body;
-  order.omiseresponse = _order.payment.paymenttype === 'Credit Card' ? req.omiseresponse : order.omiseresponse;
+  order.omiseresponse = _order.payment && _order.payment.paymenttype === 'Credit Card' ? req.omiseresponse : {};
   order.itemsbid = _order.itemsbid ? _order.itemsbid : order.itemsbid;
   order.itemsbid[0].status = 'confirm';
   order.itemsbid[0].log.push({
     status: 'confirm'
   });
-  order.omiseToken = _order.omiseToken;
+  order.omiseToken = _order.omiseToken || '';
   order.shippingAddress = _order.shippingAddress;
-  order.coupon = _order.coupon;
-  order.payment = _order.payment;
+  order.coupon = _order.coupon || {};
+  order.payment = _order.payment || {};
   order.discountamount = _order.discountamount || 0;
   order.shippingamount = _order.shippingamount || 0;
-  order.totalamount = _order.totalamount || 0;
+  order.totalamount = _order.totalamount ? _order.totalamount : order.totalamount;
   order.save(function (err) {
     if (err) {
       return res.status(400).send({
