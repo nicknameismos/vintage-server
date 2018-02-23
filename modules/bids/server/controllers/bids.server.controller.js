@@ -228,7 +228,7 @@ exports.cookingBid = function (req, res, next) {
               cookingData[2].items = cookingData[2].items.sort(function (a, b) {
                 var aa = a.dateend + a.isBid;
                 var bb = b.dateend + b.isBid;
-                return (aa < bb ? 1 : aa > bb ? -1 : 0);
+                return (aa > bb ? 1 : aa < bb ? -1 : 0);
               });
 
             }
