@@ -202,8 +202,8 @@ exports.cookingBid = function (req, res, next) {
         }
         if (req.user && element.userbid && element.userbid.length > 0) {
           if (element.userbid.map(function (e) {
-            return e.user.toString();
-          }).indexOf(req.user._id.toString()) !== -1) {
+              return e.user.toString();
+            }).indexOf(req.user._id.toString()) !== -1) {
             // console.log(element.userbid.map(function (e) { return e.user.toString(); }).indexOf(req.user._id.toString()));
             var reverseUserBid = element.userbid.reverse();
             var selectedDate = reverseUserBid[reverseUserBid.map(function (e) {
@@ -223,9 +223,10 @@ exports.cookingBid = function (req, res, next) {
                 dateend: endShow,
                 time: counttime(selectedDate)
               });
-              cookingData[2].items = cookingData[2].items.sort(function (a, b) {
-                return (a.time > b.time) ? 1 : ((b.time > a.time) ? -1 : 0);
-              });
+              // cookingData[2].items = cookingData[2].items.sort(function (a, b) {
+              //   return (a.time > b.time) ? 1 : ((b.time > a.time) ? -1 : 0);
+              // });
+              cookingData[2].items = _.chain(cookingData[2].items).sortBy('isBid').sortBy('datestart').value();
             }
 
           }
@@ -419,7 +420,9 @@ exports.bidTopay = function (req, res, next) {
     filter = searchName(req.body.keyword);
   }
   if (req.body.title === 'ประมูลแล้ว') {
-    Bid.find(filter).sort('-created').select({ status: 'topay' }).populate('shippings.ref').populate('user', 'displayName').exec(function (err, bids) {
+    Bid.find(filter).sort('-created').select({
+      status: 'topay'
+    }).populate('shippings.ref').populate('user', 'displayName').exec(function (err, bids) {
       if (err) {
         return res.status(400).send({
           message: errorHandler.getErrorMessage(err)
@@ -443,7 +446,9 @@ exports.bidEnd = function (req, res, next) {
     filter = searchName(req.body.keyword);
   }
   if (req.body.title === 'สิ้นสุดการประมูล') {
-    Bid.find(filter).sort('-created').select({ status: 'end' }).populate('shippings.ref').populate('user', 'displayName').exec(function (err, bids) {
+    Bid.find(filter).sort('-created').select({
+      status: 'end'
+    }).populate('shippings.ref').populate('user', 'displayName').exec(function (err, bids) {
       if (err) {
         return res.status(400).send({
           message: errorHandler.getErrorMessage(err)
@@ -465,7 +470,9 @@ exports.bidPaid = function (req, res, next) {
     filter = searchName(req.body.keyword);
   }
   if (req.body.title === 'จ่ายเงินแล้ว') {
-    Bid.find(filter).sort('-created').select({ status: 'paid' }).populate('shippings.ref').populate('user', 'displayName').exec(function (err, bids) {
+    Bid.find(filter).sort('-created').select({
+      status: 'paid'
+    }).populate('shippings.ref').populate('user', 'displayName').exec(function (err, bids) {
       if (err) {
         return res.status(400).send({
           message: errorHandler.getErrorMessage(err)
