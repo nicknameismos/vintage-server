@@ -223,10 +223,25 @@ exports.cookingBid = function (req, res, next) {
                 dateend: endShow,
                 time: counttime(selectedDate)
               });
+
+              // cookingData[2].items = _.chain(cookingData[2].items).sortBy('dateend').sortBy('isBid').value();
               // cookingData[2].items = cookingData[2].items.sort(function (a, b) {
-              //   return (a.time > b.time) ? 1 : ((b.time > a.time) ? -1 : 0);
+              //   var aa = a.dateend + a.isBid;
+              //   var bb = b.dateend + b.isBid;
+              //   return (aa > bb ? 1 : aa < bb ? -1 : 0);
               // });
-              cookingData[2].items = _.chain(cookingData[2].items).sortBy('isBid').sortBy('datestart').value();
+              cookingData[2].items = cookingData[2].items.sort(function (a, b) {
+                var aIsBid = a.isBid;
+                var bIsBid = b.isBid;
+                var aDateend = a.dateend;
+                var bDateend = b.dateend;
+                if (aIsBid === bIsBid) {
+                  return (aDateend < bDateend) ? -1 : (aDateend > bDateend) ? 1 : 0;
+                } else {
+                  return (aIsBid > bIsBid) ? -1 : 1;
+                }
+              });
+
             }
 
           }
