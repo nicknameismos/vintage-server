@@ -91,7 +91,7 @@ exports.createNotification = function (req, res) {
           shopNoti(title, detail, shopIds);
         });
         var title2 = 'สั่งซื้อสินค้าสำเร็จ';
-        var detail2 = 'ยืนยันคำสั่งซื้อ ' + orderRes4.docno + ' สำเร็จ เราได้แจ้งผู้ขายให้เตรียมการจัดส่งสินค้า ' + itm.product.name + ' จำนวน ' + itm.qty + ' ชิ้น';
+        var detail2 = 'ยืนยันคำสั่งซื้อ ' + orderRes4.docno + ' สำเร็จ เราได้แจ้งผู้ขายให้เตรียมการจัดส่งสินค้า';
         notiLogs.push({
           title: title2,
           detail: detail2,
