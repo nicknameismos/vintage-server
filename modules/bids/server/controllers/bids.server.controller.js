@@ -231,7 +231,15 @@ exports.cookingBid = function (req, res, next) {
               //   return (aa > bb ? 1 : aa < bb ? -1 : 0);
               // });
               cookingData[2].items = cookingData[2].items.sort(function (a, b) {
-                return a.isBid - b.isBid || a.dateend - b.dateend;
+                var aIsBid = a.isBid;
+                var bIsBid = b.isBid;
+                var aDateend = a.dateend;
+                var bDateend = b.dateend;
+                if (aIsBid === bIsBid) {
+                  return (aDateend < bDateend) ? -1 : (aDateend > bDateend) ? 1 : 0;
+                } else {
+                  return (aIsBid < bIsBid) ? -1 : 1;
+                }
               });
 
             }
