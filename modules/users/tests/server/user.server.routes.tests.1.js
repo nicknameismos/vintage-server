@@ -209,6 +209,149 @@ describe('User Mng tests', function () {
     });
   });
 
+  it('get users by admin', function (done) {
+    user.roles = ['admin'];
+    var creUserObj = {
+      username: 'usernaja',
+      password: '222'
+    };
+    var userObj = new User({
+      firstName: 'Full22',
+      lastName: 'Name22',
+      displayName: 'Full22 Name22',
+      email: 'test2@test.com',
+      username: creUserObj.username,
+      password: creUserObj.password,
+      provider: 'local',
+      roles: ['user']
+    });
+
+    var creShopObj = {
+      username: 'usernaja',
+      password: '222'
+    };
+    var ShopObj = new User({
+      firstName: 'Full2233',
+      lastName: 'Name2233',
+      displayName: 'Full2233 Name2233',
+      email: 'test3@test.com',
+      username: creShopObj.username,
+      password: creShopObj.password,
+      provider: 'local',
+      roles: ['shop']
+    });
+    userObj.save();
+    ShopObj.save();
+    user.save(function (err) {
+      should.not.exist(err);
+      agent.post('/api/auth/signin')
+        .send(credentials)
+        .expect(200)
+        .end(function (signinErr, signinRes) {
+          // Handle signin error
+          if (signinErr) {
+            return done(signinErr);
+          }
+
+          var item = {
+            title: '',
+            currentpage: 0,
+            keyword: ''
+          };
+          // Request list of users
+          agent.post('/api/getusersbyadmin')
+            .send(item)
+            .set('authorization', 'Bearer ' + signinRes.body.loginToken)
+            .expect(200)
+            .end(function (usersGetErr, usersGetRes) {
+              if (usersGetErr) {
+                return done(usersGetErr);
+              }
+
+              var user = usersGetRes.body;
+              (user.titles.length).should.match(3);
+              (user.titles[0]).should.match('ลูกค้า');
+              (user.titles[1]).should.match('เจ้าของร้าน');
+              (user.titles[2]).should.match('แอดมิน');
+              (user.items.length).should.match(4);
+              (user.paging.length).should.match(1);
+              done();
+            });
+        });
+    });
+  });
+
+  it('get users by admin and search', function (done) {
+    user.roles = ['admin'];
+    var creUserObj = {
+      username: 'usernaja',
+      password: '222'
+    };
+    var userObj = new User({
+      firstName: 'Full22',
+      lastName: 'Name22',
+      displayName: 'Full22 Name22',
+      email: 'test2@test.com',
+      username: creUserObj.username,
+      password: creUserObj.password,
+      provider: 'local',
+      roles: ['user']
+    });
+
+    var creShopObj = {
+      username: 'usernaja',
+      password: '222'
+    };
+    var ShopObj = new User({
+      firstName: 'Full2233',
+      lastName: 'Name2233',
+      displayName: 'Full2233 Name2233',
+      email: 'test3@test.com',
+      username: creShopObj.username,
+      password: creShopObj.password,
+      provider: 'local',
+      roles: ['shop']
+    });
+    userObj.save();
+    ShopObj.save();
+    user.save(function (err) {
+      should.not.exist(err);
+      agent.post('/api/auth/signin')
+        .send(credentials)
+        .expect(200)
+        .end(function (signinErr, signinRes) {
+          // Handle signin error
+          if (signinErr) {
+            return done(signinErr);
+          }
+
+          var item = {
+            title: 'แอดมิน',
+            currentpage: 0,
+            keyword: ''
+          };
+          // Request list of users
+          agent.post('/api/getusersbyadmin')
+            .send(item)
+            .set('authorization', 'Bearer ' + signinRes.body.loginToken)
+            .expect(200)
+            .end(function (usersGetErr, usersGetRes) {
+              if (usersGetErr) {
+                return done(usersGetErr);
+              }
+
+              var user = usersGetRes.body;
+              (user.titles.length).should.match(3);
+              (user.titles[0]).should.match('ลูกค้า');
+              (user.titles[1]).should.match('เจ้าของร้าน');
+              (user.titles[2]).should.match('แอดมิน');
+              (user.items.length).should.match(1);
+              (user.paging.length).should.match(1);
+              done();
+            });
+        });
+    });
+  });
 
   afterEach(function (done) {
     User.remove().exec(done);

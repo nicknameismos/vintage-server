@@ -116,6 +116,15 @@ exports.createNotification = function (req, res) {
 exports.updateNotification = function (req, res) {
   var notifications = [];
   var notiLog = {};
+  var userIds = [];
+  var titleShop = '';
+  var detailShop = '';
+  var titleUser = '';
+  var detailUser = '';
+  var isShop = false;
+  var dateStatus = '';
+  var title = '';
+  var detail = '';
   if (req.notidata.channel === 'order') {
     Product.populate(req.notidata, {
       path: 'items.product'
@@ -132,17 +141,12 @@ exports.updateNotification = function (req, res) {
             var item = orderRes4.items[orderRes4.items.map(function (e) {
               return e._id.toString();
             }).indexOf(req.body.itemid.toString())];
-            var userIds = [];
-            var titleShop = '';
-            var detailShop = '';
-            var titleUser = '';
-            var detailUser = '';
-            var isShop = false;
+            
             var orderid = orderRes4.docno ? orderRes4.docno : orderRes4._id;
 
             if (item.status === 'cancel') {
 
-              var dateStatus = '';
+              // var dateStatus = '';
               item.log.forEach(function (log) {
                 if (log.status === 'cancel') {
                   var date = new Date(log.created);
@@ -212,7 +216,6 @@ exports.updateNotification = function (req, res) {
 
             } else if (item.status === 'sent') {
 
-              var dateStatus = '';
               item.log.forEach(function (log) {
                 if (log.status === 'sent') {
                   var date = new Date(log.created);
@@ -235,7 +238,7 @@ exports.updateNotification = function (req, res) {
 
             } else if (item.status === 'reject') {
 
-              var dateStatus = '';
+              // var dateStatus = '';
               item.log.forEach(function (log) {
                 if (log.status === 'reject') {
                   var date = new Date(log.created);
@@ -270,7 +273,7 @@ exports.updateNotification = function (req, res) {
 
             } else if (item.status === 'admincancel') {
 
-              var dateStatus = '';
+              // var dateStatus = '';
               item.log.forEach(function (log) {
                 if (log.status === 'admincancel') {
                   var date = new Date(log.created);
@@ -335,8 +338,7 @@ exports.updateNotification = function (req, res) {
           return e._id.toString();
         }).indexOf(req.body.itemid.toString())];
         var userIds = [];
-        var title = '';
-        var detail = '';
+        // var detail = '';
         var orderid = orderRes4.docno ? orderRes4.docno : orderRes4._id;
         if (item.status === 'cancel') {
           title = 'สินค้าถูกยกเลิก';

@@ -17,16 +17,19 @@ module.exports = function (app) {
 
   //User Management
   app.route('/api/management/users')
-  .get(core.jwtCheck, adminPolicy.isAllowed, admin.initlist, admin.customer, admin.shopowner, admin.admins, admin.biker, admin.managelist);
+    .get(core.jwtCheck, adminPolicy.isAllowed, admin.initlist, admin.customer, admin.shopowner, admin.admins, admin.biker, admin.managelist);
 
   app.route('/api/management/paging/users')
-  .post(core.jwtCheck, adminPolicy.isAllowed,admin.setinitpage, admin.tabcustomer, admin.tabshopowner, admin.tabadmins, admin.tabbiker, admin.managelistpage);
+    .post(core.jwtCheck, adminPolicy.isAllowed, admin.setinitpage, admin.tabcustomer, admin.tabshopowner, admin.tabadmins, admin.tabbiker, admin.managelistpage);
 
   // Single user routes
   app.route('/api/users/:userId')
     .get(core.jwtCheck, adminPolicy.isAllowed, admin.read)
     .put(core.jwtCheck, adminPolicy.isAllowed, admin.update)
     .delete(core.jwtCheck, adminPolicy.isAllowed, admin.delete);
+
+  app.route('/api/getusersbyadmin')
+    .post(core.jwtCheck, adminPolicy.isAllowed, admin.getUsersByAdmin, admin.resUsers);
 
   // Finish by binding the user middleware
   app.param('userId', admin.userByID);

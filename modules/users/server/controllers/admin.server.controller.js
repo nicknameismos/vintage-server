@@ -85,8 +85,8 @@ exports.initlist = function (req, res, next) {
   next();
 };
 
-exports.customer = function(req, res, next){
-  User.find({roles: 'user'},'-salt -password -loginToken -loginExpires').exec(function (err, users) {
+exports.customer = function (req, res, next) {
+  User.find({ roles: 'user' }, '-salt -password -loginToken -loginExpires').exec(function (err, users) {
     if (err) {
       return res.status(400).send({
         message: errorHandler.getErrorMessage(err)
@@ -97,11 +97,11 @@ exports.customer = function(req, res, next){
     });
     next();
   });
-  
+
 };
 
-exports.shopowner = function(req, res, next){
-  User.find({roles: 'shop'}, '-salt -password -loginToken -loginExpires').exec(function (err, users) {
+exports.shopowner = function (req, res, next) {
+  User.find({ roles: 'shop' }, '-salt -password -loginToken -loginExpires').exec(function (err, users) {
     if (err) {
       return res.status(400).send({
         message: errorHandler.getErrorMessage(err)
@@ -112,10 +112,10 @@ exports.shopowner = function(req, res, next){
     });
     next();
   });
-  
+
 };
-exports.admins = function(req, res, next){
-  User.find({roles: 'admin'}, '-salt -password -loginToken -loginExpires').exec(function (err, users) {
+exports.admins = function (req, res, next) {
+  User.find({ roles: 'admin' }, '-salt -password -loginToken -loginExpires').exec(function (err, users) {
     if (err) {
       return res.status(400).send({
         message: errorHandler.getErrorMessage(err)
@@ -126,11 +126,11 @@ exports.admins = function(req, res, next){
     });
     next();
   });
-  
+
 };
 
-exports.biker = function(req, res, next){
-  User.find({roles: 'biker'}, '-salt -password -loginToken -loginExpires').exec(function (err, users) {
+exports.biker = function (req, res, next) {
+  User.find({ roles: 'biker' }, '-salt -password -loginToken -loginExpires').exec(function (err, users) {
     if (err) {
       return res.status(400).send({
         message: errorHandler.getErrorMessage(err)
@@ -141,7 +141,7 @@ exports.biker = function(req, res, next){
     });
     next();
   });
-  
+
 };
 
 exports.managelist = function (req, res) {
@@ -150,16 +150,16 @@ exports.managelist = function (req, res) {
   });
 };
 
-exports.setinitpage = function(req, res, next){
+exports.setinitpage = function (req, res, next) {
   req.items = [];
   req.pagings = [1];
   next();
 };
-exports.tabcustomer = function(req, res, next){
-  if(req.body.role !== 'user'){
+exports.tabcustomer = function (req, res, next) {
+  if (req.body.role !== 'user') {
     next();
-  } 
-  User.find({roles: 'user'},'-salt -password -loginToken -loginExpires').exec(function (err, users) {
+  }
+  User.find({ roles: 'user' }, '-salt -password -loginToken -loginExpires').exec(function (err, users) {
     if (err) {
       return res.status(400).send({
         message: errorHandler.getErrorMessage(err)
@@ -170,13 +170,13 @@ exports.tabcustomer = function(req, res, next){
     });
     next();
   });
-  
+
 };
 
-exports.tabshopowner = function(req, res, next){
-  if(req.body.role !== 'shop') next();
+exports.tabshopowner = function (req, res, next) {
+  if (req.body.role !== 'shop') next();
 
-  User.find({roles: 'shop'}, '-salt -password -loginToken -loginExpires').exec(function (err, users) {
+  User.find({ roles: 'shop' }, '-salt -password -loginToken -loginExpires').exec(function (err, users) {
     if (err) {
       return res.status(400).send({
         message: errorHandler.getErrorMessage(err)
@@ -187,12 +187,12 @@ exports.tabshopowner = function(req, res, next){
     });
     next();
   });
-  
+
 };
-exports.tabadmins = function(req, res, next){
-  if(req.body.role !== 'admin') next();
+exports.tabadmins = function (req, res, next) {
+  if (req.body.role !== 'admin') next();
 
-  User.find({roles: 'admin'}, '-salt -password -loginToken -loginExpires').exec(function (err, users) {
+  User.find({ roles: 'admin' }, '-salt -password -loginToken -loginExpires').exec(function (err, users) {
     if (err) {
       return res.status(400).send({
         message: errorHandler.getErrorMessage(err)
@@ -203,13 +203,13 @@ exports.tabadmins = function(req, res, next){
     });
     next();
   });
-  
+
 };
 
-exports.tabbiker = function(req, res, next){
-  if(req.role !== 'biker') next();
+exports.tabbiker = function (req, res, next) {
+  if (req.role !== 'biker') next();
 
-  User.find({roles: 'biker'}, '-salt -password -loginToken -loginExpires').exec(function (err, users) {
+  User.find({ roles: 'biker' }, '-salt -password -loginToken -loginExpires').exec(function (err, users) {
     if (err) {
       return res.status(400).send({
         message: errorHandler.getErrorMessage(err)
@@ -220,7 +220,7 @@ exports.tabbiker = function(req, res, next){
     });
     next();
   });
-  
+
 };
 
 exports.managelistpage = function (req, res) {
@@ -251,3 +251,83 @@ exports.userByID = function (req, res, next, id) {
     next();
   });
 };
+
+exports.getUsersByAdmin = function (req, res, next) {
+  var firstIndex = 0;
+  var lastIndex = 10;
+  var rolesTH = ['ลูกค้า', 'เจ้าของร้าน', 'แอดมิน'];
+  var rolesEN = ['user', 'shop', 'admin'];
+  if (req.body.currentpage > 1) {
+    firstIndex = ((req.body.currentpage - 1) * 10);
+    lastIndex = (req.body.currentpage * 10);
+  }
+  var role = 'user';
+  var filter = { roles: role };
+
+  if (req.body.title && req.body.title !== '') {
+    if (rolesTH.indexOf(req.body.title) !== -1) {
+      role = rolesEN[rolesTH.indexOf(req.body.title)];
+      filter = { roles: role };
+    }
+  }
+  if (req.body.keyword && req.body.keyword !== '') {
+    filter = searchName(req.body.keyword, role);
+  }
+  // console.log(filter);
+  User.find(filter, '-salt -password -loginToken -loginExpires').exec(function (err, users) {
+    if (err) {
+      return res.status(400).send({
+        message: errorHandler.getErrorMessage(err)
+      });
+    }
+    // console.log(users);
+    req.pagings = countPage(users);
+    req.resUser = users.slice(firstIndex, lastIndex);
+    next();
+  });
+};
+
+exports.resUsers = function (req, res) {
+  res.jsonp({
+    titles: ['ลูกค้า', 'เจ้าของร้าน', 'แอดมิน'],
+    items: req.resUser || [],
+    paging: req.pagings || []
+  });
+};
+
+function searchName(keyWordName, role) {
+  var keywordname = {
+    roles: role,
+    $or: [{
+      'firstName': {
+        '$regex': keyWordName,
+        '$options': 'i'
+      }
+    }, {
+      'lastName': {
+        '$regex': keyWordName,
+        '$options': 'i'
+      }
+    }, {
+      'displayName': {
+        '$regex': keyWordName,
+        '$options': 'i'
+      }
+    }],
+
+  };
+  return keywordname;
+}
+
+function countPage(items) {
+  var numpage = [];
+  if (items && items.length > 0) {
+    var pages = items.length / 10;
+    var pagings = Math.ceil(pages);
+    for (var i = 0; i < pagings; i++) {
+      numpage.push(i + 1);
+    }
+
+  }
+  return numpage;
+}

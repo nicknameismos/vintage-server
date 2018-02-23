@@ -390,6 +390,7 @@ exports.usermanage = function (req, res) {
   user.citizenid = _user.citizenid ? _user.citizenid : user.citizenid;
   user.bankaccount = _user.bankaccount ? _user.bankaccount : user.bankaccount;
   user.notificationids = _user.notificationids ? _user.notificationids : user.notificationids;
+  user.mobile = _user.mobile ? _user.mobile : user.mobile;
 
   user.save(function (err) {
     if (err) {
