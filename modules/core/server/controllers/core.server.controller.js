@@ -79,7 +79,7 @@ exports.createNotification = function (req, res) {
       }, function (err, orderRes4) {
         orderRes4.items.forEach(function (itm) {
           var title = 'คุณมีรายการสั่งซื้อใหม่';
-          var detail = 'รายการสั่งซื้อ ' + orderRes4.docno + ' สินค้า ' + itm.product.name + ' จำนวน ' + itm.qty + ' ชิ้น กรุณาเตรียมสินค้าเพื่อดำเนินการจัดส่ง';
+          var detail = 'รายการสั่งซื้อ ' + orderRes4.docno + ' สินค้า' + itm.product.name + ' จำนวน ' + itm.qty + ' ชิ้น กรุณาเตรียมสินค้าเพื่อดำเนินการจัดส่ง';
           notiLogs.push({
             title: title,
             detail: detail,
@@ -141,6 +141,7 @@ exports.updateNotification = function (req, res) {
             var orderid = orderRes4.docno ? orderRes4.docno : orderRes4._id;
 
             if (item.status === 'cancel') {
+
               var dateStatus = '';
               item.log.forEach(function (log) {
                 if (log.status === 'cancel') {
@@ -150,7 +151,7 @@ exports.updateNotification = function (req, res) {
               });
 
               titleShop = 'รายการสั่งซื้อถูกยกเลิก';
-              detailShop = 'รายการสั่งซื้อ ' + orderRes4._id + ' สินค้า ' + item.product.name + ' จำนวน ' + item.qty + ' ชิ้น ถูกผู้ซื้อยกเลิก เมื่อ ' + dateStatus + '';
+              detailShop = 'รายการสั่งซื้อ ' + orderRes4.docno + ' สินค้า' + item.product.name + ' จำนวน ' + item.qty + ' ชิ้น ถูกผู้ซื้อยกเลิก เมื่อ ' + dateStatus + '';
               notiLog = {
                 title: titleShop,
                 detail: detailShop,
@@ -162,7 +163,7 @@ exports.updateNotification = function (req, res) {
               shopNoti(titleShop, detailShop, userIds);
 
               titleUser = 'รายการสั่งซื้อถูกยกเลิก';
-              detailUser = 'รายการสั่งซื้อ ' + orderRes4._id + ' สินค้า ' + item.product.name + ' จำนวน ' + item.qty + ' ชิ้น ถูกยกเลิกเรียบร้อยแล้ว เมื่อ ' + dateStatus + ' กรุณารอการคืนเงินจากระบบ';
+              detailUser = 'รายการสั่งซื้อ ' + orderRes4.docno + ' สินค้า' + item.product.name + ' จำนวน ' + item.qty + ' ชิ้น ถูกยกเลิกเรียบร้อยแล้ว เมื่อ ' + dateStatus + ' กรุณารอการคืนเงินจากระบบ';
 
               notiLog = {
                 title: titleUser,
@@ -175,12 +176,63 @@ exports.updateNotification = function (req, res) {
               userNoti(titleUser, detailUser, userIds);
 
             } else if (item.status === 'completed') {
-              title = 'รายการสินค้าสำเร็จ';
-              detail = item.product.name + ' หมายเลขการสั่งซื้อ ' + orderid + ' สำเร็จแล้ว';
-              isShop = true;
+
+              // var dateStatus = '';
+              // item.log.forEach(function (log) {
+              //   if (log.status === 'completed') {
+              //     var date = new Date(log.created);
+              //     dateStatus = date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear() + ' ' + (date.getHours() + 7) + ':' + date.getMinutes();
+              //   }
+              // });
+
+              titleShop = 'รายการสั่งซื้อสำเร็จ';
+              detailShop = 'รายการสั่งซื้อ ' + orderRes4.docno + 'สินค้า' + item.product.name + ' จำนวน ' + item.qty + 'ชิ้น ลูกค้าได้รับสินค้าเรียบร้อยแล้ว กรุณารอการชำระเงินจากตลาด';
+              notiLog = {
+                title: titleShop,
+                detail: detailShop,
+                userowner: item.product.shop.shopowner,
+                user: req.user
+              };
+              notifications.push(notiLog);
+              userIds = item.product && item.product.shop && item.product.shop.shopowner && item.product.shop.shopowner.notificationids ? item.product.shop.shopowner.notificationids : [];
+              shopNoti(titleShop, detailShop, userIds);
+
+              titleUser = 'รายการสั่งซื้อสำเร็จ';
+              detailUser = 'รายการสั่งซื้อ ' + orderRes4.docno + ' สินค้า' + item.product.name + ' จำนวน ' + item.qty + ' ชิ้น ทำรายการเสร็จสมบูรณ์ ขอบคุณที่ใช้บริการ';
+
+              notiLog = {
+                title: titleUser,
+                detail: detailUser,
+                userowner: orderRes4.user,
+                user: req.user
+              };
+              notifications.push(notiLog);
+              userIds = orderRes4.user && orderRes4.user.notificationids ? orderRes4.user.notificationids : [];
+              userNoti(titleUser, detailUser, userIds);
+
             } else if (item.status === 'sent') {
-              title = 'สินค้าดำเนินการจัดส่ง';
-              detail = item.product.name + ' หมายเลขการสั่งซื้อ ' + orderid + ' กำลังดำเนินการจัดส่ง\r\nหมายเลขการจัดส่ง ' + item.refid;
+
+              var dateStatus = '';
+              item.log.forEach(function (log) {
+                if (log.status === 'sent') {
+                  var date = new Date(log.created);
+                  dateStatus = date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear() + ' ' + (date.getHours() + 7) + ':' + date.getMinutes();
+                }
+              });
+
+              titleUser = 'สินค้าถูกจัดส่งแล้ว';
+              detailUser = 'รายการสั่งซื้อ ' + orderRes4.docno + ' สินค้า' + item.product.name + ' จำนวน ' + item.qty +  'ชิ้น ถูกจัดส่งแล้ว เมื่อ ' + dateStatus + ' เลขพัสดุของคุณคือ ' + item.refid + ' กรุณารอรับสินค้า หากได้รับสินค้าแล้วกรุณากด "ได้รับสินค้าแล้ว"';
+
+              notiLog = {
+                title: titleUser,
+                detail: detailUser,
+                userowner: orderRes4.user,
+                user: req.user
+              };
+              notifications.push(notiLog);
+              userIds = orderRes4.user && orderRes4.user.notificationids ? orderRes4.user.notificationids : [];
+              userNoti(titleUser, detailUser, userIds);
+
             } else if (item.status === 'reject') {
               title = 'สินค้าถูกยกเลิก';
               detail = item.product.name + ' หมายเลขการสั่งซื้อ ' + orderid + ' ถูกยกเลิก\r\nหมายเหตุ ' + item.remark;
