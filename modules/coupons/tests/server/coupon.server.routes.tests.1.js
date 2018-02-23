@@ -737,6 +737,219 @@ describe('Coupon CRUD tests with token', function () {
     });
   });
 
+  it('get Coupon by admin', function (done) {
+    var today = new Date();
+    var startdate = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 1);
+    var enddate = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
+    // Create new Coupon model instance
+    var couponObj = new Coupon({
+      code: 'AAAA',
+      price: 20,
+      type: 'multi',
+      message: 'message',
+      owner: [],
+      startdate: startdate,
+      enddate: enddate,
+      useruse: [],
+      user: user
+    });
+
+
+    var startexpriedate = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 3);
+    var endexpiredate = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 2);
+    var couponExpire = new Coupon({
+      code: 'BBBB',
+      price: 20,
+      type: 'multi',
+      message: 'message',
+      owner: [],
+      startdate: startexpriedate,
+      enddate: endexpiredate,
+      useruse: [],
+      user: user
+    });
+
+    // Save the Coupon
+    couponExpire.save();
+    couponObj.save(function () {
+      agent.post('/api/auth/signin')
+        .send(credentials)
+        .expect(200)
+        .end(function (signinErr, signinRes) {
+          // Handle signin error
+          if (signinErr) {
+            return done(signinErr);
+          }
+          var code = {
+            title: '',
+            currentpage: 0,
+            keyword: ''
+          };
+          agent.post('/api/getcouponsbyadmin')
+            .set('authorization', 'Bearer ' + signinRes.body.loginToken)
+            .send(code)
+            .expect(200)
+            .end(function (couponSaveErr, couponSaveRes) {
+              // Handle Coupon save error
+              if (couponSaveErr) {
+                return done(couponSaveErr);
+              }
+
+              var discount = couponSaveRes.body;
+              (discount.titles.length).should.equal(2);
+              (discount.titles[0]).should.equal('กำลังใช้งาน');
+              (discount.titles[1]).should.equal('หมดอายุแล้ว');
+              (discount.items.length).should.equal(1);
+              (discount.paging.length).should.equal(1);
+              done();
+            });
+
+        });
+    });
+  });
+
+  it('get Coupon by admin expire', function (done) {
+    var today = new Date();
+    var startdate = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 1);
+    var enddate = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
+    // Create new Coupon model instance
+    var couponObj = new Coupon({
+      code: 'AAAA',
+      price: 20,
+      type: 'multi',
+      message: 'message',
+      owner: [],
+      startdate: startdate,
+      enddate: enddate,
+      useruse: [],
+      user: user
+    });
+
+
+    var startexpriedate = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 3);
+    var endexpiredate = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 2);
+    var couponExpire = new Coupon({
+      code: 'BBBB',
+      price: 20,
+      type: 'multi',
+      message: 'message',
+      owner: [],
+      startdate: startexpriedate,
+      enddate: endexpiredate,
+      useruse: [],
+      user: user
+    });
+
+    // Save the Coupon
+    couponExpire.save();
+    couponObj.save(function () {
+      agent.post('/api/auth/signin')
+        .send(credentials)
+        .expect(200)
+        .end(function (signinErr, signinRes) {
+          // Handle signin error
+          if (signinErr) {
+            return done(signinErr);
+          }
+          var code = {
+            title: 'หมดอายุแล้ว',
+            currentpage: 0,
+            keyword: ''
+          };
+          agent.post('/api/getcouponsbyadmin')
+            .set('authorization', 'Bearer ' + signinRes.body.loginToken)
+            .send(code)
+            .expect(200)
+            .end(function (couponSaveErr, couponSaveRes) {
+              // Handle Coupon save error
+              if (couponSaveErr) {
+                return done(couponSaveErr);
+              }
+
+              var discount = couponSaveRes.body;
+              (discount.titles.length).should.equal(2);
+              (discount.titles[0]).should.equal('กำลังใช้งาน');
+              (discount.titles[1]).should.equal('หมดอายุแล้ว');
+              (discount.items.length).should.equal(1);
+              (discount.paging.length).should.equal(1);
+              done();
+            });
+
+        });
+    });
+  });
+
+  it('get Coupon by admin with search', function (done) {
+    var today = new Date();
+    var startdate = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 1);
+    var enddate = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
+    // Create new Coupon model instance
+    var couponObj = new Coupon({
+      code: 'AAAA',
+      price: 20,
+      type: 'multi',
+      message: 'message',
+      owner: [],
+      startdate: startdate,
+      enddate: enddate,
+      useruse: [],
+      user: user
+    });
+
+
+    var startexpriedate = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 3);
+    var endexpiredate = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 2);
+    var couponExpire = new Coupon({
+      code: 'BBBB',
+      price: 20,
+      type: 'multi',
+      message: 'message',
+      owner: [],
+      startdate: startexpriedate,
+      enddate: endexpiredate,
+      useruse: [],
+      user: user
+    });
+
+    // Save the Coupon
+    couponExpire.save();
+    couponObj.save(function () {
+      agent.post('/api/auth/signin')
+        .send(credentials)
+        .expect(200)
+        .end(function (signinErr, signinRes) {
+          // Handle signin error
+          if (signinErr) {
+            return done(signinErr);
+          }
+          var code = {
+            title: 'หมดอายุแล้ว',
+            currentpage: 0,
+            keyword: 'CCCC'
+          };
+          agent.post('/api/getcouponsbyadmin')
+            .set('authorization', 'Bearer ' + signinRes.body.loginToken)
+            .send(code)
+            .expect(200)
+            .end(function (couponSaveErr, couponSaveRes) {
+              // Handle Coupon save error
+              if (couponSaveErr) {
+                return done(couponSaveErr);
+              }
+
+              var discount = couponSaveRes.body;
+              (discount.titles.length).should.equal(2);
+              (discount.titles[0]).should.equal('กำลังใช้งาน');
+              (discount.titles[1]).should.equal('หมดอายุแล้ว');
+              (discount.items.length).should.equal(0);
+              (discount.paging.length).should.equal(0);
+              done();
+            });
+
+        });
+    });
+  });
+
   afterEach(function (done) {
     User.remove().exec(function () {
       Coupon.remove().exec(done);
