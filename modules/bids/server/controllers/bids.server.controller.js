@@ -223,8 +223,15 @@ exports.cookingBid = function (req, res, next) {
                 dateend: endShow,
                 time: counttime(selectedDate)
               });
+              // cookingData[2].items = cookingData[2].items.sort(function (a, b) {
+              //   return (a.time > b.time) ? 1 : ((b.time > a.time) ? -1 : 0);
+              // });
               cookingData[2].items = cookingData[2].items.sort(function (a, b) {
-                return (a.time > b.time) ? 1 : ((b.time > a.time) ? -1 : 0);
+                if (a.isbid !== b.isbid) {
+                  return (b.time - a.time);
+                } else {
+                  return (a.time > b.time ? 1 : -1);
+                }
               });
             }
 
