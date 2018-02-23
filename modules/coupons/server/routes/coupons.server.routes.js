@@ -21,6 +21,9 @@ module.exports = function (app) {
   app.route('/api/getcouponbycode').all(core.jwtCheck, couponsPolicy.isAllowed)
     .post(coupons.getCouponCode, coupons.wrongCode, coupons.expiredCode, coupons.usedCode, coupons.resCouponCode);
 
+  app.route('/api/getcouponsbyadmin').all(core.jwtCheck, couponsPolicy.isAllowed)
+    .post(coupons.getCouponsAdmin, coupons.resCouponsAdmin);
+
   // Finish by binding the Coupon middleware
   app.param('couponId', coupons.couponByID);
 };

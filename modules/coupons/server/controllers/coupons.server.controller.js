@@ -225,6 +225,60 @@ exports.resCouponCode = function (req, res) {
   });
 };
 
+exports.getCouponsAdmin = function (req, res, next) {
+  var firstIndex = 0;
+  var lastIndex = 10;
+  if (req.body.currentpage > 1) {
+    firstIndex = ((req.body.currentpage - 1) * 10);
+    lastIndex = (req.body.currentpage * 10);
+  }
+  var filter = {};
+  // console.log(status);
+  if (req.body.keyword && req.body.keyword !== '') {
+    filter = searchName(req.body.keyword);
+  }
+  Coupon.find(filter, 'code startdate enddate price type').sort('-created').populate('user', 'displayName').exec(function (err, coupons) {
+    if (err) {
+      return next(err);
+    } else if (!coupons) {
+      return res.status(404).send({
+        message: 'No Coupon with that identifier has been found'
+      });
+    }
+    var resCoupons = [];
+    if (req.body.title === 'หมดอายุแล้ว') {
+      coupons.forEach(function (coup) {
+        var enddate = new Date(coup.enddate);
+        var today = new Date();
+        if (today > enddate) {
+          resCoupons.push(coup);
+        }
+      });
+    } else {
+      coupons.forEach(function (coup) {
+        var startdate = new Date(coup.startdate);
+        var enddate = new Date(coup.enddate);
+        var today = new Date();
+        if (today >= startdate && today <= enddate) {
+          resCoupons.push(coup);
+        }
+      });
+    }
+    req.pagings = countPage(resCoupons);
+    req.resCouponsAdmin = resCoupons.slice(firstIndex, lastIndex);
+
+    next();
+  });
+};
+
+exports.resCouponsAdmin = function (req, res) {
+  res.jsonp({
+    titles: ['กำลังใช้งาน', 'หมดอายุแล้ว'],
+    items: req.resCouponsAdmin || [],
+    paging: req.pagings || []
+  });
+};
+
 exports.notification = function (req, res) {
   var coupon = req.coupon;
   var datestart = new Date(coupon.startdate);
@@ -325,4 +379,30 @@ function sendNotification(title, message, ids) {
     }
     // console.log(response);
   });
+}
+
+function searchName(keyWordName) {
+  var keywordname = {
+    $or: [{
+      'code': {
+        '$regex': keyWordName,
+        '$options': 'i'
+      }
+    }],
+
+  };
+  return keywordname;
+}
+
+function countPage(items) {
+  var numpage = [];
+  if (items && items.length > 0) {
+    var pages = items.length / 10;
+    var pagings = Math.ceil(pages);
+    for (var i = 0; i < pagings; i++) {
+      numpage.push(i + 1);
+    }
+
+  }
+  return numpage;
 }
