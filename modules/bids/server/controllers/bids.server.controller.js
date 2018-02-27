@@ -442,7 +442,6 @@ exports.bidTopay = function (req, res, next) {
         });
       } else {
         // req.bidactive = bids;
-        console.log(bids);
         req.pagings = countPage(bids);
         req.resbids = bids.slice(req.firstIndex, req.lastIndex);
         next();
