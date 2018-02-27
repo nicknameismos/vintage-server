@@ -805,6 +805,22 @@ exports.shopCookingListOrder = function (req, res, next) {
       }
     });
   });
+
+  // , {
+  //   status: 'sent',
+  //   items: []
+  // }, {
+  //   status: 'completed',
+  //   items: []
+  // }, {
+  //   status: 'cancel',
+  //   items: []
+  // }
+
+  resData[1].items.sort(function (a, b) { return (a.sentdate < b.sentdate) ? 1 : ((b.sentdate < a.sentdate) ? -1 : 0); });
+  resData[2].items.sort(function (a, b) { return (a.receivedate < b.receivedate) ? 1 : ((b.receivedate < a.receivedate) ? -1 : 0); });
+  resData[3].items.sort(function (a, b) { return (a.canceldate < b.canceldate) ? 1 : ((b.canceldate < a.canceldate) ? -1 : 0); });
+  
   req.resData = resData;
   next();
 };
