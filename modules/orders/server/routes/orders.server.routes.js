@@ -15,7 +15,7 @@ module.exports = function (app) {
 
   app.route('/api/updateorderbid/:orderId').all(core.jwtCheck, ordersPolicy.isAllowed)
     // .put(orders.bidCreate);
-    .put(orders.updateCoupon, orders.omiseCard, orders.bidCreateOrder);
+    .put(orders.updateCoupon, orders.omiseCard, orders.updateBid, orders.bidCreateOrder);
 
   app.route('/api/orders/:orderId').all(core.jwtCheck, ordersPolicy.isAllowed)
     .get(orders.read)

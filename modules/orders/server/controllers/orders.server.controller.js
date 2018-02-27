@@ -120,6 +120,33 @@ exports.create = function (req, res, next) {
   });
 };
 
+exports.updateBid = function (req, res, next) {
+  var order = req.body;
+  var bidId = order.itemsbid[0].bid;
+  Bid.findById(bidId).exec(function (err, bid) {
+    if (err) {
+      return next(err);
+    } else if (!bid) {
+      return res.status(404).send({
+        message: 'No Bid with that identifier has been found'
+      });
+    }
+    bid.status = 'paid';
+    bid.save(function (err) {
+      if (err) {
+        return res.status(400).send({
+          message: errorHandler.getErrorMessage(err)
+        });
+      } else {
+        // req.notidata = order;
+        next();
+        // res.jsonp(order);
+      }
+    });
+
+  });
+};
+
 exports.bidCreateOrder = function (req, res) {
   var order = req.order;
   var _order = req.body;
@@ -1493,7 +1520,7 @@ exports.updateBidId = function (req, res, next) {
 
 exports.bidCreate = function (req, res, next) {
   if (req.bid.userbid && req.bid.userbid.length === 0) {
-    res.jsonp('no user bid');
+    next();
   } else {
     var userbid;
     req.bid.userbid.forEach(function (ubid) {

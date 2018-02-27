@@ -308,7 +308,7 @@ exports.updateNotification = function (req, res) {
 
             } else if (item.status === 'transferred') {
 
-              var dateStatus = '';
+              // var dateStatus = '';
               item.log.forEach(function (log) {
                 if (log.status === 'transferred') {
                   var date = new Date(log.created);
@@ -330,7 +330,7 @@ exports.updateNotification = function (req, res) {
 
             } else if (item.status === 'rejectrefund' || item.status === 'cancelrefund' || item.status === 'admincancelrefund') {
 
-              var dateStatus = '';
+              // var dateStatus = '';
               item.log.forEach(function (log) {
                 if (log.status === item.status) {
                   var date = new Date(log.created);

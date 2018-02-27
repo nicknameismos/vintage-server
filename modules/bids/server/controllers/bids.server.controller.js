@@ -364,7 +364,7 @@ exports.bidStatusActive = function (req, res, next) {
     filter = searchName(req.body.keyword);
   }
   if (req.body.title === 'กำลังประมูล' || req.body.title === 'รอการประมูล') {
-    Bid.find(filter).sort('-created').where('status').equals('active').populate('shippings.ref').populate('user', 'displayName').exec(function (err, bids) {
+    Bid.find(filter).sort('-created').where('status').equals('active').populate('shippings.ref').populate('user', 'displayName').populate('userbid.user', 'displayName').exec(function (err, bids) {
       if (err) {
         return res.status(400).send({
           message: errorHandler.getErrorMessage(err)
@@ -435,13 +435,14 @@ exports.bidTopay = function (req, res, next) {
     filter = searchName(req.body.keyword);
   }
   if (req.body.title === 'ประมูลแล้ว') {
-    Bid.find(filter).sort('-created').where('status').equals('topay').populate('shippings.ref').populate('user', 'displayName').exec(function (err, bids) {
+    Bid.find(filter).sort('-created').where('status').equals('topay').populate('shippings.ref').populate('userbid.user', 'displayName').populate('user', 'displayName').exec(function (err, bids) {
       if (err) {
         return res.status(400).send({
           message: errorHandler.getErrorMessage(err)
         });
       } else {
         // req.bidactive = bids;
+        console.log(bids);
         req.pagings = countPage(bids);
         req.resbids = bids.slice(req.firstIndex, req.lastIndex);
         next();
@@ -459,7 +460,7 @@ exports.bidEnd = function (req, res, next) {
     filter = searchName(req.body.keyword);
   }
   if (req.body.title === 'สิ้นสุดการประมูล') {
-    Bid.find(filter).sort('-created').where('status').equals('end').populate('shippings.ref').populate('user', 'displayName').exec(function (err, bids) {
+    Bid.find(filter).sort('-created').where('status').equals('end').populate('shippings.ref').populate('user', 'displayName').populate('userbid.user', 'displayName').exec(function (err, bids) {
       if (err) {
         return res.status(400).send({
           message: errorHandler.getErrorMessage(err)
@@ -481,7 +482,7 @@ exports.bidPaid = function (req, res, next) {
     filter = searchName(req.body.keyword);
   }
   if (req.body.title === 'จ่ายเงินแล้ว') {
-    Bid.find(filter).sort('-created').where('status').equals('paid').populate('shippings.ref').populate('user', 'displayName').exec(function (err, bids) {
+    Bid.find(filter).sort('-created').where('status').equals('paid').populate('shippings.ref').populate('user', 'displayName').populate('userbid.user', 'displayName').exec(function (err, bids) {
       if (err) {
         return res.status(400).send({
           message: errorHandler.getErrorMessage(err)
