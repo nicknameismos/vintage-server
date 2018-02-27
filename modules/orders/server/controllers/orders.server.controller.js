@@ -319,6 +319,7 @@ exports.customerCookingListOrder = function (req, res, next) {
     var sentdate = '';
     var sentdate2 = '';
     var completed2 = '';
+    var confirmdate = '';
     if (order.channel === 'bid') {
       order.itemsbid.forEach(function (itm) {
         if (itm.status === 'topay') {
@@ -340,9 +341,17 @@ exports.customerCookingListOrder = function (req, res, next) {
             status: 'topay',
             rejectreason: '',
             refid: itm.refid ? itm.refid : '',
-            channel: order.channel
+            channel: order.channel,
+            topaydate: order.created
           });
         } else if (itm.status === 'confirm') {
+          if (itm.log && itm.log.length > 0) {
+            itm.log.forEach(function (l) {
+              if (l.status === 'confirm') {
+                confirmdate = l.created;
+              }
+            });
+          }
           resData[1].items.push({
             itemid: itm._id,
             orderid: order._id,
@@ -361,7 +370,8 @@ exports.customerCookingListOrder = function (req, res, next) {
             status: 'confirm',
             rejectreason: '',
             refid: itm.refid ? itm.refid : '',
-            channel: order.channel
+            channel: order.channel,
+            confirmdate: confirmdate
           });
         } else if (itm.status === 'sent') {
           if (itm.log && itm.log.length > 0) {
@@ -487,7 +497,8 @@ exports.customerCookingListOrder = function (req, res, next) {
             status: 'confirm',
             rejectreason: '',
             refid: itm.refid ? itm.refid : '',
-            channel: order.channel
+            channel: order.channel,
+            confirmdate: order.created
           });
         } else if (itm.status === 'sent') {
           // var sentdate = '';
@@ -596,7 +607,19 @@ exports.customerCookingListOrder = function (req, res, next) {
       });
     }
   });
-
+  // {
+  //   status: 'sent',
+  //   items: []
+  // }, {
+  //   status: 'completed',
+  //   items: []
+  // }, {
+  //   status: 'cancel',
+  //   items: []
+  // }
+  resData[2].items.sort(function (a, b) { return (a.sentdate > b.sentdate) ? 1 : ((b.sentdate > a.sentdate) ? -1 : 0); });
+  resData[3].items.sort(function (a, b) { return (a.receivedate > b.receivedate) ? 1 : ((b.receivedate > a.receivedate) ? -1 : 0); });
+  resData[4].items.sort(function (a, b) { return (a.canceldate > b.canceldate) ? 1 : ((b.canceldate > a.canceldate) ? -1 : 0); });
   req.resData = resData;
   next();
 };
