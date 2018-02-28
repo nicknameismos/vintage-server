@@ -141,7 +141,7 @@ exports.updateNotification = function (req, res) {
             var item = orderRes4.items[orderRes4.items.map(function (e) {
               return e._id.toString();
             }).indexOf(req.body.itemid.toString())];
-            
+
             var orderid = orderRes4.docno ? orderRes4.docno : orderRes4._id;
 
             if (item.status === 'cancel') {
@@ -219,7 +219,7 @@ exports.updateNotification = function (req, res) {
               item.log.forEach(function (log) {
                 if (log.status === 'sent') {
                   var date = new Date(log.created);
-                  dateStatus = date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear() + ' ' + (date.getHours() + 7) + ':' + (date.getMinutes() > 9) ? date.getMinutes() : '0' + date.getMinutes();
+                  dateStatus = date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear() + ' ' + (date.getHours() + 7) + ':' + date.getMinutes();
                 }
               });
 
