@@ -10,8 +10,7 @@ var mongoose = require('mongoose'),
   request = require('request'),
   errorHandler = require(path.resolve('./modules/core/server/controllers/errors.server.controller')),
   pushNotiUrl = process.env.PUSH_NOTI_URL || 'https://onesignal.com/api/v1/notifications',
-  User = mongoose.model('User'),
-  item;
+  User = mongoose.model('User');
 
 /**
  * Render the main application page
@@ -89,7 +88,7 @@ exports.createNotification = function (req, res) {
           });
           // console.log(notiLogs);
           var shopIds = itm.product && itm.product.shop && itm.product.shop.shopowner && itm.product.shop.shopowner.notificationids ? itm.product.shop.shopowner.notificationids : [];
-          shopNoti(title, detail, shopIds);
+          shopNoti(title, detail, shopIds, 'Order', orderRes4._id, itm._id);
         });
         var title2 = 'สั่งซื้อสินค้าสำเร็จ';
         var detail2 = 'ยืนยันคำสั่งซื้อ ' + orderRes4.docno + ' สำเร็จ เราได้แจ้งผู้ขายให้เตรียมการจัดส่งสินค้าแล้ว';
@@ -145,9 +144,6 @@ exports.updateNotification = function (req, res) {
 
             var orderid = orderRes4.docno ? orderRes4.docno : orderRes4._id;
 
-            item = item;
-            item.orderid = orderid;
-
             if (item.status === 'cancel') {
 
               // var dateStatus = '';
@@ -168,7 +164,7 @@ exports.updateNotification = function (req, res) {
               };
               notifications.push(notiLog);
               userIds = item.product && item.product.shop && item.product.shop.shopowner && item.product.shop.shopowner.notificationids ? item.product.shop.shopowner.notificationids : [];
-              shopNoti(titleShop, detailShop, userIds);
+              shopNoti(titleShop, detailShop, userIds, 'Order', orderRes4._id, item._id);
 
               titleUser = 'รายการสั่งซื้อถูกยกเลิก';
               detailUser = 'รายการสั่งซื้อ ' + orderRes4.docno + ' สินค้า' + item.product.name + ' จำนวน ' + item.qty + ' ชิ้น ถูกยกเลิกเรียบร้อยแล้ว เมื่อ ' + dateStatus + ' กรุณารอการคืนเงินจากระบบ';
@@ -181,7 +177,7 @@ exports.updateNotification = function (req, res) {
               };
               notifications.push(notiLog);
               userIds = orderRes4.user && orderRes4.user.notificationids ? orderRes4.user.notificationids : [];
-              userNoti(titleUser, detailUser, userIds);
+              userNoti(titleUser, detailUser, userIds, 'Order', orderRes4._id, item._id);
 
             } else if (item.status === 'completed') {
 
@@ -203,7 +199,7 @@ exports.updateNotification = function (req, res) {
               };
               notifications.push(notiLog);
               userIds = item.product && item.product.shop && item.product.shop.shopowner && item.product.shop.shopowner.notificationids ? item.product.shop.shopowner.notificationids : [];
-              shopNoti(titleShop, detailShop, userIds);
+              shopNoti(titleShop, detailShop, userIds, 'Order', orderRes4._id, item._id);
 
               titleUser = 'รายการสั่งซื้อสำเร็จ';
               detailUser = 'รายการสั่งซื้อ ' + orderRes4.docno + ' สินค้า' + item.product.name + ' จำนวน ' + item.qty + ' ชิ้น ทำรายการเสร็จสมบูรณ์ ขอบคุณที่ใช้บริการ';
@@ -216,7 +212,7 @@ exports.updateNotification = function (req, res) {
               };
               notifications.push(notiLog);
               userIds = orderRes4.user && orderRes4.user.notificationids ? orderRes4.user.notificationids : [];
-              userNoti(titleUser, detailUser, userIds);
+              userNoti(titleUser, detailUser, userIds, 'Order', orderRes4._id, item._id);
 
             } else if (item.status === 'sent') {
 
@@ -238,7 +234,7 @@ exports.updateNotification = function (req, res) {
               };
               notifications.push(notiLog);
               userIds = orderRes4.user && orderRes4.user.notificationids ? orderRes4.user.notificationids : [];
-              userNoti(titleUser, detailUser, userIds);
+              userNoti(titleUser, detailUser, userIds, 'Order', orderRes4._id, item._id);
 
             } else if (item.status === 'reject') {
 
@@ -260,7 +256,7 @@ exports.updateNotification = function (req, res) {
               };
               notifications.push(notiLog);
               userIds = item.product && item.product.shop && item.product.shop.shopowner && item.product.shop.shopowner.notificationids ? item.product.shop.shopowner.notificationids : [];
-              shopNoti(titleShop, detailShop, userIds);
+              shopNoti(titleShop, detailShop, userIds, 'Order', orderRes4._id, item._id);
 
               titleUser = 'รายการสั่งซื้อถูกยกเลิก';
               detailUser = 'รายการสั่งซื้อ ' + orderRes4.docno + ' สินค้า' + item.product.name + ' จำนวน ' + item.qty + ' ชิ้น ถูกยกเลิกจากร้านค้า เนื่องจาก' + item.remark + ' เมื่อ ' + dateStatus + ' กรุณารอการคืนเงินจากระบบ';
@@ -273,7 +269,7 @@ exports.updateNotification = function (req, res) {
               };
               notifications.push(notiLog);
               userIds = orderRes4.user && orderRes4.user.notificationids ? orderRes4.user.notificationids : [];
-              userNoti(titleUser, detailUser, userIds);
+              userNoti(titleUser, detailUser, userIds, 'Order', orderRes4._id, item._id);
 
             } else if (item.status === 'admincancel') {
 
@@ -295,7 +291,7 @@ exports.updateNotification = function (req, res) {
               };
               notifications.push(notiLog);
               userIds = item.product && item.product.shop && item.product.shop.shopowner && item.product.shop.shopowner.notificationids ? item.product.shop.shopowner.notificationids : [];
-              shopNoti(titleShop, detailShop, userIds);
+              shopNoti(titleShop, detailShop, userIds, 'Order', orderRes4._id, item._id);
 
               titleUser = 'รายการสั่งซื้อถูกยกเลิก';
               detailUser = 'รายการสั่งซื้อ ' + orderRes4.docno + ' สินค้า' + item.product.name + ' จำนวน ' + item.qty + ' ชิ้น ถูกยกเลิกจากผู้ดูแลระบบ เนื่องจาก' + item.remark + ' เมื่อ ' + dateStatus + ' กรุณารอการคืนเงินจากระบบ';
@@ -308,7 +304,7 @@ exports.updateNotification = function (req, res) {
               };
               notifications.push(notiLog);
               userIds = orderRes4.user && orderRes4.user.notificationids ? orderRes4.user.notificationids : [];
-              userNoti(titleUser, detailUser, userIds);
+              userNoti(titleUser, detailUser, userIds, 'Order', orderRes4._id, item._id);
 
             } else if (item.status === 'transferred') {
 
@@ -330,7 +326,7 @@ exports.updateNotification = function (req, res) {
               };
               notifications.push(notiLog);
               userIds = item.product && item.product.shop && item.product.shop.shopowner && item.product.shop.shopowner.notificationids ? item.product.shop.shopowner.notificationids : [];
-              shopNoti(titleShop, detailShop, userIds);
+              shopNoti(titleShop, detailShop, userIds, 'Order', orderRes4._id, item._id);
 
             } else if (item.status === 'rejectrefund' || item.status === 'cancelrefund' || item.status === 'admincancelrefund') {
 
@@ -352,7 +348,7 @@ exports.updateNotification = function (req, res) {
               };
               notifications.push(notiLog);
               userIds = item.product && item.product.shop && item.product.shop.shopowner && item.product.shop.shopowner.notificationids ? item.product.shop.shopowner.notificationids : [];
-              shopNoti(titleShop, detailShop, userIds);
+              shopNoti(titleShop, detailShop, userIds, 'Order', orderRes4._id, item._id);
 
               titleUser = 'ได้รับการคืนเงินจากระบบ';
               detailUser = 'รายการสั่งซื้อ ' + orderRes4.docno + ' สินค้า' + item.product.name + ' จำนวน ' + item.qty + ' ชิ้น ได้รับการคืนเงินจากระบบ จำนวน ' + item.amount + ' บาท เมื่อ ' + dateStatus;
@@ -365,7 +361,7 @@ exports.updateNotification = function (req, res) {
               };
               notifications.push(notiLog);
               userIds = orderRes4.user && orderRes4.user.notificationids ? orderRes4.user.notificationids : [];
-              userNoti(titleUser, detailUser, userIds);
+              userNoti(titleUser, detailUser, userIds, 'Order', orderRes4._id, item._id);
 
             }
             // var userIds = req.user && req.user.notificationids ? req.user.notificationids : [];
@@ -395,9 +391,6 @@ exports.updateNotification = function (req, res) {
         // var detail = '';
         var orderid = orderRes4.docno ? orderRes4.docno : orderRes4._id;
 
-        item = item;
-        item.orderid = orderid;
-
         if (item.status === 'cancel') {
 
           // var dateStatus = '';
@@ -419,7 +412,7 @@ exports.updateNotification = function (req, res) {
           };
           notifications.push(notiLog);
           userIds = orderRes4.user && orderRes4.user.notificationids ? orderRes4.user.notificationids : [];
-          userNoti(titleUser, detailUser, userIds);
+          userNoti(titleUser, detailUser, userIds, 'Order', orderRes4._id, item._id);
 
         } else if (item.status === 'completed') {
 
@@ -442,7 +435,7 @@ exports.updateNotification = function (req, res) {
           };
           notifications.push(notiLog);
           userIds = orderRes4.user && orderRes4.user.notificationids ? orderRes4.user.notificationids : [];
-          userNoti(titleUser, detailUser, userIds);
+          userNoti(titleUser, detailUser, userIds, 'Order', orderRes4._id, item._id);
 
         } else if (item.status === 'sent') {
 
@@ -464,7 +457,7 @@ exports.updateNotification = function (req, res) {
           };
           notifications.push(notiLog);
           userIds = orderRes4.user && orderRes4.user.notificationids ? orderRes4.user.notificationids : [];
-          userNoti(titleUser, detailUser, userIds);
+          userNoti(titleUser, detailUser, userIds, 'Order', orderRes4._id, item._id);
 
         } else if (item.status === 'reject') {
 
@@ -487,7 +480,7 @@ exports.updateNotification = function (req, res) {
           };
           notifications.push(notiLog);
           userIds = orderRes4.user && orderRes4.user.notificationids ? orderRes4.user.notificationids : [];
-          userNoti(titleUser, detailUser, userIds);
+          userNoti(titleUser, detailUser, userIds, 'Order', orderRes4._id, item._id);
 
         } else if (item.status === 'admincancel') {
 
@@ -510,7 +503,7 @@ exports.updateNotification = function (req, res) {
           };
           notifications.push(notiLog);
           userIds = orderRes4.user && orderRes4.user.notificationids ? orderRes4.user.notificationids : [];
-          userNoti(titleUser, detailUser, userIds);
+          userNoti(titleUser, detailUser, userIds, 'Order', orderRes4._id, item._id);
 
         } else if (item.status === 'transferred') {
 
@@ -536,7 +529,7 @@ exports.updateNotification = function (req, res) {
           };
           notifications.push(notiLog);
           userIds = orderRes4.user && orderRes4.user.notificationids ? orderRes4.user.notificationids : [];
-          userNoti(titleUser, detailUser, userIds);
+          userNoti(titleUser, detailUser, userIds, 'Order', orderRes4._id, item._id);
 
         }
         // var userIds = req.user && req.user.notificationids ? req.user.notificationids : [];
@@ -566,7 +559,7 @@ exports.createBidNotification = function (req, res) {
       user: orderRes.user
     };
     var userIds = orderRes.user && orderRes.user.notificationids ? orderRes.user.notificationids : [];
-    userNoti(title, detail, userIds);
+    userNoti(title, detail, userIds, 'Bid');
     // var userIds = req.user && req.user.notificationids ? req.user.notificationids : [];
     var pushnoti = new pushNotification(notiLog);
     pushnoti.save(function (err) {
@@ -581,7 +574,7 @@ exports.createBidNotification = function (req, res) {
 
 };
 
-function userNoti(title, message, ids) {
+function userNoti(title, message, ids, type, orderid, itemid) {
   request({
     url: pushNotiUrl,
     headers: {
@@ -598,8 +591,9 @@ function userNoti(title, message, ids) {
       },
       include_player_ids: ids,
       data: {
-        type: 'Order',
-        item: JSON.stringify(item)
+        type: type,
+        orderid: orderid,
+        itemid: itemid
       }
     }
   }, function (error, response, body) {
@@ -616,7 +610,7 @@ function userNoti(title, message, ids) {
   });
 }
 
-function shopNoti(title, message, ids) {
+function shopNoti(title, message, ids, type, orderid, itemid) {
   request({
     url: pushNotiUrl,
     headers: {
@@ -633,8 +627,9 @@ function shopNoti(title, message, ids) {
       },
       include_player_ids: ids,
       data: {
-        type: 'Order',
-        item: JSON.stringify(item)
+        type: type,
+        orderid: orderid,
+        itemid: itemid
       }
     }
   }, function (error, response, body) {
