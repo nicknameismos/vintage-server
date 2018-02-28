@@ -505,7 +505,7 @@ exports.updateNotification = function (req, res) {
           userNoti(titleUser, detailUser, userIds);
 
         } else if (item.status === 'transferred') {
-          
+
 
         } else if (item.status === 'rejectrefund' || item.status === 'cancelrefund' || item.status === 'admincancelrefund') {
 
@@ -547,7 +547,7 @@ exports.updateNotification = function (req, res) {
 
 exports.createBidNotification = function (req, res) {
   var title = 'คุณชนะการประมูล';
-  var detail = 'การประมูล ' + req.bid.name + ' สำเร็จ คุณชนะการประมูล สามารถชำระเงินได้ที่ "การสั่งซื้อของฉัน"';
+  var detail = 'การประมูล ' + req.bid.name + ' สำเร็จ คุณชนะการประมูล สามารถชำระเงินได้ที่ "รายการสั่งซื้อของฉัน"';
   User.populate(req.notidata, {
     path: 'user'
   }, function (err, orderRes) {
@@ -588,7 +588,11 @@ function userNoti(title, message, ids) {
       contents: {
         en: message
       },
-      include_player_ids: ids // ['4c7cecbc-d0c7-48a9-a415-2986acc0bec3']
+      include_player_ids: ids,
+      data: {
+        abc: "123",
+        foo: "bar"
+      }
     }
   }, function (error, response, body) {
     if (error) {
