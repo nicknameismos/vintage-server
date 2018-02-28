@@ -121,8 +121,8 @@ exports.create = function (req, res, next) {
 };
 
 exports.updateBid = function (req, res, next) {
-  var order = req.body;
-  console.log(order);
+  var order = req.order;
+  // console.log(order);
   var bidId = order.itemsbid[0].bid;
   Bid.findById(bidId).exec(function (err, bid) {
     if (err) {
@@ -983,7 +983,8 @@ exports.cookingOrderDetail = function (req, res, next) {
       status: req.order.itemsbid[req.itemIndex].status,
       rejectreason: req.order.itemsbid[req.itemIndex].remark ? req.order.itemsbid[req.itemIndex].remark : '',
       channel: req.order.channel,
-      user: req.order.user
+      user: req.order.user,
+      shippings: req.order.itemsbid[req.itemIndex].bid.shipping
     };
   }
 
