@@ -34,9 +34,6 @@ module.exports = function (app) {
   app.route('/api/getorderdetail/:orderId/:itemId').all(core.jwtCheck, ordersPolicy.isAllowed)
     .get(orders.findShop, orders.cookingOrderDetail, orders.orderDetail);
 
-  app.route('/api/getorderdetail/:orderId/:itemId').all(core.jwtCheck, ordersPolicy.isAllowed)
-    .get(orders.findShop, orders.cookingOrderDetail, orders.orderDetail);
-
   app.route('/api/cancelitem').all(core.jwtCheck, ordersPolicy.isAllowed)
     .post(orders.getOrderId, orders.cancel, core.updateNotification);
 
