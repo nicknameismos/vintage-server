@@ -559,7 +559,7 @@ exports.createBidNotification = function (req, res) {
       user: orderRes.user
     };
     var userIds = orderRes.user && orderRes.user.notificationids ? orderRes.user.notificationids : [];
-    userNoti(title, detail, userIds, type);
+    userNoti(title, detail, userIds, 'Bid');
     // var userIds = req.user && req.user.notificationids ? req.user.notificationids : [];
     var pushnoti = new pushNotification(notiLog);
     pushnoti.save(function (err) {
