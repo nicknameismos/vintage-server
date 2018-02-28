@@ -984,7 +984,7 @@ exports.cookingOrderDetail = function (req, res, next) {
       rejectreason: req.order.itemsbid[req.itemIndex].remark ? req.order.itemsbid[req.itemIndex].remark : '',
       channel: req.order.channel,
       user: req.order.user,
-      shippings: req.order.itemsbid[req.itemIndex].bid.shipping
+      shippings: req.order.itemsbid[req.itemIndex].bid.shippings
     };
   }
 
