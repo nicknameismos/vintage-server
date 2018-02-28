@@ -599,7 +599,7 @@ function userNoti(title, message, ids) {
       include_player_ids: ids,
       data: {
         type: 'Order',
-        item: item
+        item: JSON.stringify(item)
       }
     }
   }, function (error, response, body) {
@@ -634,7 +634,7 @@ function shopNoti(title, message, ids) {
       include_player_ids: ids,
       data: {
         type: 'Order',
-        item: item
+        item: JSON.stringify(item)
       }
     }
   }, function (error, response, body) {
