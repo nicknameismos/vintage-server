@@ -122,6 +122,7 @@ exports.create = function (req, res, next) {
 
 exports.updateBid = function (req, res, next) {
   var order = req.body;
+  console.log(order);
   var bidId = order.itemsbid[0].bid;
   Bid.findById(bidId).exec(function (err, bid) {
     if (err) {
