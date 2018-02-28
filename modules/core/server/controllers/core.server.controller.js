@@ -10,8 +10,8 @@ var mongoose = require('mongoose'),
   request = require('request'),
   errorHandler = require(path.resolve('./modules/core/server/controllers/errors.server.controller')),
   pushNotiUrl = process.env.PUSH_NOTI_URL || 'https://onesignal.com/api/v1/notifications',
-  User = mongoose.model('User'),
-  itemNoti;
+  User = mongoose.model('User');
+  // itemNoti;
 
 /**
  * Render the main application page
@@ -145,8 +145,8 @@ exports.updateNotification = function (req, res) {
 
             var orderid = orderRes4.docno ? orderRes4.docno : orderRes4._id;
 
-            itemNoti = item;
-            itemNoti.orderid = orderid;
+            // itemNoti = item;
+            // itemNoti.orderid = orderid;
 
             if (item.status === 'cancel') {
 
@@ -395,8 +395,8 @@ exports.updateNotification = function (req, res) {
         // var detail = '';
         var orderid = orderRes4.docno ? orderRes4.docno : orderRes4._id;
 
-        itemNoti = item;
-        itemNoti.orderid = orderid;
+        // itemNoti = item;
+        // itemNoti.orderid = orderid;
 
         if (item.status === 'cancel') {
 
@@ -599,7 +599,7 @@ function userNoti(title, message, ids) {
       include_player_ids: ids,
       data: {
         type: 'Order',
-        data: itemNoti
+        // data: itemNoti
       }
     }
   }, function (error, response, body) {
@@ -634,7 +634,7 @@ function shopNoti(title, message, ids) {
       include_player_ids: ids,
       data: {
         type: 'Order',
-        data: itemNoti
+        // data: itemNoti
       }
     }
   }, function (error, response, body) {
