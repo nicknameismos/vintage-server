@@ -153,6 +153,9 @@ exports.bidCreateOrder = function (req, res) {
   var _order = req.body;
   order.omiseresponse = _order.payment && _order.payment.paymenttype === 'Credit Card' ? req.omiseresponse : {};
   order.itemsbid = _order.itemsbid ? _order.itemsbid : order.itemsbid;
+  if (_order.adminshipping && _order.adminshipping.ref && _order.adminshipping.ref.name) {
+    order.itemsbid[0].shipping = _order.adminshipping;
+  }
   order.itemsbid[0].status = 'confirm';
   order.itemsbid[0].log.push({
     status: 'confirm'
@@ -821,7 +824,7 @@ exports.shopCookingListOrder = function (req, res, next) {
   resData[1].items.sort(function (a, b) { return (a.sentdate < b.sentdate) ? 1 : ((b.sentdate < a.sentdate) ? -1 : 0); });
   resData[2].items.sort(function (a, b) { return (a.receivedate < b.receivedate) ? 1 : ((b.receivedate < a.receivedate) ? -1 : 0); });
   resData[3].items.sort(function (a, b) { return (a.canceldate < b.canceldate) ? 1 : ((b.canceldate < a.canceldate) ? -1 : 0); });
-  
+
   req.resData = resData;
   next();
 };
