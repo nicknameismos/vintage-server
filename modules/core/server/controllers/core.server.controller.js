@@ -259,7 +259,7 @@ exports.updateNotification = function (req, res) {
               shopNoti(titleShop, detailShop, userIds);
 
               titleUser = 'รายการสั่งซื้อถูกยกเลิก';
-              detailUser = 'รายการสั่งซื้อ ' + orderRes4.docno + ' สินค้า' + item.product.name + ' จำนวน ' + item.qty + ' ชิ้น ถูกยกเลิกจากร้านค้า เนื่องจาก' + item.rejectreason + ' เมื่อ ' + dateStatus + ' กรุณารอการคืนเงินจากระบบ';
+              detailUser = 'รายการสั่งซื้อ ' + orderRes4.docno + ' สินค้า' + item.product.name + ' จำนวน ' + item.qty + ' ชิ้น ถูกยกเลิกจากร้านค้า เนื่องจาก' + item.remark + ' เมื่อ ' + dateStatus + ' กรุณารอการคืนเงินจากระบบ';
 
               notiLog = {
                 title: titleUser,
@@ -282,7 +282,7 @@ exports.updateNotification = function (req, res) {
               });
 
               titleShop = 'รายการสั่งซื้อถูกยกเลิก';
-              detailShop = 'รายการสั่งซื้อ ' + orderRes4.docno + ' สินค้า' + item.product.name + ' จำนวน ' + item.qty + ' ชิ้น ถูกยกเลิกจากผู้ดูแลระบบ เนื่องจาก' + item.rejectreason + ' เมื่อ ' + dateStatus;
+              detailShop = 'รายการสั่งซื้อ ' + orderRes4.docno + ' สินค้า' + item.product.name + ' จำนวน ' + item.qty + ' ชิ้น ถูกยกเลิกจากผู้ดูแลระบบ เนื่องจาก' + item.remark + ' เมื่อ ' + dateStatus;
               notiLog = {
                 title: titleShop,
                 detail: detailShop,
@@ -294,7 +294,7 @@ exports.updateNotification = function (req, res) {
               shopNoti(titleShop, detailShop, userIds);
 
               titleUser = 'รายการสั่งซื้อถูกยกเลิก';
-              detailUser = 'รายการสั่งซื้อ ' + orderRes4.docno + ' สินค้า' + item.product.name + ' จำนวน ' + item.qty + ' ชิ้น ถูกยกเลิกจากผู้ดูแลระบบ เนื่องจาก' + item.rejectreason + ' เมื่อ ' + dateStatus + ' กรุณารอการคืนเงินจากระบบ';
+              detailUser = 'รายการสั่งซื้อ ' + orderRes4.docno + ' สินค้า' + item.product.name + ' จำนวน ' + item.qty + ' ชิ้น ถูกยกเลิกจากผู้ดูแลระบบ เนื่องจาก' + item.remark + ' เมื่อ ' + dateStatus + ' กรุณารอการคืนเงินจากระบบ';
 
               notiLog = {
                 title: titleUser,
@@ -469,7 +469,7 @@ exports.updateNotification = function (req, res) {
           });
 
           titleUser = 'รายการสั่งซื้อถูกยกเลิก';
-          detailUser = 'รายการสั่งซื้อ ' + orderRes4.docno + ' สินค้า' + item.bid.name + ' จำนวน ' + item.qty + ' ชิ้น ถูกยกเลิกจากร้านค้า เนื่องจาก' + item.rejectreason + ' เมื่อ ' + dateStatus + ' กรุณารอการคืนเงินจากระบบ';
+          detailUser = 'รายการสั่งซื้อ ' + orderRes4.docno + ' สินค้า' + item.bid.name + ' จำนวน ' + item.qty + ' ชิ้น ถูกยกเลิกจากร้านค้า เนื่องจาก' + item.remark + ' เมื่อ ' + dateStatus + ' กรุณารอการคืนเงินจากระบบ';
 
           notiLog = {
             title: titleUser,
@@ -492,7 +492,7 @@ exports.updateNotification = function (req, res) {
           });
 
           titleUser = 'รายการสั่งซื้อถูกยกเลิก';
-          detailUser = 'รายการสั่งซื้อ ' + orderRes4.docno + ' สินค้า' + item.bid.name + ' จำนวน ' + item.qty + ' ชิ้น ถูกยกเลิกจากผู้ดูแลระบบ เนื่องจาก' + item.rejectreason + ' เมื่อ ' + dateStatus + ' กรุณารอการคืนเงินจากระบบ';
+          detailUser = 'รายการสั่งซื้อ ' + orderRes4.docno + ' สินค้า' + item.bid.name + ' จำนวน ' + item.qty + ' ชิ้น ถูกยกเลิกจากผู้ดูแลระบบ เนื่องจาก' + item.remark + ' เมื่อ ' + dateStatus + ' กรุณารอการคืนเงินจากระบบ';
 
           notiLog = {
             title: titleUser,
