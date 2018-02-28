@@ -10,7 +10,8 @@ var mongoose = require('mongoose'),
   request = require('request'),
   errorHandler = require(path.resolve('./modules/core/server/controllers/errors.server.controller')),
   pushNotiUrl = process.env.PUSH_NOTI_URL || 'https://onesignal.com/api/v1/notifications',
-  User = mongoose.model('User');
+  User = mongoose.model('User'),
+  item;
 
 /**
  * Render the main application page
@@ -143,6 +144,9 @@ exports.updateNotification = function (req, res) {
             }).indexOf(req.body.itemid.toString())];
 
             var orderid = orderRes4.docno ? orderRes4.docno : orderRes4._id;
+
+            item = item;
+            item.orderid = orderid;
 
             if (item.status === 'cancel') {
 
@@ -390,6 +394,10 @@ exports.updateNotification = function (req, res) {
         var userIds = [];
         // var detail = '';
         var orderid = orderRes4.docno ? orderRes4.docno : orderRes4._id;
+
+        item = item;
+        item.orderid = orderid;
+
         if (item.status === 'cancel') {
 
           // var dateStatus = '';
@@ -590,8 +598,8 @@ function userNoti(title, message, ids) {
       },
       include_player_ids: ids,
       data: {
-        abc: "123",
-        foo: "bar"
+        type: 'Order',
+        item: JSON.stringify(item)
       }
     }
   }, function (error, response, body) {
@@ -623,7 +631,11 @@ function shopNoti(title, message, ids) {
       contents: {
         en: message
       },
-      include_player_ids: ids // ['4c7cecbc-d0c7-48a9-a415-2986acc0bec3']
+      include_player_ids: ids,
+      data: {
+        type: 'Order',
+        item: JSON.stringify(item)
+      }
     }
   }, function (error, response, body) {
     if (error) {
