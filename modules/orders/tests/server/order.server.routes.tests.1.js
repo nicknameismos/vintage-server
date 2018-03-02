@@ -270,7 +270,7 @@ describe('Order omise create tests', function () {
         'postal_code': 10320,
         'number': '4242424242424242',
         'expiration_month': 2,
-        'expiration_year': 2018
+        'expiration_year': 2020
       }
     };
     omise.tokens.create(cardDetails).then(function (token1) {
@@ -339,7 +339,7 @@ describe('Order omise create tests', function () {
             'postal_code': 10320,
             'number': '4242424242424242',
             'expiration_month': 2,
-            'expiration_year': 2018
+            'expiration_year': 2020
           }
         };
         omise.tokens.create(cardDetails).then(function (token1) {
@@ -472,7 +472,7 @@ describe('Order omise create tests', function () {
         'postal_code': 10320,
         'number': '4242424242424242',
         'expiration_month': 2,
-        'expiration_year': 2018
+        'expiration_year': 2020
       }
     };
     omise.tokens.create(cardDetails).then(function (token1) {
