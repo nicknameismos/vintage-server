@@ -224,7 +224,7 @@ exports.updateNotification = function (req, res) {
               });
 
               titleUser = 'สินค้าถูกจัดส่งแล้ว';
-              detailUser = 'รายการสั่งซื้อ ' + orderRes4.docno + ' สินค้า' + item.product.name + ' จำนวน ' + item.qty + 'ชิ้น ถูกจัดส่งแล้ว เมื่อ ' + dateStatus + ' เลขพัสดุของคุณคือ ' + item.refid + ' กรุณารอรับสินค้า หากได้รับสินค้าแล้วกรุณากด "ได้รับสินค้าแล้ว"';
+              detailUser = 'รายการสั่งซื้อ ' + orderRes4.docno + ' สินค้า' + item.product.name + ' จำนวน ' + item.qty + ' ชิ้น ถูกจัดส่งแล้ว เมื่อ ' + dateStatus + ' เลขพัสดุของคุณคือ ' + item.refid + ' กรุณารอรับสินค้า หากได้รับสินค้าแล้วกรุณากด "ได้รับสินค้าแล้ว"';
 
               notiLog = {
                 title: titleUser,
@@ -447,7 +447,7 @@ exports.updateNotification = function (req, res) {
           });
 
           titleUser = 'สินค้าถูกจัดส่งแล้ว';
-          detailUser = 'รายการสั่งซื้อ ' + orderRes4.docno + ' สินค้า' + item.bid.name + ' จำนวน ' + item.qty + 'ชิ้น ถูกจัดส่งแล้ว เมื่อ ' + dateStatus + ' เลขพัสดุของคุณคือ ' + item.refid + ' กรุณารอรับสินค้า หากได้รับสินค้าแล้วกรุณากด "ได้รับสินค้าแล้ว"';
+          detailUser = 'รายการสั่งซื้อ ' + orderRes4.docno + ' สินค้า' + item.bid.name + ' จำนวน ' + item.qty + ' ชิ้น ถูกจัดส่งแล้ว เมื่อ ' + dateStatus + ' เลขพัสดุของคุณคือ ' + item.refid + ' กรุณารอรับสินค้า หากได้รับสินค้าแล้วกรุณากด "ได้รับสินค้าแล้ว"';
 
           notiLog = {
             title: titleUser,
