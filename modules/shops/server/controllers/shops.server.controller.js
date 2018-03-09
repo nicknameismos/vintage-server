@@ -1446,7 +1446,7 @@ exports.getShopsList = function (req, res) {
       var maxLimit = shops.length;
       var limitItem = shops.length;
       if (req.limitShop !== 'all') {
-        var lastIndex = req.limitShop * 4;
+        var lastIndex = req.limitShop * 15;
         var itemsLimit = shops.slice(0, lastIndex);
         limitItem = lastIndex;
         resultItem = itemsLimit;
