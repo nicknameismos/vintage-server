@@ -1247,7 +1247,7 @@ describe('Shop CRUD edit and delete items token tests', function () {
         if (shopSaveErr) {
           return done(shopSaveErr);
         }
-        agent.get('/api/getshoplist')
+        agent.get('/api/getshoplist/1')
           .set('authorization', 'Bearer ' + token)
           .expect(200)
           .end(function (shopGetErr, shopsGetRes) {
@@ -1258,8 +1258,8 @@ describe('Shop CRUD edit and delete items token tests', function () {
             // Get shop list
             var shops = shopsGetRes.body;
 
-            (shops.length).should.match(1);
-            (shops[0].coverimage).should.match(shop.coverimage);
+            (shops.items.length).should.match(1);
+            (shops.items[0].coverimage).should.match(shop.coverimage);
 
             done();
           });

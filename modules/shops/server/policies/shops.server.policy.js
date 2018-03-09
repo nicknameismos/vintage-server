@@ -75,7 +75,7 @@ exports.invokeRolesPolicies = function () {
       resources: '/api/searchkeyword',
       permissions: '*'
     }, {
-      resources: '/api/getshoplist',
+      resources: '/api/getshoplist/:shoppage',
       permissions: '*'
     }]
   }, {
@@ -135,7 +135,7 @@ exports.invokeRolesPolicies = function () {
       resources: '/api/searchkeyword',
       permissions: '*'
     }, {
-      resources: '/api/getshoplist',
+      resources: '/api/getshoplist/:shoppage',
       permissions: ['GET']
     }]
   }, {
@@ -165,7 +165,7 @@ exports.invokeRolesPolicies = function () {
       resources: '/api/searchkeyword',
       permissions: '*'
     }, {
-      resources: '/api/getshoplist',
+      resources: '/api/getshoplist/:shoppage',
       permissions: ['GET']
     }]
   }, {
@@ -189,7 +189,7 @@ exports.invokeRolesPolicies = function () {
       resources: '/api/searchkeyword',
       permissions: '*'
     }, {
-      resources: '/api/getshoplist',
+      resources: '/api/getshoplist/:shoppage',
       permissions: ['GET']
     }]
   }]);

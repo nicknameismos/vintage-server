@@ -566,7 +566,7 @@ describe('Customer Home Stories Test', function () {
       created: new Date(2018, 1, 31)
     });
     bidProduct.save();
-    agent.get('/api/vintagecustomerhome')
+    agent.get('/api/vintagecustomerhome/1')
       .end(function (getErr2, getRes2) {
         if (getErr2) {
           return done(getErr2);

@@ -392,6 +392,11 @@ exports.todaywelcome = function (req, res) {
 
 };
 
+exports.pageLimit = function (req, res, next, page) {
+  req.page = page;
+  next();
+};
+
 exports.getListBids = function (req, res, next) {
   Bid.find().sort('-starttime').exec(function (err, bids) {
     if (err) {
@@ -497,10 +502,24 @@ exports.cookingListProducts = function (req, res, next) {
 };
 
 exports.customerVintageHome = function (req, res, next) {
-  var items = req.items.sort(function(a, b) { return (a.created < b.created) ? 1 : ((b.created < a.created) ? -1 : 0); });
+  var items = req.items.sort(function (a, b) { return (a.created < b.created) ? 1 : ((b.created < a.created) ? -1 : 0); });
+  var resultItem = items;
+  var maxLimit = items.length;
+  var limitItem = items.length;
+  var itemsLimit;
+  if (req.page !== 'all') {
+    var lastIndex = req.page * 30;
+    itemsLimit = items.slice(0, lastIndex);
+    limitItem = lastIndex;
+    resultItem = itemsLimit;
+  }
+
+
   res.jsonp({
     bid: req.resBids,
-    items: items
+    items: resultItem,
+    limitItem: limitItem,
+    maxLimit: maxLimit
   });
 };
 

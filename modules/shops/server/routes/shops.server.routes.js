@@ -85,8 +85,9 @@ module.exports = function (app) {
   app.route('/api/searchkeyword').all(core.jwtCheck, shopsPolicy.isAllowed)
     .post(shops.searchShopKeyword, shops.searchProductKeyword, shops.resSearch);
 
-  app.route('/api/getshoplist')//.all(core.jwtCheck, shopsPolicy.isAllowed)
+  app.route('/api/getshoplist/:shoppage')//.all(core.jwtCheck, shopsPolicy.isAllowed)
     .get(shops.getShopsList);
   // // Finish by binding the Shop middleware
   app.param('shopId', shops.shopByID);
+  app.param('shoppage', shops.shopPageLimit);
 };

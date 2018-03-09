@@ -42,11 +42,12 @@ module.exports = function (app) {
   app.param('cateid', customers.getcateid);
   app.param('condition', customers.getcondition);
 
-  app.route('/api/vintagecustomerhome')
+  app.route('/api/vintagecustomerhome/:page')
     .get(customers.getListBids, customers.cookingListBids, customers.getListAds, customers.cookingListAds, customers.getListProducts, customers.cookingListProducts, customers.customerVintageHome);
 
   app.param('lat', customers.getlat);
   app.param('lng', customers.getlng);
+  app.param('page', customers.pageLimit);
   app.param('cateid', customers.getcateid);
   app.param('condition', customers.getcondition);
 
