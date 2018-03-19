@@ -64,7 +64,7 @@ exports.mailer = function (req, res) {
     to: email, // list of receivers
     // to: 'mynameissarawut@gmail.com',
     subject: "Username & password for shop", // Subject line
-    html: "<p><b>" + "username" + " : " + data.username + "</b></p>" + "   " + "<p><b>" + "password" + " : " + "user1234" + "</b></p>", // plaintext body
+    html: "<p><b>" + "username" + " : " + email + "</b></p>" + "   " + "<p><b>" + "password" + " : " + "user1234" + "</b></p>", // plaintext body
 
   };
   smtpTransport.sendMail(mailOptions, function (error, response) {
