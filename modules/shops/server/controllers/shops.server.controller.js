@@ -46,21 +46,22 @@ exports.mailer = function (req, res) {
 
   // console.log('mail' + req.shop);
   var data = req.shop.user;
+  var email = req.shop.email;
   var smtpTransport = nodemailer.createTransport("SMTP", {
     service: "Gmail",
-    // auth: {
-    //   user: "cnetmiod@gmail.com",
-    //   pass: "P@ssw0rd4321"
-    // }
     auth: {
-      user: "mailsentuser@gmail.com",
-      pass: "P@ssw0rd12345"
+      user: "cnetmiod@gmail.com",
+      pass: "P@ssw0rd4321"
     }
+    // auth: {
+    //   user: "mailsentuser@gmail.com",
+    //   pass: "P@ssw0rd12345"
+    // }
   });
-
+  console.log(email);
   var mailOptions = {
-    from: "Green vintage ✔ <mailsentuser@gmail.com>", // sender address✔
-    to: data.email, // list of receivers
+    from: "Green vintage ✔ <cnetmiod@gmail.com>", // sender address✔
+    to: email, // list of receivers
     // to: 'mynameissarawut@gmail.com',
     subject: "Username & password for shop", // Subject line
     html: "<p><b>" + "username" + " : " + data.username + "</b></p>" + "   " + "<p><b>" + "password" + " : " + "user1234" + "</b></p>", // plaintext body
