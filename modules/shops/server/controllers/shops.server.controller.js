@@ -48,9 +48,13 @@ exports.mailer = function (req, res) {
   var data = req.shop.user;
   var smtpTransport = nodemailer.createTransport("SMTP", {
     service: "Gmail",
+    // auth: {
+    //   user: "cnetmiod@gmail.com",
+    //   pass: "P@ssw0rd4321"
+    // }
     auth: {
-      user: "cnetmiod@gmail.com",
-      pass: "P@ssw0rd4321"
+      user: "mailsentuser@gmail.com",
+      pass: "P@ssw0rd12345"
     }
   });
 
