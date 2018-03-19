@@ -59,7 +59,7 @@ exports.mailer = function (req, res) {
   });
 
   var mailOptions = {
-    from: "Green vintage ✔ <cnetmiod@gmail.com>", // sender address✔
+    from: "Green vintage ✔ <mailsentuser@gmail.com>", // sender address✔
     to: data.email, // list of receivers
     // to: 'mynameissarawut@gmail.com',
     subject: "Username & password for shop", // Subject line
