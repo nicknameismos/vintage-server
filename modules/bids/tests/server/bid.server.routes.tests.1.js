@@ -144,6 +144,7 @@ describe('Bid CRUD tests with token', function () {
         (bids.items[1].items.length).should.match(2);
         (bids.items[2].type).should.match('ME');
         (bids.items[2].items.length).should.match(2);
+        (bids.items[2].items[0].iswin).should.match(true);
 
         done();
       });

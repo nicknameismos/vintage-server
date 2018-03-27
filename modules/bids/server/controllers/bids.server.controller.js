@@ -211,6 +211,10 @@ exports.cookingBid = function (req, res, next) {
             }).indexOf(req.user._id.toString())].created;
             var lastWeek = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 7);
             if (selectedDate >= lastWeek && selectedDate <= today) {
+              var isWin = false;
+              if (element.userbid && element.userbid[element.userbid.length - 1].user.toString() === req.user._id.toString()) {
+                isWin = true;
+              }
               cookingData[2].items.push({
                 _id: element._id,
                 created: element.created,
@@ -221,7 +225,8 @@ exports.cookingBid = function (req, res, next) {
                 pricebid: element.bidprice,
                 datestart: new Date(element.starttime),
                 dateend: endShow,
-                time: counttime(selectedDate)
+                time: counttime(selectedDate),
+                iswin: isWin
               });
 
               // cookingData[2].items = _.chain(cookingData[2].items).sortBy('dateend').sortBy('isBid').value();
