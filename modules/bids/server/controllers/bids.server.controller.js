@@ -285,8 +285,12 @@ exports.getBidDetail = function (req, res) {
   var userid = '';
   var displayName = '';
   var image = '';
+  var isExpire = true;
   if (today >= startdate && today <= expiredate) {
     isBid = true;
+  }
+  if (today > expiredate) {
+    isExpire = false;
   }
   if (bid && bid.userbid && bid.userbid.length > 0) {
     price = bid.userbid[bid.userbid.length - 1].bidprice || 0;
@@ -312,7 +316,8 @@ exports.getBidDetail = function (req, res) {
       _id: userid,
       name: displayName,
       profileImageURL: image
-    }
+    },
+    isexpire: isExpire
   };
   res.jsonp(resbid);
 };
