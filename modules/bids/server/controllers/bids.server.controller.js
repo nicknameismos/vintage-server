@@ -285,12 +285,12 @@ exports.getBidDetail = function (req, res) {
   var userid = '';
   var displayName = '';
   var image = '';
-  var isExpire = true;
+  var isExpire = false;
   if (today >= startdate && today <= expiredate) {
     isBid = true;
   }
   if (today > expiredate) {
-    isExpire = false;
+    isExpire = true;
   }
   if (bid && bid.userbid && bid.userbid.length > 0) {
     price = bid.userbid[bid.userbid.length - 1].bidprice || 0;
