@@ -212,7 +212,7 @@ exports.cookingBid = function (req, res, next) {
             var lastWeek = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 7);
             if (selectedDate >= lastWeek && selectedDate <= today) {
               var isWin = false;
-              if (element.userbid && element.userbid[element.userbid.length - 1].user.toString() === req.user._id.toString()) {
+              if (element.userbid && element.userbid[0].user.toString() === req.user._id.toString()) {
                 isWin = true;
               }
               cookingData[2].items.push({
