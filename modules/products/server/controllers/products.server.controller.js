@@ -30,7 +30,8 @@ exports.changeProductPicture = function (req, res) {
   //       message: 'Error occurred while uploading profile picture'
   //     });
   //   } else {
-  var cloudImageURL = 'data:image/png;base64,' + req.body.data;
+  // var cloudImageURL = 'data:image/jpg;base64,' + req.body.data;
+  var cloudImageURL = req.body.data;
   // console.log(cloudImageURL);
   cloudinary.uploader.upload(cloudImageURL, function (result) {
     var imageURL = result.url;
