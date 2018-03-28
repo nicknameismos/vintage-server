@@ -1526,16 +1526,18 @@ exports.getOrderListAdmin = function (req, res, next) {
       statusEN.forEach(function (status) {
         var bid;
         var item;
+        var count = 0;
         orders.forEach(function (order) {
-          console.log(status);
           bid = order.itemsbid.filter(function (bid) {
             return bid.status === status
           });
           item = order.items.filter(function (item) {
             return item.status === status
           });
+          count += bid.length;
+          count += item.length;
         });
-        req.count.push(bid.length + item.length);
+        req.count.push(count);
       });
 
       next();
