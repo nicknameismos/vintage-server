@@ -1531,7 +1531,7 @@ exports.getOrderListAdmin = function (req, res, next) {
           var item = order.items.filter(function (item) {
             return item.status === status
           });
-          count[index] = bid.length + item.length;
+          req.count.push(bid.length + item.length);
         });
       });
 
