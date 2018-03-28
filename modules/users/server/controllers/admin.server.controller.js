@@ -319,7 +319,7 @@ exports.getUsersByAdmin = function (req, res, next) {
 };
 
 exports.getCountUsersByAdmin = function (req, res, next) {
-  var user = 0;
+  var usercount = 0;
   var shop = 0;
   var admin = 0;
   User.find().exec(function (err, users) {
@@ -331,14 +331,14 @@ exports.getCountUsersByAdmin = function (req, res, next) {
 
     users.forEach(function (user) {
       if (user.roles[0] === 'user') {
-        user++;
+        usercount++;
       } else if (user.roles[0] === 'shop') {
         shop++;
       } else if (user.roles[0] === 'admin') {
         admin++;
       }
     });
-    req.count = [user, shop, admin];
+    req.count = [usercount, shop, admin];
     next();
   });
 };
