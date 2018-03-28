@@ -314,7 +314,6 @@ exports.getUsersByAdmin = function (req, res, next) {
     // console.log(users);
     req.pagings = countPage(users);
     req.resUser = users.slice(firstIndex, lastIndex);
-    req.allUsers = users;
     next();
   });
 };
@@ -323,17 +322,25 @@ exports.getCountUsersByAdmin = function (req, res, next) {
   var user = 0;
   var shop = 0;
   var admin = 0;
-  req.allUsers.forEach(function (user) {
-    if (user.roles[0] === 'user') {
-      user++;
-    } else if (user.roles[0] === 'shop') {
-      shop++;
-    } else if (user.roles[0] === 'admin') {
-      admin++;
+  User.find().exec(function (err, users) {
+    if (err) {
+      return res.status(400).send({
+        message: errorHandler.getErrorMessage(err)
+      });
     }
+
+    users.forEach(function (user) {
+      if (user.roles[0] === 'user') {
+        user++;
+      } else if (user.roles[0] === 'shop') {
+        shop++;
+      } else if (user.roles[0] === 'admin') {
+        admin++;
+      }
+    });
+    req.count = [user, shop, admin];
+    next();
   });
-  req.count = [user, shop, admin];
-  next();
 };
 
 exports.resUsers = function (req, res) {
