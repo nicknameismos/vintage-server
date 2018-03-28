@@ -1529,7 +1529,6 @@ exports.getOrderListAdmin = function (req, res, next) {
 };
 
 exports.getCountOrderListAdmin = function (req, res, next) {
-  req.count = [];
   var topay = 0;
   var confirm = 0;
   var sent = 0;
