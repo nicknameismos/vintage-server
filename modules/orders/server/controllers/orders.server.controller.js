@@ -1446,7 +1446,7 @@ exports.getOrderListAdmin = function (req, res, next) {
                   }
                 });
               }
-              if (status.toString() === 'refund' ? itm.status.toString() === 'cancelrefund' || itm.status.toString() === 'rejectrefund' || itm.status.toString() === 'admincancelrefund' : status.toString() === 'admincancel' ? itm.status.toString() === 'admincancel' || itm.status.toString() === 'reject' : itm.status.toString() === status.toString()) {
+              if (status.toString() === 'refund' ? itm.status.toString() === 'cancelrefund' || itm.status.toString() === 'rejectrefund' || itm.status.toString() === 'admincancelrefund' : status.toString() === 'admincancel' ? itm.status.toString() === 'admincancel' : itm.status.toString() === status.toString()) {
                 dataOrders.push({
                   itemid: itm._id,
                   orderid: order._id,
@@ -1492,7 +1492,7 @@ exports.getOrderListAdmin = function (req, res, next) {
                   }
                 });
               }
-              if (status.toString() === 'refund' ? itm.status.toString() === 'cancelrefund' || itm.status.toString() === 'rejectrefund' || itm.status.toString() === 'admincancelrefund' : status.toString() === 'admincancel' ? itm.status.toString() === 'admincancel' || itm.status.toString() === 'reject' : itm.status.toString() === status.toString()) {
+              if (status.toString() === 'refund' ? itm.status.toString() === 'cancelrefund' || itm.status.toString() === 'rejectrefund' || itm.status.toString() === 'admincancelrefund' : status.toString() === 'admincancel' ? itm.status.toString() === 'admincancel' : itm.status.toString() === status.toString()) {
                 dataOrders.push({
                   itemid: itm._id,
                   orderid: order._id,
@@ -1568,7 +1568,7 @@ exports.getCountOrderListAdmin = function (req, res, next) {
         completed++;
       } else if (item.status === 'cancel') {
         cancel++;
-      } else if (item.status === 'admincancel') {
+      } else if (item.status === 'admincancel' || item.status === 'reject') {
         admincancel++;
       } else if (item.status === 'cancelrefund' || item.status === 'rejectrefund' || item.status === 'admincancelrefund') {
         refund++;
