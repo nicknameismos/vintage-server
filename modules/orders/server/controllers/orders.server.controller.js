@@ -1524,7 +1524,7 @@ exports.getOrderListAdmin = function (req, res, next) {
       req.orders = dataOrders.slice(firstIndex, lastIndex);
       req.count = [];
       statusEN.forEach(function (status, index) {
-        orders.forEach(function (order,) {
+        orders.forEach(function (order) {
           var bid = order.itemsbid.filter(function (bid) {
             return bid.status === status
           });
