@@ -998,7 +998,7 @@ exports.cookingOrderDetail = function (req, res, next) {
       isrefund: req.order.itemsbid[req.itemIndex].status === 'rejectrefund' || req.order.itemsbid[req.itemIndex].status === 'cancelrefund' ? true : false,
       status: req.order.itemsbid[req.itemIndex].status,
       rejectreason: req.order.itemsbid[req.itemIndex].remark ? req.order.itemsbid[req.itemIndex].remark : '',
-      refid: req.order.itemsbid[req.itemIndex].refid,      
+      refid: req.order.itemsbid[req.itemIndex].refid,
       channel: req.order.channel,
       user: req.order.user,
       shippings: req.order.itemsbid[req.itemIndex].bid.shippings
@@ -1522,6 +1522,19 @@ exports.getOrderListAdmin = function (req, res, next) {
       }
       req.pagins = countPage(dataOrders);
       req.orders = dataOrders.slice(firstIndex, lastIndex);
+      req.count = [];
+      statusEN.forEach(function (status, index) {
+        var bidLength = 0;
+        var itemLength = 0;
+        bidLength = orders.itemsbid.filter(function (bid) {
+          return bid.status === status
+        }).length;
+        itemLength = orders.items.filter(function (item) {
+          return item.status === status
+        }).length;
+        count[index] = bidLength + itemLength;
+      });
+
       next();
     }
   });
@@ -1531,7 +1544,8 @@ exports.cookingOrderListAdmin = function (req, res, next) {
   var data = {
     titles: ['รอชำระเงิน', 'รอจัดส่ง', 'รอรับสินค้า', 'สำเร็จ', 'ลูกค้ายกเลิก', 'ระบบยกเลิก', 'คืนเงินแล้ว', 'จ่ายเงินแล้ว'],
     items: req.orders,
-    paging: req.pagins
+    paging: req.pagins,
+    count: req.count
   };
   req.data = data;
   next();
