@@ -75,18 +75,31 @@ exports.list = function (req, res) {
  * User(s) Management
  */
 exports.initlist = function (req, res, next) {
-  req.usersofrole = [
-    { name: "customer", users: [] },
-    { name: "shopowner", users: [] },
-    { name: "admin", users: [] },
-    { name: "biker", users: [] }
+  req.usersofrole = [{
+      name: "customer",
+      users: []
+    },
+    {
+      name: "shopowner",
+      users: []
+    },
+    {
+      name: "admin",
+      users: []
+    },
+    {
+      name: "biker",
+      users: []
+    }
   ];
 
   next();
 };
 
 exports.customer = function (req, res, next) {
-  User.find({ roles: 'user' }, '-salt -password -loginToken -loginExpires').exec(function (err, users) {
+  User.find({
+    roles: 'user'
+  }, '-salt -password -loginToken -loginExpires').exec(function (err, users) {
     if (err) {
       return res.status(400).send({
         message: errorHandler.getErrorMessage(err)
@@ -101,7 +114,9 @@ exports.customer = function (req, res, next) {
 };
 
 exports.shopowner = function (req, res, next) {
-  User.find({ roles: 'shop' }, '-salt -password -loginToken -loginExpires').exec(function (err, users) {
+  User.find({
+    roles: 'shop'
+  }, '-salt -password -loginToken -loginExpires').exec(function (err, users) {
     if (err) {
       return res.status(400).send({
         message: errorHandler.getErrorMessage(err)
@@ -115,7 +130,9 @@ exports.shopowner = function (req, res, next) {
 
 };
 exports.admins = function (req, res, next) {
-  User.find({ roles: 'admin' }, '-salt -password -loginToken -loginExpires').exec(function (err, users) {
+  User.find({
+    roles: 'admin'
+  }, '-salt -password -loginToken -loginExpires').exec(function (err, users) {
     if (err) {
       return res.status(400).send({
         message: errorHandler.getErrorMessage(err)
@@ -130,7 +147,9 @@ exports.admins = function (req, res, next) {
 };
 
 exports.biker = function (req, res, next) {
-  User.find({ roles: 'biker' }, '-salt -password -loginToken -loginExpires').exec(function (err, users) {
+  User.find({
+    roles: 'biker'
+  }, '-salt -password -loginToken -loginExpires').exec(function (err, users) {
     if (err) {
       return res.status(400).send({
         message: errorHandler.getErrorMessage(err)
@@ -159,7 +178,9 @@ exports.tabcustomer = function (req, res, next) {
   if (req.body.role !== 'user') {
     next();
   }
-  User.find({ roles: 'user' }, '-salt -password -loginToken -loginExpires').exec(function (err, users) {
+  User.find({
+    roles: 'user'
+  }, '-salt -password -loginToken -loginExpires').exec(function (err, users) {
     if (err) {
       return res.status(400).send({
         message: errorHandler.getErrorMessage(err)
@@ -176,7 +197,9 @@ exports.tabcustomer = function (req, res, next) {
 exports.tabshopowner = function (req, res, next) {
   if (req.body.role !== 'shop') next();
 
-  User.find({ roles: 'shop' }, '-salt -password -loginToken -loginExpires').exec(function (err, users) {
+  User.find({
+    roles: 'shop'
+  }, '-salt -password -loginToken -loginExpires').exec(function (err, users) {
     if (err) {
       return res.status(400).send({
         message: errorHandler.getErrorMessage(err)
@@ -192,7 +215,9 @@ exports.tabshopowner = function (req, res, next) {
 exports.tabadmins = function (req, res, next) {
   if (req.body.role !== 'admin') next();
 
-  User.find({ roles: 'admin' }, '-salt -password -loginToken -loginExpires').exec(function (err, users) {
+  User.find({
+    roles: 'admin'
+  }, '-salt -password -loginToken -loginExpires').exec(function (err, users) {
     if (err) {
       return res.status(400).send({
         message: errorHandler.getErrorMessage(err)
@@ -209,7 +234,9 @@ exports.tabadmins = function (req, res, next) {
 exports.tabbiker = function (req, res, next) {
   if (req.role !== 'biker') next();
 
-  User.find({ roles: 'biker' }, '-salt -password -loginToken -loginExpires').exec(function (err, users) {
+  User.find({
+    roles: 'biker'
+  }, '-salt -password -loginToken -loginExpires').exec(function (err, users) {
     if (err) {
       return res.status(400).send({
         message: errorHandler.getErrorMessage(err)
@@ -262,12 +289,16 @@ exports.getUsersByAdmin = function (req, res, next) {
     lastIndex = (req.body.currentpage * 10);
   }
   var role = 'user';
-  var filter = { roles: role };
+  var filter = {
+    roles: role
+  };
 
   if (req.body.title && req.body.title !== '') {
     if (rolesTH.indexOf(req.body.title) !== -1) {
       role = rolesEN[rolesTH.indexOf(req.body.title)];
-      filter = { roles: role };
+      filter = {
+        roles: role
+      };
     }
   }
   if (req.body.keyword && req.body.keyword !== '') {
@@ -283,15 +314,34 @@ exports.getUsersByAdmin = function (req, res, next) {
     // console.log(users);
     req.pagings = countPage(users);
     req.resUser = users.slice(firstIndex, lastIndex);
+    req.allUsers = users;
     next();
   });
+};
+
+exports.getCountUsersByAdmin = function (req, res, next) {
+  var user = 0;
+  var shop = 0;
+  var admin = 0;
+  req.allUsers.forEach(function (user) {
+    if (user.roles[0] === 'user') {
+      user++;
+    } else if (user.roles[0] === 'shop') {
+      shop++;
+    } else if (user.roles[0] === 'admin') {
+      admin++;
+    }
+  });
+  req.count = [user, shop, admin];
+  next();
 };
 
 exports.resUsers = function (req, res) {
   res.jsonp({
     titles: ['ลูกค้า', 'เจ้าของร้าน', 'แอดมิน'],
     items: req.resUser || [],
-    paging: req.pagings || []
+    paging: req.pagings || [],
+    count: req.count
   });
 };
 
