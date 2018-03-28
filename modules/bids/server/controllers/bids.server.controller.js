@@ -507,11 +507,71 @@ exports.bidPaid = function (req, res, next) {
   }
 };
 
+exports.countBid = function (req, res, next) {
+  // .where('status').equals('active')
+  // titles: ['กำลังประมูล', 'รอการประมูล', 'ประมูลแล้ว', 'จ่ายเงินแล้ว', 'สิ้นสุดการประมูล']
+  var filter = {};
+  if (req.body.keyword && req.body.keyword !== '') {
+    filter = searchName(req.body.keyword);
+  }
+  Bid.find(filter).sort('-created').exec(function (err, bids) {
+    if (err) {
+      return res.status(400).send({
+        message: errorHandler.getErrorMessage(err)
+      });
+    } else {
+      var today = new Date();
+      var biding = 0;
+      var waiting = 0;
+      var topay = 0;
+      var end = 0;
+      var paid = 0;
+      bids.forEach(function (element) {
+
+        var startdate = new Date(element.starttime);
+        startdate = startdate.setHours(startdate.getHours() - 7);
+        var expiredate = new Date(element.endtime);
+        expiredate = expiredate.setHours(expiredate.getHours() - 7);
+
+        if (element.status === 'active') {
+          // กำลังประมูล
+          if (today >= startdate && today <= expiredate) {
+            biding += 1;
+          }
+
+          // รอการประมูล
+          if (startdate >= today) {
+            waiting += 1;
+          }
+        }
+
+        // ประมูลแล้ว
+        if (element.status === 'topay') {
+          topay += 1;
+        }
+
+        // จ่ายเงินแล้ว
+        if (element.status === 'paid') {
+          paid += 1;
+        }
+
+        // สิ้นสุดการประมูล
+        if (element.status === 'end') {
+          end += 1;
+        }
+      });
+      req.count = [biding, waiting, topay, paid, end];
+      next();
+    }
+  });
+}
+
 exports.bidList = function (req, res) {
   res.jsonp({
     titles: ['กำลังประมูล', 'รอการประมูล', 'ประมูลแล้ว', 'จ่ายเงินแล้ว', 'สิ้นสุดการประมูล'],
     items: req.resbids || [],
-    paging: req.pagings || []
+    paging: req.pagings || [],
+    count: req.count || []
   });
 };
 

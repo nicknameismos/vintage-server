@@ -28,7 +28,7 @@ module.exports = function (app) {
     .get(bids.createBidsScheduleJob);
 
   app.route('/api/bidlist').all(core.jwtCheck, bidsPolicy.isAllowed)
-    .post(bids.bidStatusActive, bids.bidToday, bids.bidWaiting, bids.bidTopay, bids.bidEnd, bids.bidPaid, bids.bidList);
+    .post(bids.bidStatusActive, bids.bidToday, bids.bidWaiting, bids.bidTopay, bids.bidEnd, bids.bidPaid, bids.countBid, bids.bidList);
   // .post(bids.bidList);
   // Finish by binding the Bid middleware
   app.param('bidId', bids.bidByID);
