@@ -1568,7 +1568,7 @@ exports.getCountOrderListAdmin = function (req, res, next) {
         completed++;
       } else if (item.status === 'cancel') {
         cancel++;
-      } else if (item.status === 'admincancel' || item.status === 'reject') {
+      } else if (item.status === 'admincancel') {
         admincancel++;
       } else if (item.status === 'cancelrefund' || item.status === 'rejectrefund' || item.status === 'admincancelrefund') {
         refund++;
