@@ -1577,7 +1577,7 @@ exports.getCountOrderListAdmin = function (req, res, next) {
       }
     });
   });
-  req.count[topay, confirm, sent, completed, cancel, admincancel, refund, transferred];
+  req.count = [topay, confirm, sent, completed, cancel, admincancel, refund, transferred];
   next();
 };
 
