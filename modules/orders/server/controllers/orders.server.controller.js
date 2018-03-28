@@ -1524,13 +1524,15 @@ exports.getOrderListAdmin = function (req, res, next) {
       req.orders = dataOrders.slice(firstIndex, lastIndex);
       req.count = [];
       statusEN.forEach(function (status, index) {
-        var bid= orders.itemsbid.filter(function (bid) {
-          return bid.status === status
+        orders.forEach(function (order,) {
+          var bid = order.itemsbid.filter(function (bid) {
+            return bid.status === status
+          });
+          var item = order.items.filter(function (item) {
+            return item.status === status
+          });
+          count[index] = bid.length + item.length;
         });
-        var item = orders.items.filter(function (item) {
-          return item.status === status
-        });
-        count[index] = bid.length + item.length;
       });
 
       next();
