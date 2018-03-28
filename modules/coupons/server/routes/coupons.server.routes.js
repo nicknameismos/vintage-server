@@ -22,7 +22,7 @@ module.exports = function (app) {
     .post(coupons.getCouponCode, coupons.wrongCode, coupons.expiredCode, coupons.usedCode, coupons.resCouponCode);
 
   app.route('/api/getcouponsbyadmin').all(core.jwtCheck, couponsPolicy.isAllowed)
-    .post(coupons.getCouponsAdmin, coupons.resCouponsAdmin);
+    .post(coupons.getCouponsAdmin, coupons.getCountCouponsAdmin, coupons.resCouponsAdmin);
 
   // Finish by binding the Coupon middleware
   app.param('couponId', coupons.couponByID);

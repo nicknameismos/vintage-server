@@ -266,16 +266,34 @@ exports.getCouponsAdmin = function (req, res, next) {
     }
     req.pagings = countPage(resCoupons);
     req.resCouponsAdmin = resCoupons.slice(firstIndex, lastIndex);
-
+    req.allCoupon = coupons;
     next();
   });
+};
+
+exports.getCountCouponsAdmin = function (req, res, next) {
+  var active = 0;
+  var inactive = 0;
+  req.allCoupon.forEach(function (coup) {
+    var startdate = new Date(coup.startdate);
+    var enddate = new Date(coup.enddate);
+    var today = new Date();
+    if (today > enddate) {
+      inactive++;
+    } else if (today >= startdate && today <= enddate) {
+      active++;
+    }
+  });
+  req.count = [active, inactive]
+  next();
 };
 
 exports.resCouponsAdmin = function (req, res) {
   res.jsonp({
     titles: ['กำลังใช้งาน', 'หมดอายุแล้ว'],
     items: req.resCouponsAdmin || [],
-    paging: req.pagings || []
+    paging: req.pagings || [],
+    count: req.count
   });
 };
 
