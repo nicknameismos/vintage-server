@@ -1522,27 +1522,64 @@ exports.getOrderListAdmin = function (req, res, next) {
       }
       req.pagins = countPage(dataOrders);
       req.orders = dataOrders.slice(firstIndex, lastIndex);
-      req.count = [];
-      statusEN.forEach(function (status) {
-        var bid;
-        var item;
-        var count = 0;
-        orders.forEach(function (order) {
-          bid = order.itemsbid.filter(function (bid) {
-            return bid.status === status
-          });
-          item = order.items.filter(function (item) {
-            return item.status === status
-          });
-          count += bid.length;
-          count += item.length;
-        });
-        req.count.push(count);
-      });
-
+      req.allOrder = orders;
       next();
     }
   });
+};
+
+exports.getCountOrderListAdmin = function (req, res, next) {
+  req.count = [];
+  var topay = 0;
+  var confirm = 0;
+  var sent = 0;
+  var completed = 0;
+  var cancel = 0;
+  var admincancel = 0;
+  var refund = 0;
+  var transferred = 0;
+  req.allOrder.forEach(function (order) {
+    order.itemsbid.forEach(function (bid) {
+      if (bid.status === 'topay') {
+        topay++;
+      } else if (bid.status === 'confirm') {
+        confirm++;
+      } else if (bid.status === 'sent') {
+        sent++;
+      } else if (bid.status === 'completed') {
+        completed++;
+      } else if (bid.status === 'cancel') {
+        cancel++;
+      } else if (bid.status === 'admincancel') {
+        admincancel++;
+      } else if (bid.status === 'cancelrefund' || bid.status === 'rejectrefund' || bid.status === 'admincancelrefund') {
+        refund++;
+      } else if (bid.status === 'transferred') {
+        transferred++;
+      }
+    });
+    order.items.forEach(function (item) {
+      if (item.status === 'topay') {
+        topay++;
+      } else if (item.status === 'confirm') {
+        confirm++;
+      } else if (item.status === 'sent') {
+        sent++;
+      } else if (item.status === 'completed') {
+        completed++;
+      } else if (item.status === 'cancel') {
+        cancel++;
+      } else if (item.status === 'admincancel') {
+        admincancel++;
+      } else if (item.status === 'cancelrefund' || item.status === 'rejectrefund' || item.status === 'admincancelrefund') {
+        refund++;
+      } else if (item.status === 'transferred') {
+        transferred++;
+      }
+    });
+  });
+  req.count[topay, confirm, sent, completed, cancel, admincancel, refund, transferred];
+  next();
 };
 
 exports.cookingOrderListAdmin = function (req, res, next) {

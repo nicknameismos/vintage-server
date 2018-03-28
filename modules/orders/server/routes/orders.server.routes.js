@@ -56,7 +56,7 @@ module.exports = function (app) {
     .post(orders.getOrderId, orders.refund, core.updateNotification);
 
   app.route('/api/getordersbyadmin').all(core.jwtCheck, ordersPolicy.isAllowed)
-    .post(orders.getOrderListAdmin, orders.cookingOrderListAdmin, orders.resOrderListAdmin);
+    .post(orders.getOrderListAdmin, orders.getCountOrderListAdmin, orders.cookingOrderListAdmin, orders.resOrderListAdmin);
 
   app.route('/api/admincancelitem').all(core.jwtCheck, ordersPolicy.isAllowed)
     .post(orders.getOrderId, orders.admincancel, core.updateNotification);
