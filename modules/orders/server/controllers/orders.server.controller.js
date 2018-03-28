@@ -1523,10 +1523,11 @@ exports.getOrderListAdmin = function (req, res, next) {
       req.pagins = countPage(dataOrders);
       req.orders = dataOrders.slice(firstIndex, lastIndex);
       req.count = [];
-      statusEN.forEach(function (status, index) {
+      statusEN.forEach(function (status) {
         var bid;
         var item;
         orders.forEach(function (order) {
+          console.log(status);
           bid = order.itemsbid.filter(function (bid) {
             return bid.status === status
           });
