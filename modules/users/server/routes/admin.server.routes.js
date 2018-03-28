@@ -29,7 +29,7 @@ module.exports = function (app) {
     .delete(core.jwtCheck, adminPolicy.isAllowed, admin.delete);
 
   app.route('/api/getusersbyadmin')
-    .post(core.jwtCheck, adminPolicy.isAllowed, admin.getUsersByAdmin, admin.resUsers);
+    .post(core.jwtCheck, adminPolicy.isAllowed, admin.getUsersByAdmin, admin.getCountUsersByAdmin, admin.resUsers);
 
   // Finish by binding the user middleware
   app.param('userId', admin.userByID);
