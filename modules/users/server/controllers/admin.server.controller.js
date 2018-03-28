@@ -76,21 +76,21 @@ exports.list = function (req, res) {
  */
 exports.initlist = function (req, res, next) {
   req.usersofrole = [{
-      name: "customer",
-      users: []
-    },
-    {
-      name: "shopowner",
-      users: []
-    },
-    {
-      name: "admin",
-      users: []
-    },
-    {
-      name: "biker",
-      users: []
-    }
+    name: "customer",
+    users: []
+  },
+  {
+    name: "shopowner",
+    users: []
+  },
+  {
+    name: "admin",
+    users: []
+  },
+  {
+    name: "biker",
+    users: []
+  }
   ];
 
   next();
@@ -322,7 +322,24 @@ exports.getCountUsersByAdmin = function (req, res, next) {
   var usercount = 0;
   var shop = 0;
   var admin = 0;
-  User.find().exec(function (err, users) {
+  var rolesTH = ['ลูกค้า', 'เจ้าของร้าน', 'แอดมิน'];
+  var rolesEN = ['user', 'shop', 'admin'];
+  var role = 'user';
+  var filter = {
+    roles: role
+  };
+  if (req.body.title && req.body.title !== '') {
+    if (rolesTH.indexOf(req.body.title) !== -1) {
+      role = rolesEN[rolesTH.indexOf(req.body.title)];
+      filter = {
+        roles: role
+      };
+    }
+  }
+  if (req.body.keyword && req.body.keyword !== '') {
+    filter = searchName(req.body.keyword, role);
+  }
+  User.find(filter).exec(function (err, users) {
     if (err) {
       return res.status(400).send({
         message: errorHandler.getErrorMessage(err)
